@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  amivulnerable:
+    image: amivulnerable:latest
+    build:
+      context: .
+      dockerfile: AmIVulnerable/Dockerfile
+    ports:
+      - "8080:80"
+      - "8443:443"
+ 
