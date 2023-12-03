@@ -1,7 +1,13 @@
 version: '3.4'
 
+networks:
+  amivulnerable:
+
 services:
   amivulnerable:
+    networks:
+      - amivulnerable
+    container_name: api
     image: amivulnerable:latest
     build:
       context: .
@@ -9,4 +15,3 @@ services:
     ports:
       - "8080:80"
       - "8443:443"
- 
