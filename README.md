@@ -40,3 +40,17 @@ Eine Automatisierung der Analyse solcher Pakete zielt somit nicht nur eine Reduk
 Dies spiegelt sich beispielsweise in der Möglichkeit wieder, ganze Projekte direkt analysieren zu lassen anstelle der einzelnen Pakete.
 
 ### Ziele
+Dank der CVE-Daten ist es möglich für Pakete bekannte Sicherheitsprobleme zu ermitteln.
+
+CVE-Nummern sind verteilte Nummern der CNA - CVE-numbering authority - die spezifische Schwachstellen einer Software beschreiben.
+Zusammengefasst lokalisiert auf der Webseite der CVE <sup>https://www.cve.org/Downloads</sup>, können diese dort eingesehen können.
+
+Ziel der Ausarbeitung und des begleitenden Projektes ist die vereinfachte Analyse von Projekten mithilfe dieser CVE-Daten.
+
+Es soll untersucht werden,
+
+1. inwieweit ganze Projekte mit ihren Abhängigkeiten performant erfasst und
+2. Sicherheitslücken ermittelt aus den CVE Daten weiterverarbeitbar aufbereitet
+
+werden können.
+
