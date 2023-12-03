@@ -54,3 +54,18 @@ Es soll untersucht werden,
 
 werden können.
 
+### Vorgehen und Maßnahmen
+Diese Arbeit begleitet den Entwicklungsfortschritt eines Webservices und dessen Analyse.
+
+Umgesetzt als ASP.NET Core-Web-API wird dieser Dienst in einem Docker-Netzwerk realisiert und die Daten der Mitre Corporation in eine eigene Datenbank überführt.
+Mittels dieser soll bei Anfrage an die API eine Suche gestartet werden, ob sich ein sicherheitsauffälliges Paket finden lässt und dies dann zurückgegeben werden.
+
+Die Resultate werden im [JSON-LD Format](https://json-ld.org/) zurückgegeben und sollen dort die wichtigsten Parameter für den Anfragesteller gebündelt zurückgeben.
+
+Im Ersten Schritt ist dies mit der Übergabe eines einzelnen Paketes gedacht - ähnlich der Webseite [cvedetails.com](https://www.cvedetails.com/vulnerability-search.php). <br>
+Anschließend ist die Umsetzung auf ein Framework geplant, wo zuerst ein Abhängigkeitsbaum ermittelt werden muss und darauf aufbauend eine Rückgabe eventuell gefundener Probleme. <br>
+Weitere zusätzliche Schritte sind je nach Zeit und Machbarkeit noch nicht näher definiert.
+
+Die Ausarbeitung verfolgt ebenfalls den Zweck, die Planung, Erkenntnisse und Wege der Verifizierung verschiedener einzelner Pläne zu begleiten.
+Somit wird für spätere weiterführende Projekte eine Möglichkeit geschaffen, exemplarisch aufgetretene Probleme abzugleichen oder zu umgehen.
+
