@@ -20,6 +20,14 @@ Masterprojekt des Jahrgangs 22INM der HTWK Leipzig
 <img src="documentation/planning/procedure-2.png" alt="neu kompilieren!" title="procedure-2.png" />
 <figcaption><a href="documentation/planning/procedure.md">Speicherort der Rohdatei</a></figcaption>
 
+## Projekt-Verwaltungsstruktur
+### Ordnerstruktur
+- [Code](code/)
+    - [Anwendung](code/AmIVulnerable/)
+- [Dokumentation](documentation/)
+    - [Ausarbeitung/Paper](documentation/latex/)
+    - [Planungsdokumentation](documentation/planning/)
+
 ## Vorbereitung - Golden Circle
 ### Motivation
 Die Nutzung frei verfügbarer Pakete sind im Arbeitsalltag gang und gäbe.
