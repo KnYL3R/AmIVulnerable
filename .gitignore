@@ -1,6 +1,17 @@
+# general like VisualStudioCode, ...
 .vs
 .vscode
+*.env
+README.pdf
+README.html
+
+# ASP.NET
 bin
 obj
 *.user
-*.env
+
+# Latex
+_TexCompileDateien
+documentation/latex/*.pdf
+!AmIVulnerable.pdf
+compile.bat
