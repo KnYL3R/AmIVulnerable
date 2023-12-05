@@ -1,0 +1,121 @@
+\documentclass[10pt,a4paper,twoside]{article}
+\usepackage[top=1.5in,bottom=1in,left=1.125in,right=1.125in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[center]{caption}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{latexsym}
+\usepackage{lipsum}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{tasks}
+\usepackage[singlespacing]{setspace}
+\usepackage[ngerman]{babel}
+
+% Biblatex
+\usepackage{csquotes}
+\usepackage[
+    backend=biber,
+    style=numeric,
+    natbib=true,
+    sorting=none,
+    block=nbpar,
+    backref=true
+]{biblatex}
+\addbibresource{lib/bib.bib}
+\usepackage{hyperref}
+
+% If you want to break on URL numbers
+\setcounter{biburlnumpenalty}{9000}
+% If you want to break on URL lower case letters
+\setcounter{biburllcpenalty}{9000}
+% If you want to break on URL UPPER CASE letters
+\setcounter{biburlucpenalty}{9000}
+
+\pagestyle{myheadings}
+\setlength{\parindent}{0.8in}
+
+\usepackage{float}
+
+% Graph--------------------------------------------------------------------------------------------
+\usepackage{graphics,graphicx}
+\usepackage{calc}
+\usepackage{tikz}
+\usetikzlibrary{decorations.markings}
+\tikzstyle{vertex}=[circle, draw, inner sep=2pt, minimum size=4pt]
+\newcommand{\vertex}{\node[vertex]}
+\newcounter{Angle}
+
+\renewcommand{\baselinestretch}{1.25}
+
+% ???
+\newcommand*{\QEDA}{\hfill\ensuremath{\large{\lozenge}}}
+\newcommand*{\QEDAa}{\hfill\ensuremath{\square}}
+
+% Centering table of contents and list of table
+% \usepackage{tocloft}
+% \renewcommand{\contentsname}{\hfill\bfseries\Large Inhaltsverzeichnis \hfill}
+% \renewcommand{\cftaftertoctitle}{\hfill}
+
+\usepackage[explicit]{titlesec}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\definecolor{DarkGreen}{RGB}{3,103,16}
+\renewcommand{\thefootnote}{\textcolor{DarkGreen}{\arabic{footnote}}}
+
+\usepackage[bottom]{footmisc}
+
+% Variablen ---------------------------------------------------------------------------------------
+    \newcommand{\autorFirstNameT}{Tim}
+    \newcommand{\autorFirstNameK}{Konstantin}
+    \newcommand{\autorFamilyNameT}{Kretzschmar}
+    \newcommand{\autorFamilyNameK}{Blechschmidt}
+    % Kürzere Referenzierung
+% Variablen ---------------------------------------------------------------------------------------
+
+% Eigenschaften einstellen
+\hypersetup{
+    pdftitle={},
+    pdfauthor={\autorFirstNameT \autorFirstNameK} {\autorFamilyNameT \autorFamilyNameK},
+    pdfcreator={\autorFirstNameT \autorFirstNameK} {\autorFamilyNameT \autorFamilyNameK},
+    pdfkeywords={AmIVulnerable} {CVE} {Both} {\autorFamilyNameT} {\autorFamilyNameK},
+    pdfnewwindow = true,
+    colorlinks,
+    pdfpagelabels,
+    pdfstartview = FitH,
+    bookmarksopen = true,
+    bookmarksnumbered = true,
+    linkcolor = black,
+    urlcolor = blue,
+    plainpages = false,
+    hypertexnames = false,
+    citecolor = blue
+}
+
+\begin{document}
+    \nocite{*}
+
+    \phantomsection
+    \addcontentsline{toc}{section}{Inhaltsverzeichnis}
+    \tableofcontents\label{Inhaltsverzeichnis}
+
+    \newpage
+    \input{sections/sec1.tex}
+
+    \newpage
+    \phantomsection
+    \printbibheading[title={Quellen}]
+    \addcontentsline{toc}{section}{Quellen}
+    \printbibliography[type=book, heading=subbibliography, title={Literatur}]
+    % \newpage
+    % \printbibliography[type=online, heading=subbibliography, title={Links}]
+    % \newpage
+    % \printbibliography[type=article, heading=subbibliography, title={Zeitschriften}]
+
+\end{document}
