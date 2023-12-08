@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\code\AmIVulnerable\AmIVulnerable\AmIVulnerable.csproj" />
+    <ProjectReference Include="..\AmIVulnerable\AmIVulnerable.csproj" />
   </ItemGroup>
 
 </Project>

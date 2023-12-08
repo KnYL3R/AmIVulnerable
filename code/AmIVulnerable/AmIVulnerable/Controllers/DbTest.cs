@@ -16,6 +16,17 @@ namespace AmIVulnerable.Controllers {
             return Ok();
         }
 
+        [HttpPost]
+        [Route("contentPing")]
+        public IActionResult ContentPing ([FromBody] string body) {
+            if (body.Equals("DemoDummy")) {
+                return Ok("Positiv");
+            }
+            else {
+                return BadRequest();
+            }
+        }
+
         [HttpGet]
         [Route("FillSampleDatabase")]
         public IActionResult SimplePing() {
