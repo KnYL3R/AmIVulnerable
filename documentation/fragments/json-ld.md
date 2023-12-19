@@ -30,7 +30,20 @@ Dieser MVC<sup>Model-View-Controller</sup>-Controller gibt über die Route "view
 ### JSON-Context
 
 ## Aufgetretene Probleme
+<ol>
+    <li>
+        Die Beschreibung des HTML-Dokuments, welches angezeigt werden soll, muss als String zurückgegeben werden von dem Endpunkt.
+        Für eine volle Beschreibung ist dies jedoch ein sehr langer String, welches die Controller-Datei stark aufbläht.
+    </li>
+</ol>
 
 ## Lösung der Probleme
+Zu den Punkten oben hier die Lösungen mit den selben Nummern:
+<ol>
+    <li>
+        Der Inhalt wurde in eine eigene html-Datei ausgelagert und dann über das Dateisystem geladen - System.IO.File.
+        Somit wird die Controller-Beschreibung schlanker und eine bessere Wartbarkeit gewährleistet.
+    </li>
+</ol>
 
 ## Sonstiges
