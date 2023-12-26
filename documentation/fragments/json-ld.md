@@ -7,15 +7,12 @@ Mit ihm soll es Webnutzern weltweit ermöglicht werden, standardisierte und masc
 Während im context-Teil des JSON ein einzelner Link sich befindet, kann in der dort aufgerufenen Beschreibung eine vielzahl weiterführender Links und somit weiterer verlinkter Daten stehen. <sup>[Linked Data Abschnitt](https://json-ld.org/)</sup>
 
 ## Funktionsweise
-JSON-LD (JavaScript Object Notation for Linked Data) erweitert JSON, um strukturierte und verknüpfte Daten im Web zu repräsentieren. Die Schlüsselprinzipien sind:
 
 1. JSON-Struktur: Verwendung der JSON-Syntax für leicht lesbare Daten.
 2. Verknüpfte Daten: Nutzung von URIs, um Beziehungen zwischen Datenpunkten herzustellen.
 3. Kontext: Definition von Bedeutungen durch den Kontext, der angibt, wie Schlüssel interpretiert werden sollen.
 4. Typisierung: Möglichkeit, Datenpunkte zu typisieren, um die Art der Daten zu kennzeichnen.
 5. HTML-Einbettung: Integration in HTML-Dokumente für maschinenlesbare Informationen, besonders relevant für SEO.
-
-JSON-LD erleichtert die Interoperabilität von strukturierten Daten im Web.
 
 ## Umsetzung
 ### Webseite-Ansicht
@@ -64,3 +61,6 @@ Zu den Punkten oben hier die Lösungen mit den selben Nummern:
 </ol>
 
 ## Sonstiges
+Schema.org ist eine Kooperation von Suchmaschinen, die ein standardisiertes Vokabular für strukturierte Daten im Web bereitstellt. 
+Es ermöglicht Website-Betreibern, Informationen auf ihren Seiten eindeutig zu markieren, was Suchmaschinen bei der präzisen Interpretation und Anzeige unterstützt. 
+Durch die Verwendung von Schema.org können Websites ihre Sichtbarkeit in den Suchergebnissen verbessern.
