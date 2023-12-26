@@ -7,6 +7,15 @@ Mit ihm soll es Webnutzern weltweit ermöglicht werden, standardisierte und masc
 Während im context-Teil des JSON ein einzelner Link sich befindet, kann in der dort aufgerufenen Beschreibung eine vielzahl weiterführender Links und somit weiterer verlinkter Daten stehen. <sup>[Linked Data Abschnitt](https://json-ld.org/)</sup>
 
 ## Funktionsweise
+JSON-LD (JavaScript Object Notation for Linked Data) erweitert JSON, um strukturierte und verknüpfte Daten im Web zu repräsentieren. Die Schlüsselprinzipien sind:
+
+1. JSON-Struktur: Verwendung der JSON-Syntax für leicht lesbare Daten.
+2. Verknüpfte Daten: Nutzung von URIs, um Beziehungen zwischen Datenpunkten herzustellen.
+3. Kontext: Definition von Bedeutungen durch den Kontext, der angibt, wie Schlüssel interpretiert werden sollen.
+4. Typisierung: Möglichkeit, Datenpunkte zu typisieren, um die Art der Daten zu kennzeichnen.
+5. HTML-Einbettung: Integration in HTML-Dokumente für maschinenlesbare Informationen, besonders relevant für SEO.
+
+JSON-LD erleichtert die Interoperabilität von strukturierten Daten im Web.
 
 ## Umsetzung
 ### Webseite-Ansicht
@@ -28,6 +37,14 @@ Dieser MVC<sup>Model-View-Controller</sup>-Controller gibt über die Route "view
 </label>
 
 ### JSON-Context
+Im Allgemeinen bezieht sich der "@context"-Schlüssel in JSON-LD auf die Definition der Bedeutung oder Semantik der verwendeten Begriffe (Schlüssel) in einem JSON-LD-Dokument. Er spielt eine zentrale Rolle bei der Interpretation der Daten, indem er angibt, wie die verschiedenen Schlüssel und Werte zu verstehen sind.
+
+Der @context kann in unterschiedlichen Formen angegeben werden:
+
+1. IRI (Internationalized Resource Identifier): Eine Zeichenfolge, die auf eine externe Ressource verweist, die die Bedeutung der verwendeten Begriffe definiert. Zum Beispiel "@context": "http://schema.org/", wobei Schema.org ein gemeinsames Vokabular für strukturierte Daten ist.
+2. Objekt: Ein eingebettetes JSON-Objekt, das die Bedeutung der Schlüssel im aktuellen Dokument angibt. 
+
+Der "@context" ermöglicht also eine klare Definition der Semantik und erleichtert die interoperable Verwendung von strukturierten Daten im Web, da er sicherstellt, dass verschiedene Systeme und Anwendungen ein gemeinsames Verständnis der Daten haben.
 
 ## Aufgetretene Probleme
 <ol>
