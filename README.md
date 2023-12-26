@@ -17,8 +17,8 @@ Masterprojekt des Jahrgangs 22INM der HTWK Leipzig
 
 ## Planung
 <img src="documentation/planning/procedure-1.png" alt="neu kompilieren!" title="procedure-1.png" />
-<img src="documentation/planning/procedure-2.png" alt="neu kompilieren!" title="procedure-2.png" />
 <figcaption><a href="documentation/planning/procedure.md">Speicherort der Rohdatei</a></figcaption>
+Hier der geplante und immer wieder aktualisierte Fortschritt des Projektes.
 
 ## Projekt-Verwaltungsstruktur
 ### Ordnerstruktur
