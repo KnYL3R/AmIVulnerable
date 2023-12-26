@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiteDbLib", "LiteDbLib\Lite
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modells", "Modells\Modells.csproj", "{03B60F6F-8975-4531-8B21-F2EAEE0B5B17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmIVulnerable.Test", "AmIVulnerable.Test\AmIVulnerable.Test.csproj", "{D298A9EB-0556-4734-A5B8-52D58D4A994A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmIVulnerable.Test", "AmIVulnerable.Test\AmIVulnerable.Test.csproj", "{D298A9EB-0556-4734-A5B8-52D58D4A994A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
