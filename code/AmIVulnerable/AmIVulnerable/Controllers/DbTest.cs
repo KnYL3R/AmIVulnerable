@@ -1,5 +1,8 @@
 ﻿using LiteDb.Controller;
 using Microsoft.AspNetCore.Mvc;
+using Modells;
+using Newtonsoft.Json;
+using System.Security.Cryptography;
 
 namespace AmIVulnerable.Controllers {
 
@@ -61,6 +64,54 @@ namespace AmIVulnerable.Controllers {
             }
             else {
                 return BadRequest(res);
+            }
+        }
+
+        [HttpGet]
+        [Route("testJsonFiles")]
+        public IActionResult Test() {
+            List<string> fileList = new List<string>();
+
+            string pathDif = "..\\..\\..\\..\\..\\..\\..\\";
+            string folderPath = AppDomain.CurrentDomain.BaseDirectory + pathDif + "cvelistV5-main";
+            ExploreFolder(folderPath, fileList);
+
+            fileList.RemoveAt(0);
+            fileList.RemoveAt(0);
+            int i = 0;
+            foreach (string jsonFile in fileList) {
+                try {
+                    string jsonContent;
+                    using (StreamReader reader = new StreamReader(jsonFile)) {
+                        jsonContent = reader.ReadToEnd();
+                    }
+                    CVEcomp? test = JsonConvert.DeserializeObject<CVEcomp>(jsonContent);
+                    i += 1;
+                    if (i % 10000 == 0) {
+                        Console.WriteLine("Jup");
+                    }
+                    test = null;
+                }
+                catch (Exception ex) {
+                    return BadRequest(ex.Message);
+                }
+            }
+
+            return Ok();
+        }
+
+        private void ExploreFolder(string folderPath, List<string> fileList) {
+            try {
+                // Alle Dateien im aktuellen Ordner hinzufügen
+                fileList.AddRange(Directory.GetFiles(folderPath));
+
+                // Rekursiv alle Unterordner durchsuchen
+                foreach (string subfolder in Directory.GetDirectories(folderPath)) {
+                    ExploreFolder(subfolder, fileList);
+                }
+            }
+            catch (Exception ex) {
+                Console.WriteLine($"Fehler beim Durchsuchen des Ordners: {ex.Message}");
             }
         }
     }
