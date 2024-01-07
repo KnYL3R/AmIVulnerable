@@ -10,10 +10,10 @@ namespace AmIVulnerable.Controllers {
 
         [HttpGet]
         [Route("clone")]
-        public IActionResult CloneRepo([FromHeader] string url) {
+        public IActionResult CloneRepo([FromHeader] string? url) {
             try {
                 CM.AppSettings["CloneFinished"] = "false";
-                if (url.Equals("")) {
+                if (url.Equals("s")) {
                     _ = Clone(CM.AppSettings["StandardCveUrlPlusTag"]!);
                     return Ok();
                 }
@@ -27,7 +27,7 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
-        private async Task Clone(string url) {
+        private async Task Clone(string url){
             await Task.Run(() => {
                 Repository.Clone(url, AppDomain.CurrentDomain.BaseDirectory + "raw");
                 CM.AppSettings["CloneFinished"] = "true";
