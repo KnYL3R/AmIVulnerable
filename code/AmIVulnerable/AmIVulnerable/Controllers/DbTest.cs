@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Modells;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace AmIVulnerable.Controllers {
 
@@ -76,24 +77,18 @@ namespace AmIVulnerable.Controllers {
             string folderPath = AppDomain.CurrentDomain.BaseDirectory + pathDif + "cvelistV5-main";
             ExploreFolder(folderPath, fileList);
 
-            fileList.RemoveAt(0);
-            fileList.RemoveAt(0);
-            int i = 0;
             foreach (string jsonFile in fileList) {
-                try {
-                    string jsonContent;
-                    using (StreamReader reader = new StreamReader(jsonFile)) {
-                        jsonContent = reader.ReadToEnd();
+                if (Regex.IsMatch(jsonFile, @"CVE-[\w\S]+.json")) {
+                    try {
+                        string jsonContent;
+                        using (StreamReader reader = new StreamReader(jsonFile)) {
+                            jsonContent = reader.ReadToEnd();
+                        }
+                        CVEcomp test = JsonConvert.DeserializeObject<CVEcomp>(jsonContent)!;
                     }
-                    CVEcomp? test = JsonConvert.DeserializeObject<CVEcomp>(jsonContent);
-                    i += 1;
-                    if (i % 10000 == 0) {
-                        Console.WriteLine("Jup");
+                    catch (Exception ex) {
+                        return BadRequest(ex.Message);
                     }
-                    test = null;
-                }
-                catch (Exception ex) {
-                    return BadRequest(ex.Message);
                 }
             }
 
