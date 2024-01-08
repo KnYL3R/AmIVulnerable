@@ -41,7 +41,7 @@ namespace AmIVulnerable.Controllers {
             });
         }
 
-        public void RemoveReadOnlyAttribute(string path) {
+        private void RemoveReadOnlyAttribute(string path) {
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
 
             foreach (var file in directoryInfo.GetFiles()) {
