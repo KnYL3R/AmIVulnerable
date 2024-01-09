@@ -8,37 +8,48 @@ namespace AmIVulnerable.Controllers {
     [ApiController]
     public class GitController : ControllerBase {
 
-        [HttpGet]
+        [HttpPost]
         [Route("clone")]
-        public IActionResult CloneRepo([FromHeader] string? url) {
+        public IActionResult CloneRepo([FromHeader] bool cveRaw, [FromBody] Tuple<string, string> data) {
+        //public IActionResult CloneRepo([FromHeader] string? url) {
             try {
                 CM.AppSettings["CloneFinished"] = "false";
-                if (url.Equals("s")) {
-                    _ = Clone(CM.AppSettings["StandardCveUrlPlusTag"]!, true);
-                    return Ok();
+                if (cveRaw) {
+                    if (data.Item1.Equals("")) { // nothing, so use standard
+                        _ = Clone(CM.AppSettings["StandardCveUrlPlusTag"]!, data.Item2, "raw");
+                    }
+                    else {
+                        _ = Clone(data.Item1, data.Item2, "raw");
+                    }
                 }
                 else {
-                    _ = Clone(url, false);
-                    return Ok();
+                    _ = Clone(data.Item1, data.Item2, "rawAnalyze");
                 }
+                return Ok();
             }
             catch (Exception ex) {
                 return BadRequest(ex.Message);
             }
         }
 
-        private async Task Clone(string url, bool s){
+        private async Task Clone(string url, string tag, string dir){
             await Task.Run(() => {
-                if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "raw")) {
-                    string targetDir = AppDomain.CurrentDomain.BaseDirectory + "raw";
+                if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + dir)) {
+                    string targetDir = AppDomain.CurrentDomain.BaseDirectory + dir;
                     RemoveReadOnlyAttribute(targetDir);
                     Directory.Delete(targetDir, true);
                 }
-                if (s) {
-                    Process.Start("git.exe", $"clone {url} --branch cve_2023-12-31_at_end_of_day {AppDomain.CurrentDomain.BaseDirectory}raw");
+                if (tag.Equals("")) {
+                    Process.Start("git.exe", $"clone {url} {AppDomain.CurrentDomain.BaseDirectory}{dir}");
                 }
                 else {
-                    Process.Start("git.exe", $"clone {url} {AppDomain.CurrentDomain.BaseDirectory}raw");
+                    try {
+                        Process.Start("git.exe", $"clone {url} --branch {tag} {AppDomain.CurrentDomain.BaseDirectory}{dir}");
+                    }
+                    catch (Exception ex) {
+                        Console.WriteLine("Error with clone, tag?\n" + ex.Message);
+                        return; // leave CloneFinished false
+                    }
                 }
                 #region For Reminder
                 //if (s) {

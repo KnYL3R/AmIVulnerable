@@ -1,12 +1,14 @@
 ﻿namespace Modells {
 
-    /// <summary>
-    /// Root class for the CVE Data
-    /// </summary>
+    /// <summary>Root class for the CVE Data</summary>
     public class CVEcomp {
+        /// <summary></summary>
         public string dataType { get; set; }
+        /// <summary></summary>
         public string dataVersion { get; set; }
+        /// <summary></summary>
         public CveMetadata cveMetadata { get; set; }
+        /// <summary></summary>
         public Containers containers { get; set; }
     }
 
