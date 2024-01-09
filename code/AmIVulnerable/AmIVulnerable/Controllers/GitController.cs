@@ -1,7 +1,5 @@
-﻿using LibGit2Sharp;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.AccessControl;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using CM = System.Configuration.ConfigurationManager;
 
 namespace AmIVulnerable.Controllers {
@@ -16,11 +14,11 @@ namespace AmIVulnerable.Controllers {
             try {
                 CM.AppSettings["CloneFinished"] = "false";
                 if (url.Equals("s")) {
-                    _ = Clone(CM.AppSettings["StandardCveUrlPlusTag"]!);
+                    _ = Clone(CM.AppSettings["StandardCveUrlPlusTag"]!, true);
                     return Ok();
                 }
                 else {
-                    _ = Clone(url);
+                    _ = Clone(url, false);
                     return Ok();
                 }
             }
@@ -29,14 +27,30 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
-        private async Task Clone(string url){
+        private async Task Clone(string url, bool s){
             await Task.Run(() => {
                 if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "raw")) {
                     string targetDir = AppDomain.CurrentDomain.BaseDirectory + "raw";
                     RemoveReadOnlyAttribute(targetDir);
                     Directory.Delete(targetDir, true);
                 }
-                Repository.Clone(url, AppDomain.CurrentDomain.BaseDirectory + "raw");
+                if (s) {
+                    Process.Start("git.exe", $"clone {url} --branch cve_2023-12-31_at_end_of_day {AppDomain.CurrentDomain.BaseDirectory}raw");
+                }
+                else {
+                    Process.Start("git.exe", $"clone {url} {AppDomain.CurrentDomain.BaseDirectory}raw");
+                }
+                #region For Reminder
+                //if (s) {
+                //    Repository.Clone(url, AppDomain.CurrentDomain.BaseDirectory + "raw", new CloneOptions {
+                //        BranchName = "cve_2023-12-31_at_end_of_day",
+                //        IsBare = true,
+                //    });
+                //}
+                //else {
+                //    Repository.Clone(url, AppDomain.CurrentDomain.BaseDirectory + "raw");
+                //}
+                #endregion
                 CM.AppSettings["CloneFinished"] = "true";
             });
         }
