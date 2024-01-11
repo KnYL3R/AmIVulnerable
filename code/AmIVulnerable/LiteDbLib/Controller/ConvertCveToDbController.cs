@@ -25,13 +25,14 @@ namespace LiteDbLib.Controller {
 
         /// <summary>Define the name of the table.</summary>
         private readonly string tableName = "cve";
+        
+        private Regex regexYear = new Regex(@"\\cves\\(\d{4})\\");
         #endregion
 
         public ConvertCveToDbController(List<string> files) {
             this.files = files; // cve files
 
             // initialize filelist
-            Regex regexYear = new Regex(@"\\cves\\(\d{4})\\");
             Stack<DirectoryInfo> stack = new Stack<DirectoryInfo>();
             stack.Push(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory + "raw"));
 
@@ -58,13 +59,20 @@ namespace LiteDbLib.Controller {
 
         public bool ConvertRawCve() {
             try {
-                foreach (string file in dbFiles) {
-                    using (LiteDatabase db = new LiteDatabase(file)) {
-                        ILiteCollection<CVEcomp> col = db.GetCollection<CVEcomp>(tableName);
+                foreach (string file in files) {
+                    Match match = regexYear.Match(file);
+                    string extractDb = match.Groups[1].Value;
+                    if (dbFiles.Contains(extractDb)) { // year match a dbFile
+                        using (LiteDatabase db = new LiteDatabase(saveDir + extractDb)) {
+                            ILiteCollection<CVEcomp> col = db.GetCollection<CVEcomp>(tableName);
 
-                        CVEcomp cve = JsonConvert.DeserializeObject<CVEcomp>(File.ReadAllText(file))!;
+                            CVEcomp cve = JsonConvert.DeserializeObject<CVEcomp>(File.ReadAllText(file))!;
 
-                        col.Insert(cve.cveMetadata.cveId, cve);
+                            col.Insert(cve.cveMetadata.cveId, cve);
+                        }
+                    }
+                    else {
+                        return false;
                     }
                 }
                 return true;
