@@ -30,7 +30,7 @@ namespace AmIVulnerable.Controllers {
             ExploreFolder(path, fileList);
 
             foreach (int i in Enumerable.Range(0, fileList.Count)) {
-                if (!Regex.IsMatch(fileList[i], @"CVE-[\w\S]+.json")) {
+                if (!Regex.IsMatch(fileList[i], @"CVE-[-\S]+.json")) {
                     indexToDelete.Add(i);
                 }
             }
