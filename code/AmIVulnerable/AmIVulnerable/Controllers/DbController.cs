@@ -1,7 +1,5 @@
 ﻿using LiteDbLib.Controller;
 using Microsoft.AspNetCore.Mvc;
-using Modells;
-using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 
 namespace AmIVulnerable.Controllers {
@@ -40,6 +38,7 @@ namespace AmIVulnerable.Controllers {
                 fileList.RemoveAt(indexToDelete[i] - i);
             }
             ConvertCveToDbController ccdbc = new ConvertCveToDbController(fileList);
+            ccdbc.ConvertRawCve();
 
             return Ok();
         }

@@ -1,9 +1,7 @@
 ﻿using LiteDB;
 using Modells;
 using Newtonsoft.Json;
-using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading.Channels;
 
 namespace LiteDbLib.Controller {
 
@@ -16,7 +14,7 @@ namespace LiteDbLib.Controller {
                 if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "Data")) {
                     Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Data");
                 }
-                return (AppDomain.CurrentDomain.BaseDirectory + "/Data");
+                return (AppDomain.CurrentDomain.BaseDirectory + "Data");
             }
         }
 
@@ -25,14 +23,15 @@ namespace LiteDbLib.Controller {
 
         /// <summary>Define the name of the table.</summary>
         private readonly string tableName = "cve";
-        
-        private Regex regexYear = new Regex(@"\\cves\\(\d{4})\\");
+
+        /// <summary>Find the Year of the CVE-File</summary>
+        Regex regexYear = new Regex(@"\\cves\\(\d{4})\\");
         #endregion
 
         public ConvertCveToDbController(List<string> files) {
             this.files = files; // cve files
 
-            // initialize filelist
+            // initialize directorylist
             Stack<DirectoryInfo> stack = new Stack<DirectoryInfo>();
             stack.Push(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory + "raw"));
 
@@ -43,8 +42,9 @@ namespace LiteDbLib.Controller {
 
                 Match match = regexYear.Match(currentDirectoryPath);
                 if (match.Success) {
-                    // Jahreszahl extrahieren
-                    dbFiles.Add(match.Groups[1].Value);
+                    if (!dbFiles.Contains(match.Groups[1].Value)) { // only add when not already in list
+                        dbFiles.Add(match.Groups[1].Value);
+                    }
                 }
 
                 DirectoryInfo[] subdirectory = currentDirectory.GetDirectories();
@@ -53,26 +53,24 @@ namespace LiteDbLib.Controller {
                 }
             }
 
-            dbFiles = dbFiles.Distinct().Order().ToList();
-            dbFiles.ForEach(Console.WriteLine);
+            dbFiles = dbFiles.Order().ToList(); //.Distinct() because of line 45 not neccessary
         }
 
         public bool ConvertRawCve() {
             try {
                 foreach (string file in files) {
                     Match match = regexYear.Match(file);
-                    string extractDb = match.Groups[1].Value;
-                    if (dbFiles.Contains(extractDb)) { // year match a dbFile
-                        using (LiteDatabase db = new LiteDatabase(saveDir + extractDb)) {
-                            ILiteCollection<CVEcomp> col = db.GetCollection<CVEcomp>(tableName);
-
-                            CVEcomp cve = JsonConvert.DeserializeObject<CVEcomp>(File.ReadAllText(file))!;
-
-                            col.Insert(cve.cveMetadata.cveId, cve);
-                        }
+                    int dbFile = dbFiles.FindIndex(x => x.Equals(match.Groups[1].Value));
+                    dbFile = -1;
+                    if (dbFile == -1) {
+                        continue; // if year was not found, continue convert and ignore file
                     }
-                    else {
-                        return false;
+                    using (LiteDatabase db = new LiteDatabase($"{saveDir}\\{dbFiles[dbFile]}.litedb")) {
+                        ILiteCollection<CVEcomp> col = db.GetCollection<CVEcomp>(tableName);
+
+                        CVEcomp cve = JsonConvert.DeserializeObject<CVEcomp>(File.ReadAllText(file))!;
+
+                        col.Insert(cve.cveMetadata.cveId, cve);
                     }
                 }
                 return true;
