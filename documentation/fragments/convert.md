@@ -18,7 +18,10 @@ Wenn ein entsprechendes Jahr erfolgreich ermittelt wurde, ist wird der Inhalt de
 Nach der Speicherung folgt das nächste Element, bis alle fertig sind.
 
 ## Grundlage der Jahresdatenbanken
-<p style="color: red">noch zu erledigen</p>
+Sobald ein Update der Datenbank erfolgen soll, ist es so einfacher, sowohl neue Daten einzufügen, als auch alte Daten zu validieren oder zu ersetzten.
+Sollte es beispielsweise notwendig sein, die Daten des Jahres 2012 zu erneuern, so muss lediglich diese eine Datenbank angepasst werden.
+
+Ebenso ist der unwahrscheinlich, aber nicht ausgeschlossene somit ein Ausfall einer Datei nicht so dramatisch, da nur ein Jahr neu erstellt werden muss und nicht alle gesamt, was weitaus länger dauert.
 
 ## Fragen zur Leistung
 
