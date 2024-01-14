@@ -1,5 +1,9 @@
 ﻿using LiteDb.Controller;
 using Microsoft.AspNetCore.Mvc;
+using Modells;
+using Newtonsoft.Json;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace AmIVulnerable.Controllers {
 
@@ -61,6 +65,46 @@ namespace AmIVulnerable.Controllers {
             }
             else {
                 return BadRequest(res);
+            }
+        }
+
+        [HttpGet]
+        [Route("testJsonFiles")]
+        public IActionResult Test() {
+            List<string> fileList = new List<string>();
+
+            ExploreFolder(AppDomain.CurrentDomain.BaseDirectory + "raw/", fileList);
+
+            foreach (string jsonFile in fileList) {
+                if (Regex.IsMatch(jsonFile, @"CVE-[\w\S]+.json")) {
+                    try {
+                        string jsonContent;
+                        using (StreamReader reader = new StreamReader(jsonFile)) {
+                            jsonContent = reader.ReadToEnd();
+                        }
+                        CVEcomp test = JsonConvert.DeserializeObject<CVEcomp>(jsonContent)!;
+                    }
+                    catch (Exception ex) {
+                        return BadRequest(ex.Message);
+                    }
+                }
+            }
+
+            return Ok();
+        }
+
+        private void ExploreFolder(string folderPath, List<string> fileList) {
+            try {
+                // Alle Dateien im aktuellen Ordner hinzufügen
+                fileList.AddRange(Directory.GetFiles(folderPath));
+
+                // Rekursiv alle Unterordner durchsuchen
+                foreach (string subfolder in Directory.GetDirectories(folderPath)) {
+                    ExploreFolder(subfolder, fileList);
+                }
+            }
+            catch (Exception ex) {
+                Console.WriteLine($"Fehler beim Durchsuchen des Ordners: {ex.Message}");
             }
         }
     }
