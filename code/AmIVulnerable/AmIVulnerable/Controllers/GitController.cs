@@ -16,7 +16,13 @@ namespace AmIVulnerable.Controllers {
                 CM.AppSettings["CloneFinished"] = "false";
                 if (cveRaw) {
                     if (data.Item1.Equals("")) { // nothing, so use standard
-                        _ = Clone(CM.AppSettings["StandardCveUrlPlusTag"]!, data.Item2, "raw");
+                        if (data.Item2.Equals("")) { //nothing, so use standard
+                            _ = Clone(CM.AppSettings["StandardCveUrlPlusTag"]!, "cve_2023-12-31_at_end_of_day", "raw");
+
+                        }
+                        else {
+                            _ = Clone(CM.AppSettings["StandardCveUrlPlusTag"]!, data.Item2, "raw");
+                        }
                     }
                     else {
                         _ = Clone(data.Item1, data.Item2, "raw");

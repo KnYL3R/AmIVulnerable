@@ -73,9 +73,7 @@ namespace AmIVulnerable.Controllers {
         public IActionResult Test() {
             List<string> fileList = new List<string>();
 
-            //string pathDif = "..\\..\\..\\..\\..\\..\\..\\";
-            //string folderPath = AppDomain.CurrentDomain.BaseDirectory + pathDif + "cvelistV5-main";
-            ExploreFolder(AppDomain.CurrentDomain.BaseDirectory + "raw/cvelistV5-main", fileList);
+            ExploreFolder(AppDomain.CurrentDomain.BaseDirectory + "raw/", fileList);
 
             foreach (string jsonFile in fileList) {
                 if (Regex.IsMatch(jsonFile, @"CVE-[\w\S]+.json")) {
