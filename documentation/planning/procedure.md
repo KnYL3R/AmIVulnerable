@@ -31,8 +31,11 @@ gantt
 
     Besprechung: milestone, 2023-12-14, 0d
 
-    JSON-LD: active, json-ld, after besprechung, 2d
-    JSON-LD dokumentieren: active, json-ld-dokumentieren, after json-ld, 2d
+    JSON-LD: done, json-ld, after besprechung, 2d
+    JSON-LD dokumentieren: done, json-ld-dokumentieren, after json-ld, 2d
+
+    Clone des CVE-Repo: done, cloneCveRepo, after json-ld-dokumentieren, 4d
+    CVE in Datenbank überführen: done, cveToDatabase, after cloneCveRepo, 3d
 
     Abgabe: milestone, 2024-03-11, 0d
 ```
