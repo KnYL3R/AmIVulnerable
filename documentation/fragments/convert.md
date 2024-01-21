@@ -27,6 +27,9 @@ Ebenso ist der unwahrscheinlich, aber nicht ausgeschlossene somit ein Ausfall ei
 
 ### Zeit der Konvertierung
 Ein kompletter Vorgang des Umwandelns der JSON-Dateien zu den LiteDB's dauert ca 1h auf einem 3,6GHz intel Prozessor.
+Auf einem 2,1GHz intel Prozessor betrag die Dauer ca 1h 40min.
+
+Die Angaben betreffen die Grundtaktrate.
 
 ### Dauer der Abfrage auf den LiteDB-Dateien
 -- erst möglich wenn Funktion implementiert --
