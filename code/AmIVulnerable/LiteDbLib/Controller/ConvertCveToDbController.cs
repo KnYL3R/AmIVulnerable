@@ -61,7 +61,6 @@ namespace LiteDbLib.Controller {
                 foreach (string file in files) {
                     Match match = regexYear.Match(file);
                     int dbFile = dbFiles.FindIndex(x => x.Equals(match.Groups[1].Value));
-                    dbFile = -1;
                     if (dbFile == -1) {
                         continue; // if year was not found, continue convert and ignore file
                     }
