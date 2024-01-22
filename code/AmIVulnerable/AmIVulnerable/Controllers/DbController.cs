@@ -16,7 +16,7 @@ namespace AmIVulnerable.Controllers {
         public IActionResult IsRawDataThere() {
             string path = $"{AppDomain.CurrentDomain.BaseDirectory}raw";
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
-            if (directoryInfo.GetDirectories().Count() != 0) {
+            if (directoryInfo.GetDirectories().Length != 0) {
                 return Ok();
             }
             else {
@@ -46,7 +46,7 @@ namespace AmIVulnerable.Controllers {
             return Ok();
         }
 
-        private void ExploreFolder(string folderPath, List<string> fileList) {
+        private static void ExploreFolder(string folderPath, List<string> fileList) {
             try {
                 fileList.AddRange(Directory.GetFiles(folderPath));
 
@@ -63,7 +63,7 @@ namespace AmIVulnerable.Controllers {
         public IActionResult CheckSinglePackage([FromHeader] string packageName,
                                                     [FromHeader] bool isDbSearch = true,
                                                     [FromHeader] string? packageVersion = "") {
-            if (packageVersion.Equals("")) { // search all versions
+            if (packageVersion!.Equals("")) { // search all versions
                 if (isDbSearch) {
                     SearchDbController searchDbController = new SearchDbController();
                     List<CveResult> res = [];

@@ -38,7 +38,7 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
-        private async Task Clone(string url, string tag, string dir){
+        private static async Task Clone(string url, string tag, string dir){
             await Task.Run(() => {
                 if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + dir)) {
                     string targetDir = AppDomain.CurrentDomain.BaseDirectory + dir;
@@ -72,14 +72,14 @@ namespace AmIVulnerable.Controllers {
             });
         }
 
-        private void RemoveReadOnlyAttribute(string path) {
+        private static void RemoveReadOnlyAttribute(string path) {
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
 
-            foreach (var file in directoryInfo.GetFiles()) {
+            foreach (FileInfo file in directoryInfo.GetFiles()) {
                 file.Attributes &= ~FileAttributes.ReadOnly;
             }
 
-            foreach (var subDirectory in directoryInfo.GetDirectories()) {
+            foreach (DirectoryInfo subDirectory in directoryInfo.GetDirectories()) {
                 RemoveReadOnlyAttribute(subDirectory.FullName);
             }
         }
@@ -87,7 +87,7 @@ namespace AmIVulnerable.Controllers {
         [HttpGet]
         [Route("cloneStatus")]
         public IActionResult CloneStatus() {
-            if (CM.AppSettings["CloneFinished"].Equals("true")) {
+            if (CM.AppSettings["CloneFinished"]!.Equals("true")) {
                 return Ok();
             }
             else {
