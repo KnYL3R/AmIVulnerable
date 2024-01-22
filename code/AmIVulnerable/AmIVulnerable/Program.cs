@@ -1,3 +1,6 @@
+using Serilog;
+using Serilog.Events;
+
 namespace AmIVulnerable {
 
     public class Program {
@@ -19,6 +22,16 @@ namespace AmIVulnerable {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .WriteTo.File(
+                    path: AppDomain.CurrentDomain.BaseDirectory + "Log/Logs.txt",
+                    rollingInterval: RollingInterval.Day
+                    )
+                .CreateLogger();
 
             app.UseHttpsRedirection();
 

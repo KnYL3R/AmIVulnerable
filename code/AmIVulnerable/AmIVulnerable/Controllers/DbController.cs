@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Modells;
 using Newtonsoft.Json;
+using SerilogTimings;
 using System.Text.RegularExpressions;
 
 namespace AmIVulnerable.Controllers {
@@ -65,7 +66,10 @@ namespace AmIVulnerable.Controllers {
             if (packageVersion.Equals("")) { // search all versions
                 if (isDbSearch) {
                     SearchDbController searchDbController = new SearchDbController();
-                    List<CveResult> res = searchDbController.SearchSinglePackage(packageName);
+                    List<CveResult> res = [];
+                    using(Operation.Time($"{packageName}")) {
+                        res = searchDbController.SearchSinglePackage(packageName);
+                    }
                     if (res.Count > 0) {
                         return Ok(JsonConvert.SerializeObject(res));
                     }
@@ -90,6 +94,7 @@ namespace AmIVulnerable.Controllers {
                     }
                     // search in the files
                     List<CveResult> results = [];
+                    using (Operation.Time($"Packge \"{packageName}\"")) {
                         int start = 0;
                         foreach (int i in Enumerable.Range(start, fileList.Count - start)) {
                             CVEcomp item = JsonConvert.DeserializeObject<CVEcomp>(System.IO.File.ReadAllText(fileList[i]))!;
@@ -110,6 +115,7 @@ namespace AmIVulnerable.Controllers {
                                 }
                             }
                         }
+                    }
                     return Ok(JsonConvert.SerializeObject(results));
                 }
             }
