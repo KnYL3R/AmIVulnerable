@@ -59,12 +59,14 @@ namespace LiteDbLib.Controller {
         public bool ConvertRawCve() {
             try {
                 foreach (string file in files) {
+                    Console.WriteLine(file);
                     Match match = regexYear.Match(file);
                     int dbFile = dbFiles.FindIndex(x => x.Equals(match.Groups[1].Value));
                     if (dbFile == -1) {
                         continue; // if year was not found, continue convert and ignore file
                     }
-                    using (LiteDatabase db = new LiteDatabase($"{saveDir}\\{dbFiles[dbFile]}.litedb")) {
+                    using (LiteDatabase db = new LiteDatabase($"{saveDir}\\{dbFiles[dbFile]}.litedb"))
+                    {
                         ILiteCollection<CVEcomp> col = db.GetCollection<CVEcomp>(tableName);
 
                         CVEcomp cve = JsonConvert.DeserializeObject<CVEcomp>(File.ReadAllText(file))!;
