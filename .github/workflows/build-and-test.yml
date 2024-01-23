@@ -30,7 +30,7 @@ jobs:
     - name: cd & Install dependencies
       run: |
           cd code/AmIVulnerable
-          dotnet restore
+          dotnet restore AmIVulnerable.sln
       
     - name: Build
       run: dotnet build --configuration Release --no-restore
