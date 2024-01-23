@@ -27,9 +27,10 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Install dependencies
-      run: cd code/AmIVulnerable
-           dotnet restore
+    - name: cd & Install dependencies
+      run: |
+          cd code/AmIVulnerable
+          dotnet restore
       
     - name: Build
       run: dotnet build --configuration Release --no-restore
