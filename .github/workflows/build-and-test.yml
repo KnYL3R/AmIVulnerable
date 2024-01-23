@@ -10,6 +10,7 @@ on:
 
 env:
   DOTNET_VERSION: '8.0.101' # The .NET SDK version to use
+  SLN_NAME: AmIVulnerable.sln
 
 jobs:
   build-and-test:
@@ -30,10 +31,14 @@ jobs:
     - name: cd & Install dependencies
       run: |
           cd code/AmIVulnerable
-          dotnet restore AmIVulnerable.sln
+          dotnet restore ${{ env.SLN_NAME }}
       
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: |
+          cd code/AmIVulnerable
+          dotnet build ${{ env.SLN_NAME }} --configuration Release --no-restore
     
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: |
+          cd code/AmIVulnerable
+          dotnet test ${{ env.SLN_NAME }} --no-restore --verbosity normal
