@@ -28,6 +28,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Install dependencies
+      before-run: cd code/AmIVulnerable
       run: dotnet restore
       
     - name: Build
