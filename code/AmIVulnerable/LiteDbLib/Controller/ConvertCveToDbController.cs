@@ -56,17 +56,13 @@ namespace LiteDbLib.Controller {
             dbFiles = dbFiles.Order().ToList(); //.Distinct() because of line 45 not neccessary
         }
 
-        public bool ConvertRawCve()
-        {
-            try
-            {
-                foreach (string file in files)
-                {
+        public bool ConvertRawCve() {
+            try {
+                foreach (string file in files) {
                     Console.WriteLine(file);
                     Match match = regexYear.Match(file);
                     int dbFile = dbFiles.FindIndex(x => x.Equals(match.Groups[1].Value));
-                    if (dbFile == -1)
-                    {
+                    if (dbFile == -1) {
                         continue; // if year was not found, continue convert and ignore file
                     }
                     using (LiteDatabase db = new LiteDatabase($"{saveDir}\\{dbFiles[dbFile]}.litedb"))
@@ -80,8 +76,7 @@ namespace LiteDbLib.Controller {
                 }
                 return true;
             }
-            catch
-            {
+            catch {
                 return false;
             }
         }

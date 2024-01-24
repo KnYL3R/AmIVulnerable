@@ -1,9 +1,12 @@
+using Serilog;
+using Serilog.Events;
+
 namespace AmIVulnerable {
 
     public class Program {
 
         public static void Main (string[] args) {
-            var builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
 
@@ -12,13 +15,23 @@ namespace AmIVulnerable {
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var app = builder.Build();
+            WebApplication app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment()) {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .WriteTo.File(
+                    path: AppDomain.CurrentDomain.BaseDirectory + "Log/Logs.txt",
+                    rollingInterval: RollingInterval.Day
+                    )
+                .CreateLogger();
 
             app.UseHttpsRedirection();
 
