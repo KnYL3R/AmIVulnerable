@@ -41,7 +41,10 @@ namespace AmIVulnerable.Controllers {
                 fileList.RemoveAt(indexToDelete[i] - i);
             }
             ConvertCveToDbController ccdbc = new ConvertCveToDbController(fileList);
-            ccdbc.ConvertRawCve();
+
+            using (Operation.Time($"Konvertieren der Datenbank")) {
+                ccdbc.ConvertRawCve();
+            }
 
             return Ok();
         }
