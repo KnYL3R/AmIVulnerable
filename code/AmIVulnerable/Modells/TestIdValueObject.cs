@@ -7,9 +7,9 @@
 
         /// <summary>ID in the Database</summary>
         /// <value>Integer, that hold the ID.</value>
-        public int Id { get; set; }
+        public int Id { get; set; } = -1;
         /// <summary>Value, that is presented in the ID.</summary>
         /// <value>Current Value.</value>
-        public int Value { get; set; }
+        public int Value { get; set; } = -1;
     }
 }
