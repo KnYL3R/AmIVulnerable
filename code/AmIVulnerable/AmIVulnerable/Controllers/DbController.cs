@@ -127,5 +127,29 @@ namespace AmIVulnerable.Controllers {
             }
             return Ok();
         }
+
+        [HttpGet]
+        [Route("checkPackageList")]
+        public IActionResult CheckPackageList([FromBody] List<Tuple<string, string>> packages) {
+            if (packages.Count > 0) {
+                List<CveResult> results = [];
+                foreach (Tuple<string, string> item in packages) {
+                    if (item.Item1.Equals("")) {
+                        continue;
+                    }
+                    SearchDbController searchDbController = new SearchDbController();
+                    using (Operation.Time($"")) {
+                        results.AddRange(searchDbController.SearchSinglePackage(item.Item1));
+                    }
+                }
+                if (results.Count > 0) {
+                    return Ok(JsonConvert.SerializeObject(results));
+                }
+                else {
+                    return NoContent();
+                }
+            }
+            return Ok("No package List delivered.");
+        }
     }
 }
