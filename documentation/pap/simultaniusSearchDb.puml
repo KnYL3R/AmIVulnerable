@@ -1,0 +1,42 @@
+@startuml "Simultanius search on LiteDb-Files"
+
+    start
+    while (foreach product in list to search) 
+        if (last product?) then (yes)
+            :j = index of current product
+            k = amount of database-files
+            runCount = 0
+            endCount = 0;
+            while (j >= (j - k))
+                :search in file[k] after product[j]|
+                if (k == 0) then (yes)
+                    :runCount += 1
+                    j = i
+                    k = (amount of database-files) - endCount;
+                    if (k == -1) then (yes)
+                        stop
+                        note left: goto return result-list;
+                    endif
+                    if (endCount != (j - k)) then (yes)
+                        break
+                    endif
+                endif
+                :j -= 1
+                k -= 1;
+            endwhile
+        else (no)
+            :j = index of current product;
+            :k = amount of database-files;
+            while (j >= 0 && k >= 0)
+                ' fork
+                :search in file[k] after product[j]|
+                :j -= 1
+                k -= 1;
+                ' end fork
+            endwhile
+        endif
+    endwhile
+    : return result-list;
+    end
+
+@enduml
