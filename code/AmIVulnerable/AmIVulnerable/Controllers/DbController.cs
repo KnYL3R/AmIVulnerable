@@ -137,7 +137,7 @@ namespace AmIVulnerable.Controllers {
 
         [HttpPost]
         [Route("checkPackageList")]
-        public IActionResult CheckPackageList([FromBody] List<Tuple<string, string>> packages) {
+        public async Task<IActionResult> CheckPackageListAsync([FromBody] List<Tuple<string, string>> packages) {
             if (packages.Count > 0) {
                 SearchDbController searchDbController = new SearchDbController();
                 List<CveResult> results = [];
@@ -151,7 +151,7 @@ namespace AmIVulnerable.Controllers {
                         //results.AddRange(searchDbController.SearchSinglePackage(item.Item1));
                     }
                 }
-                results = searchDbController.SearchPackagesAsList(strings).Result;
+                results = await searchDbController.SearchPackagesAsList(strings);
                 if (results.Count > 0) {
                     return Ok(JsonConvert.SerializeObject(results));
                 }

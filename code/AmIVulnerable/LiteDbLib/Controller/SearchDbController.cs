@@ -79,12 +79,15 @@ namespace LiteDbLib.Controller {
                     while (j >= 0 && k >= 0) {
                         Task<List<CveResult>>[] tasks = new Task<List<CveResult>>[j + 1];
                         foreach (int k2 in Enumerable.Range(0, dbFiles.Count - 1)) {
-                            tasks[k2] = Task.Run(() => SearchInDb(dbFiles[k], designations[j]));
+                            string db = dbFiles[k];
+                            string des = designations[j];
+                            tasks[k2] = Task.Run(() => SearchInDb(db, des));
                             k -= 1; j -= 1;
                             if (j < 0) {
                                 break;
                             }
                         }
+                        //await Console.Out.WriteLineAsync(); // only for debug check
                         List<CveResult>[] res = await Task.WhenAll(tasks);
                         foreach (List<CveResult> x in res) {
                             results.AddRange(x);
@@ -123,7 +126,7 @@ namespace LiteDbLib.Controller {
         }
 
         private async Task<List<CveResult>> SearchInDb(string dbFile, string designation) {
-            await Console.Out.WriteLineAsync($"{dbFile} search for {designation}");
+            //await Console.Out.WriteLineAsync($"{dbFile} search for {designation}"); // only for debug check
             List<CveResult> results = [];
             using (LiteDatabase db = new LiteDatabase($"{saveDir}\\{dbFile}")) {
                 ILiteCollection<CVEcomp> col = db.GetCollection<CVEcomp>(tableName);
