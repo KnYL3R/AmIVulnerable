@@ -60,6 +60,7 @@ namespace LiteDbLib.Controller {
                                     results.Add(new CveResult() {
                                         CveNumber = item.cveMetadata.cveId,
                                         Version = version.version,
+                                        Designation = designation,
                                     });
                                 }
                             }
@@ -161,6 +162,7 @@ namespace LiteDbLib.Controller {
                                 results.Add(new CveResult() {
                                     CveNumber = item.cveMetadata.cveId,
                                     Version = version.version,
+                                    Designation = designation,
                                 });
                             }
                         }

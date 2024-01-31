@@ -72,7 +72,7 @@ namespace AmIVulnerable.Controllers {
                 if (isDbSearch) {
                     SearchDbController searchDbController = new SearchDbController();
                     List<CveResult> res = [];
-                    using(Operation.Time($"{packageName}")) {
+                    using(Operation.Time($"Package \"{packageName}\"")) {
                         res = searchDbController.SearchSinglePackage(packageName);
                     }
                     if (res.Count > 0) {
@@ -83,8 +83,7 @@ namespace AmIVulnerable.Controllers {
                     }
                 }
                 else {
-                    // find all json files of cve
-                    
+                    // find all json files of cve                    
                     return Ok(JsonConvert.SerializeObject(SearchInJson(packageName)));
                 }
             }
@@ -110,7 +109,7 @@ namespace AmIVulnerable.Controllers {
             }
             // search in the files
             List<CveResult> results = [];
-            using (Operation.Time($"Packge \"{packageName}\"")) {
+            using (Operation.Time($"Package \"{packageName}\"")) {
                 int start = 0;
                 foreach (int i in Enumerable.Range(start, fileList.Count - start)) {
                     CVEcomp item = JsonConvert.DeserializeObject<CVEcomp>(System.IO.File.ReadAllText(fileList[i]))!;

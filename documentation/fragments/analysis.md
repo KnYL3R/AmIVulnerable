@@ -30,5 +30,5 @@ Zur Leistung ergaben sich dabei folgende Werte:
 ## JSON-Dateien
 
 ```log
-2024-01-24 19:08:18.676 +01:00 [INF] Packge "LiteDB" completed in 853896.3 ms
+2024-01-24 19:08:18.676 +01:00 [INF] Package "LiteDB" completed in 853896.3 ms
 ```
