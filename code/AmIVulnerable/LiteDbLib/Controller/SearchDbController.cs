@@ -96,8 +96,8 @@ namespace LiteDbLib.Controller {
                             results.AddRange(x);
                         }
                     }
-                    if (i == (designations.Count - 1)) { // if pipe filled let check the pipeCount again and reset so the highest element
-                        i -= 1; 
+                    if (i == (designations.Count - 1)) {
+                        i -= 1; // if pipe filled let check the pipeCount again and reset so the highest element
                     }
                 }
                 else if (
@@ -128,7 +128,7 @@ namespace LiteDbLib.Controller {
                         foreach (List<CveResult> x in res) {
                             results.AddRange(x);
                         }
-                        if (k != 0) {
+                        if (k >= 0) {
                             j = i;
                             k += (designations.Count - 1);
                         }
@@ -137,44 +137,7 @@ namespace LiteDbLib.Controller {
                 else { // drain the pipe
                     pipeCount += 1;
                 }
-                await Console.Out.WriteLineAsync((char)i);
-                //if (i < (designations.Count - 1)) {
-                // stand above at fill pipe
-                //}
-                //else {
-                //    int j = i;
-                //    int k = dbFiles.Count - 1;
-                //    int runCount = 0;
-                //    int endCount = 1;
-                //    int range = j - k;
-                //    //while (j >= j - range) {
-                //    while (true) {
-                //            Task<List<CveResult>>[] tasks = new Task<List<CveResult>>[j + 1];
-                //        foreach (int k2 in Enumerable.Range(0, dbFiles.Count - 1)) {
-                //            string db = dbFiles[k];
-                //            string des = designations[j];
-                //            tasks[k2] = Task.Run(() => SearchInDb(db, des));
-                //            k -= 1; j -= 1;
-                //            if (k == 0) {
-                //                runCount += 1;
-                //                j = i;
-                //                k = dbFiles.Count - 1 - endCount;
-                //                if (k == -1) {
-                //                    break;
-                //                }
-                //                if (endCount != range) {
-                //                    endCount += 1;
-                //                }
-                //                continue;
-                //            }
-                //        }
-                //        await Console.Out.WriteLineAsync(); // only for debug check
-                //        List<CveResult>[] res = await Task.WhenAll(tasks);
-                //        foreach (List<CveResult> x in res) {
-                //            results.AddRange(x);
-                //        }
-                //    }
-                //}
+                await Console.Out.WriteLineAsync(i.ToString());
             }
             return results;
         }
