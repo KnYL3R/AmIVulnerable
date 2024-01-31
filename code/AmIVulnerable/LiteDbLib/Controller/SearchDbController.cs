@@ -101,14 +101,16 @@ namespace LiteDbLib.Controller {
                         i -= 1; // if pipe filled let check the pipeCount again and reset so the highest element
                     }
                 }
-                else if (
-                            (
-                                (designations.Count > dbFiles.Count) && ((pipeCount - dbFiles.Count) < s)
-                            ) // more designations, so check the dbCounter
-                            ||
-                            (
-                                (designations.Count < dbFiles.Count) && (pipeCount - designations.Count) < s)
-                            ) // more dbFiles, so check the designationCounter
+                else if ((pipeCount != (s - designations.Count)) 
+                            && (
+                                (
+                                    (designations.Count > dbFiles.Count) && ((pipeCount - dbFiles.Count) < s)
+                                ) // more designations, so check the dbCounter
+                                ||
+                                (
+                                    (designations.Count < dbFiles.Count) && (pipeCount - designations.Count) < s)
+                                ) // more dbFiles, so check the designationCounter
+                            )
                         { // fill the pipe with new items and remove old
                     int j = i;
                     int k = dbFiles.Count - 2;
@@ -134,11 +136,38 @@ namespace LiteDbLib.Controller {
                             k += (designations.Count - 1);
                         }
                     }
+                    if (i == (designations.Count - 1)) {
+                        i -= 1; // if pipe filled let check the pipeCount again and reset so the highest element
+                    }
                 }
                 else { // drain the pipe
-                    pipeCount += 1;
+                    int j = i;
+                    int drainCount = 1;
+                    int k = designations.Count - 2;
+                    while (j >= drainCount && k >= 0) {
+                        Task<List<CveResult>>[] tasks = new Task<List<CveResult>>[k + 1];
+                        foreach (int k2 in Enumerable.Range(0, dbFiles.Count - 1)) {
+                            string db = dbFiles[k];
+                            string des = designations[j];
+                            tasks[k2] = Task.Run(() => SearchInDb(db, des));
+                            pipeCount += 1;
+                            k -= 1; j -= 1;
+                            if (j < 0 || k == -1) {
+                                break;
+                            }
+                        }
+                        List<CveResult>[] res = await Task.WhenAll(tasks);
+                        await Console.Out.WriteLineAsync(); // only for debug check
+                        foreach (List<CveResult> x in res) {
+                            results.AddRange(x);
+                        }
+                        drainCount += 1;
+                        if (k <= 0) {
+                            j = i;
+                            k += (designations.Count - drainCount);
+                        }
+                    }
                 }
-                await Console.Out.WriteLineAsync(i.ToString());
             }
             return results;
         }
