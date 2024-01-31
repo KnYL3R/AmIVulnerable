@@ -9,7 +9,7 @@ namespace LiteDbLib.Controller {
 
         #region Config
         /// <summary>Return the location, where the database is located.</summary>
-        private string saveDir {
+        private static string SaveDir {
             get {
                 if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "Data")) {
                     Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Data");
@@ -44,7 +44,7 @@ namespace LiteDbLib.Controller {
             List<CveResult> results = [];
             foreach (string dbFile in dbFiles) {
                 Console.WriteLine($"Akutell - {dbFile}");
-                using (LiteDatabase db = new LiteDatabase($"{saveDir}\\{dbFile}")) {
+                using (LiteDatabase db = new LiteDatabase($"{SaveDir}\\{dbFile}")) {
                     ILiteCollection<CVEcomp> col = db.GetCollection<CVEcomp>(tableName);
 
                     IEnumerator<CVEcomp> pointer = col.Query().ToEnumerable().GetEnumerator();
@@ -73,8 +73,9 @@ namespace LiteDbLib.Controller {
         public async Task<List<CveResult>> SearchPackagesAsList(List<string> designations) {
             List<CveResult> results = [];
             int pipeCount = 0;
-            foreach (int i in Enumerable.Range(0, designations.Count)) {
-                if (pipeCount < (designations.Count - 1)) { // fill pipe
+            int s = Enumerable.Range(1, designations.Count).Sum();
+            for (int i = 0; i < designations.Count; i += 1) {
+                if (pipeCount < s) { // fill pipe
                     int j = i;
                     int k = dbFiles.Count - 1;
                     while (j >= 0 && k >= 0) {
@@ -83,35 +84,60 @@ namespace LiteDbLib.Controller {
                             string db = dbFiles[k];
                             string des = designations[j];
                             tasks[k2] = Task.Run(() => SearchInDb(db, des));
+                            pipeCount += 1;
                             k -= 1; j -= 1;
                             if (j < 0) {
                                 break;
                             }
                         }
-                        await Console.Out.WriteLineAsync(); // only for debug check
                         List<CveResult>[] res = await Task.WhenAll(tasks);
+                        await Console.Out.WriteLineAsync(); // only for debug check
                         foreach (List<CveResult> x in res) {
                             results.AddRange(x);
                         }
                     }
-                    pipeCount += 1;
+                    if (i == (designations.Count - 1)) { // if pipe filled let check the pipeCount again and reset so the highest element
+                        i -= 1; 
+                    }
                 }
                 else if (
-                        (
-                            (designations.Count > dbFiles.Count) && ((pipeCount - dbFiles.Count) < dbFiles.Count)
-                        ) // more designations, so check the dbCounter
-                        ||
-                        (
-                            (designations.Count < dbFiles.Count) && (pipeCount - designations.Count) < designations.Count)
-                        ) // more dbFiles, so check the designationCounter
+                            (
+                                (designations.Count > dbFiles.Count) && ((pipeCount - dbFiles.Count) < s)
+                            ) // more designations, so check the dbCounter
+                            ||
+                            (
+                                (designations.Count < dbFiles.Count) && (pipeCount - designations.Count) < s)
+                            ) // more dbFiles, so check the designationCounter
                         { // fill the pipe with new items and remove old
-                    // TODO
-                    pipeCount += 1;
+                    int j = i;
+                    int k = dbFiles.Count - 2;
+                    while (j >= 0 && k >= 0) {
+                        Task<List<CveResult>>[] tasks = new Task<List<CveResult>>[j + 1];
+                        foreach (int k2 in Enumerable.Range(0, dbFiles.Count - 1)) {
+                            string db = dbFiles[k];
+                            string des = designations[j];
+                            tasks[k2] = Task.Run(() => SearchInDb(db, des));
+                            pipeCount += 1;
+                            k -= 1; j -= 1;
+                            if (j < 0) {
+                                break;
+                            }
+                        }
+                        List<CveResult>[] res = await Task.WhenAll(tasks);
+                        await Console.Out.WriteLineAsync(); // only for debug check
+                        foreach (List<CveResult> x in res) {
+                            results.AddRange(x);
+                        }
+                        if (k != 0) {
+                            j = i;
+                            k += (designations.Count - 1);
+                        }
+                    }
                 }
                 else { // drain the pipe
-                    // TODO
                     pipeCount += 1;
                 }
+                await Console.Out.WriteLineAsync((char)i);
                 //if (i < (designations.Count - 1)) {
                 // stand above at fill pipe
                 //}
@@ -156,7 +182,7 @@ namespace LiteDbLib.Controller {
         private async Task<List<CveResult>> SearchInDb(string dbFile, string designation) {
             await Console.Out.WriteLineAsync($"{dbFile} search for {designation}"); // only for debug check
             List<CveResult> results = [];
-            using (LiteDatabase db = new LiteDatabase($"{saveDir}\\{dbFile}")) {
+            using (LiteDatabase db = new LiteDatabase($"{SaveDir}\\{dbFile}")) {
                 ILiteCollection<CVEcomp> col = db.GetCollection<CVEcomp>(tableName);
 
                 IEnumerator<CVEcomp> pointer = col.Query().ToEnumerable().GetEnumerator();
