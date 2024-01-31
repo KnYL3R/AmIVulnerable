@@ -1,5 +1,6 @@
 @startuml "Simultanius search on LiteDb-Files"
 
+    note left: Nicht mehr aktuell - zu überarbeiten;
     start
     while (foreach product in list to search) 
         if (last product?) then (yes)
