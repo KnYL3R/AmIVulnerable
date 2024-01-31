@@ -72,8 +72,9 @@ namespace LiteDbLib.Controller {
 
         public async Task<List<CveResult>> SearchPackagesAsList(List<string> designations) {
             List<CveResult> results = [];
+            int pipeCount = 0;
             foreach (int i in Enumerable.Range(0, designations.Count)) {
-                if (i <= (designations.Count - 1)) {
+                if (pipeCount < (designations.Count - 1)) { // fill pipe
                     int j = i;
                     int k = dbFiles.Count - 1;
                     while (j >= 0 && k >= 0) {
@@ -87,46 +88,73 @@ namespace LiteDbLib.Controller {
                                 break;
                             }
                         }
-                        //await Console.Out.WriteLineAsync(); // only for debug check
+                        await Console.Out.WriteLineAsync(); // only for debug check
                         List<CveResult>[] res = await Task.WhenAll(tasks);
                         foreach (List<CveResult> x in res) {
                             results.AddRange(x);
                         }
                     }
+                    pipeCount += 1;
                 }
-                else { // solved after if is finished
-                    /*
-                    int j = i;
-                    int k = dbFiles.Count - 1;
-                    int runCount = 0;
-                    int endCount = 1;
-                    int range = j - k;
-                    while (j >= j - range) {
-                        //Console.WriteLine($"Datei {files[j]} in Datenbank {k} durchsucht");
-                        if (k == 0) {
-                            runCount += 1;
-                            Console.WriteLine();
-                            j = i;
-                            k = dbFiles.Count - 1 - endCount;
-                            if (k == -1) {
-                                break;
-                            }
-                            if (endCount != range) {
-                                endCount += 1;
-                            }
-                            continue;
-                        }
-                        j -= 1;
-                        k -= 1;
-                    }
-                    */
+                else if (
+                        (
+                            (designations.Count > dbFiles.Count) && ((pipeCount - dbFiles.Count) < dbFiles.Count)
+                        ) // more designations, so check the dbCounter
+                        ||
+                        (
+                            (designations.Count < dbFiles.Count) && (pipeCount - designations.Count) < designations.Count)
+                        ) // more dbFiles, so check the designationCounter
+                        { // fill the pipe with new items and remove old
+                    // TODO
+                    pipeCount += 1;
                 }
+                else { // drain the pipe
+                    // TODO
+                    pipeCount += 1;
+                }
+                //if (i < (designations.Count - 1)) {
+                // stand above at fill pipe
+                //}
+                //else {
+                //    int j = i;
+                //    int k = dbFiles.Count - 1;
+                //    int runCount = 0;
+                //    int endCount = 1;
+                //    int range = j - k;
+                //    //while (j >= j - range) {
+                //    while (true) {
+                //            Task<List<CveResult>>[] tasks = new Task<List<CveResult>>[j + 1];
+                //        foreach (int k2 in Enumerable.Range(0, dbFiles.Count - 1)) {
+                //            string db = dbFiles[k];
+                //            string des = designations[j];
+                //            tasks[k2] = Task.Run(() => SearchInDb(db, des));
+                //            k -= 1; j -= 1;
+                //            if (k == 0) {
+                //                runCount += 1;
+                //                j = i;
+                //                k = dbFiles.Count - 1 - endCount;
+                //                if (k == -1) {
+                //                    break;
+                //                }
+                //                if (endCount != range) {
+                //                    endCount += 1;
+                //                }
+                //                continue;
+                //            }
+                //        }
+                //        await Console.Out.WriteLineAsync(); // only for debug check
+                //        List<CveResult>[] res = await Task.WhenAll(tasks);
+                //        foreach (List<CveResult> x in res) {
+                //            results.AddRange(x);
+                //        }
+                //    }
+                //}
             }
             return results;
         }
 
         private async Task<List<CveResult>> SearchInDb(string dbFile, string designation) {
-            //await Console.Out.WriteLineAsync($"{dbFile} search for {designation}"); // only for debug check
+            await Console.Out.WriteLineAsync($"{dbFile} search for {designation}"); // only for debug check
             List<CveResult> results = [];
             using (LiteDatabase db = new LiteDatabase($"{saveDir}\\{dbFile}")) {
                 ILiteCollection<CVEcomp> col = db.GetCollection<CVEcomp>(tableName);
