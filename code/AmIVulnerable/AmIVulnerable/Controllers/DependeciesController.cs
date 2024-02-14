@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LiteDbLib.Controller;
+using Microsoft.AspNetCore.Mvc;
 using Modells;
 using Modells.Packages;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text.Json;
-
 using F = System.IO.File;
 
 namespace AmIVulnerable.Controllers {
@@ -32,14 +32,20 @@ namespace AmIVulnerable.Controllers {
 
         [HttpGet]
         [Route("ExtractAndAnalyzeTree")]
-        public IActionResult ExtractAndAnalyzeTree([FromHeader] ProjectType projectType) {
+        public async Task<IActionResult> ExtractAndAnalyzeTreeAsync([FromHeader] ProjectType projectType) {
             switch (projectType) {
                 case ProjectType.NodeJs: {
                         ExecuteCommand("npm", "install");
+                        ExecuteCommand("del", "tree.json");
                         ExecuteCommand("npm", "list --all --json >> tree.json");
                         List<NodePackage> depTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze/tree.json");
-                        List<NodePackage> resTree = analyzeTree(depTree);
-                        return Ok(JsonConvert.SerializeObject(resTree));
+                        List<NodePackageResult> resTree = await analyzeTreeAsync(depTree) ?? [];
+                        if (resTree.Count != 0) {
+                            return Ok(JsonConvert.SerializeObject(resTree));
+                        }
+                        else {
+                            return StatusCode(299, "Keine Schwachstelle gefunden.");
+                        }
                     }
                 default: {
                         return BadRequest();
@@ -93,8 +99,9 @@ namespace AmIVulnerable.Controllers {
             return nodePackage;
         }
 
-        private List<NodePackage> analyzeTree(List<NodePackage> depTree) {
+        private async Task<List<NodePackageResult>?> analyzeTreeAsync(List<NodePackage> depTree) {
             List<Tuple<string, string>> nodePackages = [];
+            // preperation list
             foreach (NodePackage x in depTree) {
                 List<NodePackage> y = analyzeSubtree(x);
                 foreach (NodePackage z in y) {
@@ -104,7 +111,26 @@ namespace AmIVulnerable.Controllers {
                     }
                 }
             }
-            return null;
+            // analyze list
+            SearchDbController searchDbController = new SearchDbController();
+            List<string> designation = [];
+            foreach (Tuple<string, string> x in nodePackages) {
+                designation.Add(x.Item1);
+            }
+            //List<CveResult> results = await searchDbController.SearchPackagesAsList(designation);
+            List<CveResult> results = searchDbController.SearchPackagesAsListMono(designation.Take(10).ToList());
+            // find the critical points
+            if (results.Count == 0) {
+                return null;
+            }
+            List<NodePackageResult> resulstList = [];
+            foreach (NodePackage x in depTree) {
+                List<Tuple<int, bool>> r = checkOnVulnerabilities([], x, results);
+                if (r.Any(x => x.Item2.Equals(true))) {
+                    resulstList.Add(addPackagePlusDependencyStatus(x, r));
+                }
+            }
+            return resulstList;
         }
 
         private List<NodePackage> analyzeSubtree(NodePackage nodePackage) {
@@ -113,6 +139,32 @@ namespace AmIVulnerable.Controllers {
                 res.AddRange(analyzeSubtree(x));
             }
             res.Add(nodePackage);
+            return res;
+        }
+
+        private List<Tuple<int, bool>> checkOnVulnerabilities(List<Tuple<int, bool>> packageMatrix, NodePackage package, List<CveResult> cveList) {
+            List<Tuple<int, bool>> matrix = [];
+            matrix.AddRange(packageMatrix);
+            foreach (NodePackage x in package.Dependencies) {
+                matrix.AddRange(checkOnVulnerabilities(matrix, x, cveList));
+            }
+            // check if vulnerable
+            foreach (CveResult cveResult in cveList) {
+                // TODO:
+            }
+            return matrix;
+        }
+
+        private NodePackageResult addPackagePlusDependencyStatus(NodePackage x, List<Tuple<int, bool>> r) {
+            NodePackageResult res = new NodePackageResult() {
+                Name = x.Name,
+                Version = x.Version,
+                isCveTracked = r[0].Item2
+            };
+            r.RemoveAt(0);
+            foreach (NodePackage y in x.Dependencies) {
+                res.Dependencies.Add(addPackagePlusDependencyStatus(x, r));
+            }
             return res;
         }
     }

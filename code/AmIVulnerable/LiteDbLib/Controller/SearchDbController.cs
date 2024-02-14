@@ -74,14 +74,17 @@ namespace LiteDbLib.Controller {
         public async Task<List<CveResult>> SearchPackagesAsList(List<string> designations) {
             List<CveResult> results = [];
             int pipeCount = 0;
-            int designtaionSeriesSum = Enumerable.Range(1, designations.Count).Sum();
+            int designtaionSeriesSum = Enumerable.Range(1, dbFiles.Count).Sum();
+            if (designations.Count <= dbFiles.Count) {
+                designtaionSeriesSum = Enumerable.Range(1, designations.Count).Sum();
+            }
             for (int i = 0; i < designations.Count; i += 1) {
                 if (pipeCount < designtaionSeriesSum) { // fill pipe
                     int j = i;
                     int dbFilePosition = dbFiles.Count - 1;
                     while (j >= 0 && dbFilePosition >= 0) {
                         Task<List<CveResult>>[] tasks = new Task<List<CveResult>>[j + 1];
-                        foreach (int taskDbIndex in Enumerable.Range(0, dbFiles.Count - 1)) {
+                        foreach (int taskDbIndex in Enumerable.Range(0, dbFiles.Count)) {
                             string db = dbFiles[dbFilePosition];
                             string des = designations[j];
                             tasks[taskDbIndex] = Task.Run(() => SearchInDb(db, des));
@@ -92,7 +95,6 @@ namespace LiteDbLib.Controller {
                             }
                         }
                         List<CveResult>[] res = await Task.WhenAll(tasks);
-                        //await Console.Out.WriteLineAsync(); // only for debug check
                         foreach (List<CveResult> x in res) {
                             results.AddRange(x);
                         }
@@ -115,7 +117,7 @@ namespace LiteDbLib.Controller {
                     int j = i;
                     int dbFilePosition = dbFiles.Count - 2;
                     while (j >= 0 && dbFilePosition >= 0) {
-                        Task<List<CveResult>>[] tasks = new Task<List<CveResult>>[j + 1];
+                        Task<List<CveResult>>[] tasks = new Task<List<CveResult>>[dbFiles.Count - 1];
                         foreach (int taskDbIndex in Enumerable.Range(0, dbFiles.Count - 1)) {
                             string db = dbFiles[dbFilePosition];
                             string des = designations[j];
@@ -168,6 +170,19 @@ namespace LiteDbLib.Controller {
                         }
                     }
                 }
+            }
+            return results;
+        }
+
+        public List<CveResult> SearchPackagesAsListMono(List<string> designations) {
+            List<CveResult> results = [];
+            foreach (string designation in designations) {
+                foreach (string dbfile in dbFiles) {
+                    results.AddRange(SearchInDb(dbfile, designation));
+                    Console.WriteLine($"{dbfile} search after {designation}");
+                }
+                results.ForEach(x => Console.Write(x.Designation + " "));
+                Console.WriteLine();
             }
             return results;
         }
