@@ -99,7 +99,7 @@ namespace AmIVulnerable.Controllers {
             return nodePackage;
         }
 
-        private async Task<List<NodePackageResult>?> analyzeTreeAsync(List<NodePackage> depTree) {
+        private async Task<List<NodePackageResult?>?> analyzeTreeAsync(List<NodePackage> depTree) {
             List<Tuple<string, string>> nodePackages = [];
             // preperation list
             foreach (NodePackage x in depTree) {
@@ -118,19 +118,19 @@ namespace AmIVulnerable.Controllers {
                 designation.Add(x.Item1);
             }
             //List<CveResult> results = await searchDbController.SearchPackagesAsList(designation);
-            List<CveResult> results = searchDbController.SearchPackagesAsListMono(designation.Take(10).ToList());
+            List<CveResult> results = searchDbController.SearchPackagesAsListMono(designation);
             // find the critical points
             if (results.Count == 0) {
                 return null;
             }
-            List<NodePackageResult> resulstList = [];
+            List<NodePackageResult?> resulstList = [];
             foreach (NodePackage x in depTree) {
-                List<Tuple<int, bool>> r = checkOnVulnerabilities([], x, results);
-                if (r.Any(x => x.Item2.Equals(true))) {
-                    resulstList.Add(addPackagePlusDependencyStatus(x, r));
+                NodePackageResult? temp = checkVulnerabilities(x, results);
+                if (temp is not null) {
+                    resulstList.Add(temp);
                 }
             }
-            return resulstList;
+            return resulstList ?? [];
         }
 
         private List<NodePackage> analyzeSubtree(NodePackage nodePackage) {
@@ -142,30 +142,45 @@ namespace AmIVulnerable.Controllers {
             return res;
         }
 
-        private List<Tuple<int, bool>> checkOnVulnerabilities(List<Tuple<int, bool>> packageMatrix, NodePackage package, List<CveResult> cveList) {
-            List<Tuple<int, bool>> matrix = [];
-            matrix.AddRange(packageMatrix);
+        private NodePackageResult? checkVulnerabilities(NodePackage package, List<CveResult> cveData) {
+            NodePackageResult r = new NodePackageResult() {
+                Name = "",
+                isCveTracked = false
+            };
             foreach (NodePackage x in package.Dependencies) {
-                matrix.AddRange(checkOnVulnerabilities(matrix, x, cveList));
+                NodePackageResult? temp = checkVulnerabilities(x, cveData);
+                if (temp is not null) {
+                    r.Dependencies.Add(temp);
+                }
             }
-            // check if vulnerable
-            foreach (CveResult cveResult in cveList) {
-                // TODO:
+            foreach (CveResult x in cveData) { // check
+                if (x.Designation.Equals(package.Name)) {
+                    r.isCveTracked = true;
+                }
             }
-            return matrix;
+            if (r.isCveTracked == false && !depCheck(r)) {
+                return null;
+            }
+            r.Name = package.Name;
+            r.Version = package.Version;
+            return r;
         }
 
-        private NodePackageResult addPackagePlusDependencyStatus(NodePackage x, List<Tuple<int, bool>> r) {
-            NodePackageResult res = new NodePackageResult() {
-                Name = x.Name,
-                Version = x.Version,
-                isCveTracked = r[0].Item2
-            };
-            r.RemoveAt(0);
-            foreach (NodePackage y in x.Dependencies) {
-                res.Dependencies.Add(addPackagePlusDependencyStatus(x, r));
+        private bool depCheck(NodePackageResult package) {
+            foreach (NodePackageResult x in package.Dependencies) {
+                bool isTracked = depCheck(x);
+                if (isTracked) {
+                    goto isTrue; 
+                }
             }
-            return res;
+            if (package.isCveTracked) {
+                return true;
+            }
+            else {
+                return false;
+            }
+            isTrue:
+            return true;
         }
     }
 }
