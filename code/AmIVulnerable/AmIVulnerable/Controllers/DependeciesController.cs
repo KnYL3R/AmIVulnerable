@@ -117,8 +117,10 @@ namespace AmIVulnerable.Controllers {
             foreach (Tuple<string, string> x in nodePackages) {
                 designation.Add(x.Item1);
             }
-            //List<CveResult> results = await searchDbController.SearchPackagesAsList(designation);
-            List<CveResult> results = searchDbController.SearchPackagesAsListMono(designation);
+
+            List<CveResult> results = await searchDbController.SearchPackagesAsList(designation);
+            //List<CveResult> results = searchDbController.SearchPackagesAsListMono(designation);
+
             // find the critical points
             if (results.Count == 0) {
                 return null;
