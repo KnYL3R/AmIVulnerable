@@ -43,7 +43,7 @@ namespace LiteDbLib.Controller {
         public List<CveResult> SearchSinglePackage(string designation) {
             List<CveResult> results = [];
             foreach (string dbFile in dbFiles) {
-                Console.WriteLine($"Akutell - {dbFile}");
+                //Console.WriteLine($"Akutell - {dbFile}");
                 using (LiteDatabase db = new LiteDatabase($"{SaveDir}\\{dbFile}")) {
                     ILiteCollection<CVEcomp> col = db.GetCollection<CVEcomp>(tableName);
 
@@ -141,7 +141,7 @@ namespace LiteDbLib.Controller {
                         if (rest < 0) {
                             break;
                         }
-                        await Console.Out.WriteLineAsync($"Rest: {rest}");
+                        //await Console.Out.WriteLineAsync($"Rest: {rest}");
                         int dbFilePosition = dbFiles.Count - 1;
                         Task<List<CveResult>>[] tasks = new Task<List<CveResult>>[rest];
                         for (int taskDbIndex = 0; taskDbIndex < rest; taskDbIndex += 1) {
@@ -149,14 +149,13 @@ namespace LiteDbLib.Controller {
                             db = dbFiles[dbFilePosition - taskDbIndex - drainCount + finishedCount];
                             des = designations[i - taskDbIndex - drainCount];
                             
-                            await Console.Out.WriteLineAsync($"{dbFilePosition - taskDbIndex - drainCount + finishedCount} | {db} - {i - taskDbIndex} | {des}");
-                            
+                            //await Console.Out.WriteLineAsync($"{dbFilePosition - taskDbIndex - drainCount + finishedCount} | {db} - {i - taskDbIndex} | {des}");
                             tasks[taskDbIndex] = Task.Run(() => SearchInDb(db, des));
                             runCounter += 1;
                             j -= 1;
                         }
                         List<CveResult>[] res = await Task.WhenAll(tasks);
-                        await Console.Out.WriteLineAsync(); // only for debug check
+                        //await Console.Out.WriteLineAsync(); // only for debug check
                         foreach (List<CveResult> x in res) {
                             results.AddRange(x);
                         }
@@ -174,16 +173,16 @@ namespace LiteDbLib.Controller {
             List<CveResult> results = [];
             foreach (string designation in designations) {
                 foreach (string dbfile in dbFiles) {
-                    //results.AddRange(SearchInDb(dbfile, designation));
-                    Console.WriteLine($"{dbfile} search after {designation}");
+                    results.AddRange(SearchInDb(dbfile, designation));
+                    //Console.WriteLine($"{dbfile} search after {designation}");
                 }
-                results.ForEach(x => Console.Write(x.Designation + " "));
-                Console.WriteLine();
+                //results.ForEach(x => Console.Write(x.Designation + " "));
+                //Console.WriteLine();
             }
             return results;
         }
 
-        private async Task<List<CveResult>> SearchInDb(string dbFile, string designation) {
+        private List<CveResult> SearchInDb(string dbFile, string designation) {
             //await Console.Out.WriteLineAsync($"{dbFile} search for {designation}"); // only for debug check
             List<CveResult> results = [];
             using (LiteDatabase db = new LiteDatabase($"{SaveDir}\\{dbFile}")) {
