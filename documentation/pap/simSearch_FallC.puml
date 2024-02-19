@@ -1,0 +1,8 @@
+@startuml "Fall A"
+
+    note: drain the pipe;
+    start
+        :H;
+    end
+
+@enduml
