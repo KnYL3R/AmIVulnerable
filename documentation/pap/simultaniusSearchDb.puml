@@ -3,11 +3,11 @@
     start
     while (foreach product in list to search)
         if (runCounter < fillPipe) then (yes)
-            :Fall A;
+            :Fall A\n"fill the pipe";
         elseif (runCounter < (absoluteCounter - fillPipe)) then (yes)
-            :Fall B;
+            :Fall B\n"run the pipe";
         else (no)
-            :Fall C;
+            :Fall C\n"drain the pipe";
             :return result-list;
             stop
         endif
@@ -15,37 +15,3 @@
     end
 
 @enduml
-
-    '     if (last product?) then (yes)
-    '         :j = index of current product
-    '         k = amount of database-files
-    '         runCount = 0
-    '         endCount = 0;
-    '         while (j >= (j - k))
-    '             :search in file[k] after product[j]|
-    '             if (k == 0) then (yes)
-    '                 :runCount += 1
-    '                 j = i
-    '                 k = (amount of database-files) - endCount;
-    '                 if (k == -1) then (yes)
-    '                     stop
-    '                     note left: goto return result-list;
-    '                 endif
-    '                 if (endCount != (j - k)) then (yes)
-    '                     break
-    '                 endif
-    '             endif
-    '             :j -= 1
-    '             k -= 1;
-    '         endwhile
-    '     else (no)
-    '         :j = index of current product;
-    '         :k = amount of database-files;
-    '         while (j >= 0 && k >= 0)
-    '             ' fork
-    '             :search in file[k] after product[j]|
-    '             :j -= 1
-    '             k -= 1;
-    '             ' end fork
-    '         endwhile
-    '     endif

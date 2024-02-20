@@ -1,8 +1,48 @@
 @startuml "Fall A"
 
-    note: fill the pipe;
+    note: fill the pipe
     start
-        :H;
+        while (tempI >= 0 && dbFilePosition >= 0)
+            while (foreach (int taskDbIndex in Enumerable.Range(0, dbFiles.Count)))
+                :Erstelle Task mit der Suche von Eintrag\ndesignation[tempI] in Datenbank dbFiles[dbFilePosition];
+                :Inkrementiere    runCounter\nDekrementiere tempI;
+                if (tempI < 0) then (yes)
+                    break;
+                else (no)
+                endif
+            fork
+                :&#8704; erstellten Tasks ausführen;
+            end fork
+            :Beenden aller Task abwarten;
+            :Resultate falls vorhanden in die res-Liste aufnehmen;
+            endwhile
+        endwhile
     end
 
 @enduml
+
+' --LiteDbLib.Controller.SearchDbController--
+' if (runCounter < fillPipeCount) { //fill the pipe
+'     int tempI = i, dbFilePosition = dbFiles.Count - 1;
+'     while (tempI >= 0 && dbFilePosition >= 0) {
+'         Task<List<CveResult>>[] tasks = new Task<List<CveResult>>[tempI + 1];
+'         foreach (int taskDbIndex in Enumerable.Range(0, dbFiles.Count)) {
+'             string db = dbFiles[dbFilePosition];
+'             string des = designations[tempI];
+'             tasks[taskDbIndex] = Task.Run(() => SearchInDb(db, des));
+'             runCounter += 1;
+'             dbFilePosition -= 1; tempI -= 1;
+'             if (tempI < 0) {
+'                 break;
+'             }
+'         }
+'         List<CveResult>[] res = await Task.WhenAll(tasks);
+'         //await Console.Out.WriteLineAsync(); // only for debug check
+'         foreach (List<CveResult> x in res) {
+'             results.AddRange(x);
+'         }
+'     }
+'     if (i == (designations.Count - 1)) {
+'         i -= 1; // if pipe filled let check the pipeCount again and reset so the highest element
+'     }
+' }
