@@ -1,6 +1,7 @@
 ﻿using LiteDbLib.Controller;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Modells;
 using Newtonsoft.Json;
 using SerilogTimings;
@@ -146,11 +147,13 @@ namespace AmIVulnerable.Controllers {
                     if (item.Item1.Equals("")) {
                         continue;
                     }
-                    using (Operation.Time($"")) {
-                        //results.AddRange(searchDbController.SearchSinglePackage(item.Item1));
+                    using (Operation.Time($"Time by mono {item.Item1}")) {
+                        results.AddRange(searchDbController.SearchSinglePackage(item.Item1));
                     }
                 }
-                results = await searchDbController.SearchPackagesAsList(strings);
+                using (Operation.Time($"Time by pipe")) {
+                    results = await searchDbController.SearchPackagesAsList(strings);
+                }
                 if (results.Count > 0) {
                     return Ok(JsonConvert.SerializeObject(results));
                 }

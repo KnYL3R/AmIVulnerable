@@ -1,0 +1,69 @@
+@startuml "Case C"
+
+    note: drain the pipe
+    start
+        :initialize finishedCount = 0;
+        while (for (int j = fillPipeCount; j != (-1 * fillPipeCount);)
+            if (dbFiles.Count > designations.Count) then (yes)
+                :rest = i - drainCount;
+            else (no)
+                :rest = dbFiles.Count - 1 - drainCount + finishedCount;
+            endif
+            if (rest < 0 ?) then (yes)
+                break
+            else (no)
+            endif
+            while (for (int taskDbIndex = 0; taskDbIndex < rest; taskDbIndex += 1))
+                :Erstelle Task mit der Suche von Eintrag designation[i - taskDbIndex - drainCount] in \nDatenbank dbFiles[dbFilePosition - taskDbIndex - drainCount + finishedCount];
+                :Inkrementiere runCounter;
+            endwhile
+            fork
+                :&#8704; erstellten Tasks ausführen;
+            end fork
+            :Beenden aller Task abwarten;
+            :Resultate falls vorhanden in die res-Liste aufnehmen;
+            :Inkrementiere drainCount;
+            if (dbFiles.Count < designations.Count && (dbFiles.Count + drainCount <= designations.Count) ?) then (yes)
+                :Inkrementiere finishedCount;
+            else (no)
+            endif
+        endwhile
+    end
+
+@enduml
+
+' --LiteDbLib.Controller.SearchDbController--
+' else /* runCounter >= (absoluteRun - fillPipeCount) */ {
+'     int finishedCount = 0;
+'     for (int j = fillPipeCount; j != (-1 * fillPipeCount); /*nothing*/) {
+'         int rest = dbFiles.Count - 1 - drainCount + finishedCount;
+'         if (dbFiles.Count > designations.Count) {
+'             rest = i - drainCount;
+'         }
+'         if (rest < 0) {
+'             break;
+'         }
+'         //await Console.Out.WriteLineAsync($"Rest: {rest}");
+'         int dbFilePosition = dbFiles.Count - 1;
+'         Task<List<CveResult>>[] tasks = new Task<List<CveResult>>[rest];
+'         for (int taskDbIndex = 0; taskDbIndex < rest; taskDbIndex += 1) {
+'             string db, des;
+'             db = dbFiles[dbFilePosition - taskDbIndex - drainCount + finishedCount];
+'             des = designations[i - taskDbIndex - drainCount];
+            
+'             //await Console.Out.WriteLineAsync($"{dbFilePosition - taskDbIndex - drainCount + finishedCount} | {db} - {i - taskDbIndex} | {des}");
+'             tasks[taskDbIndex] = Task.Run(() => SearchInDb(db, des));
+'             runCounter += 1;
+'             j -= 1;
+'         }
+'         List<CveResult>[] res = await Task.WhenAll(tasks);
+'         //await Console.Out.WriteLineAsync(); // only for debug check
+'         foreach (List<CveResult> x in res) {
+'             results.AddRange(x);
+'         }
+'         drainCount += 1;
+'         if (dbFiles.Count < designations.Count && (dbFiles.Count + drainCount <= designations.Count)) {
+'             finishedCount += 1;
+'         }
+'     }
+' }

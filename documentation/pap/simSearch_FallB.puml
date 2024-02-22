@@ -1,0 +1,53 @@
+@startuml "Case B"
+
+    note: run the pipe
+    start
+        if (dbFiles.Count > designations.Count) then (yes)
+            :taskAmount = designations.Count - 1;
+        else (no)
+            :taskAmount = dbFiles.Count - 1;
+        endif
+        while (for (int taskDbIndex = 0; taskDbIndex < taskAmount; taskDbIndex += 1))
+            :Erstelle Task mit der Suche von Eintrag designation[i - taskDbIndex] in \nDatenbank dbFiles[dbFilePosition - taskDbIndex - fullPipeCount];
+            :Inkrementiere runCounter;
+        endwhile
+        fork
+            :&#8704; erstellten Tasks ausführen;
+        end fork
+        :Beenden aller Task abwarten;
+        :Resultate falls vorhanden in die res-Liste aufnehmen;
+        if (dbFiles.Count > designations.Count) then (yes)
+            :Inkrementiere fullPipeCount;
+        else (no)
+        endif
+    end
+
+@enduml
+
+' --LiteDbLib.Controller.SearchDbController--
+' else if (runCounter <= (absoluteRun - fillPipeCount)) { // fill constant the pipe with new items
+'     int taskAmount = dbFiles.Count - 1;
+'     if (dbFiles.Count > designations.Count) {
+'         taskAmount = designations.Count - 1;
+'     }
+'     int dbFilePosition = dbFiles.Count - 1;
+'     Task<List<CveResult>>[] tasks = new Task<List<CveResult>>[taskAmount];
+'     for (int taskDbIndex = 0; taskDbIndex < taskAmount; taskDbIndex += 1) {
+'         //await Console.Out.WriteLineAsync($"{dbFilePosition - taskDbIndex - fullPipeCount} - i:{i} - {i - taskDbIndex}");
+'         string db = dbFiles[dbFilePosition - taskDbIndex - fullPipeCount];
+'         string des = designations[i - taskDbIndex];
+'         tasks[taskDbIndex] = Task.Run(() => SearchInDb(db, des));
+'         runCounter += 1;
+'     }
+'     List<CveResult>[] res = await Task.WhenAll(tasks);
+'     //await Console.Out.WriteLineAsync(); // only for debug check
+'     foreach (List<CveResult> x in res) {
+'         results.AddRange(x);
+'     }
+'     if (i == (designations.Count - 1)) {
+'         i -= 1; // if pipe filled let check the pipeCount again and reset so the highest element
+'     }
+'     if (dbFiles.Count > designations.Count) {
+'         fullPipeCount += 1;
+'     }
+' }
