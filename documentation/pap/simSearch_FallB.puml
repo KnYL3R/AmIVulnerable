@@ -1,4 +1,4 @@
-@startuml "Fall B"
+@startuml "Case B"
 
     note: run the pipe
     start

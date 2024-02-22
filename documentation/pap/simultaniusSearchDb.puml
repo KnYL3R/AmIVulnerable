@@ -3,12 +3,12 @@
     start
     while (foreach product in list to search)
         if (runCounter < fillPipe) then (yes)
-            :Fall A\n"fill the pipe";
+            :Case A\n"fill the pipe";
         elseif (runCounter < (absoluteCounter - fillPipe)) then (yes)
-            :Fall B\n"run the pipe";
+            :Case B\n"run the pipe";
         else (no)
             :Fall C\n"drain the pipe";
-            :return result-list;
+            :Case result-list;
             stop
         endif
     endwhile

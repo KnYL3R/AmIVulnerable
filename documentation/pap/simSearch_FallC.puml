@@ -1,4 +1,4 @@
-@startuml "Fall C"
+@startuml "Case C"
 
     note: drain the pipe
     start
