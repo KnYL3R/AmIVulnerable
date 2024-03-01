@@ -13,6 +13,11 @@ namespace AmIVulnerable.Controllers {
     [ApiController]
     public class DbController : ControllerBase {
 
+        /**
+         * Get-route checking if raw cve data is in directory
+         * OK if exists
+         * No Content if doesnt exist
+         */
         [HttpGet]
         [Route("CheckRawDir")]
         public IActionResult IsRawDataThere() {
@@ -26,6 +31,10 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
+        /**
+         * Get-route converting raw cve data to db data
+         * OK if successful
+         */
         [HttpGet]
         [Route("ConvertRawDirToDb")]
         public IActionResult ConvertRawFile() {
@@ -45,6 +54,7 @@ namespace AmIVulnerable.Controllers {
             ConvertCveToDbController ccdbc = new ConvertCveToDbController(fileList);
 
             using (Operation.Time($"Konvertieren der Datenbank")) {
+                //return true/false, if false return internal error?
                 ccdbc.ConvertRawCve();
             }
 

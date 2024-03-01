@@ -56,6 +56,9 @@ namespace LiteDbLib.Controller {
             dbFiles = dbFiles.Order().ToList(); //.Distinct() because of line 45 not neccessary
         }
 
+        /**
+         * Compiles json data into LiteDB Collections
+         */
         public bool ConvertRawCve() {
             try {
                 foreach (string file in files) {
