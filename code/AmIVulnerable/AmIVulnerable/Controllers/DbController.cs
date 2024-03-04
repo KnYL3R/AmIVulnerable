@@ -1,9 +1,8 @@
 ﻿using LiteDbLib.Controller;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Modells;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SerilogTimings;
 using System.Text.RegularExpressions;
 
@@ -77,7 +76,11 @@ namespace AmIVulnerable.Controllers {
                         res = searchDbController.SearchSinglePackage(packageName);
                     }
                     if (res.Count > 0) {
-                        return Ok(JsonConvert.SerializeObject(res));
+                        JObject jsonLdObject = new JObject {
+                            { "@context", "https://localhost:7203/views/cveResult" },
+                            { "data", JsonConvert.SerializeObject(res) }
+                        };
+                        return Ok(JsonConvert.SerializeObject(jsonLdObject));
                     }
                     else {
                         return NoContent();
@@ -155,7 +158,11 @@ namespace AmIVulnerable.Controllers {
                     results = await searchDbController.SearchPackagesAsList(strings);
                 }
                 if (results.Count > 0) {
-                    return Ok(JsonConvert.SerializeObject(results));
+                    JObject jsonLdObject = new JObject {
+                            { "@context", "https://localhost:7203/views/cveResult" },
+                            { "data", JsonConvert.SerializeObject(results) }
+                        };
+                    return Ok(JsonConvert.SerializeObject(jsonLdObject));
                 }
                 else {
                     return NoContent();
