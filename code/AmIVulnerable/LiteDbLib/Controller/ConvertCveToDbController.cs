@@ -28,6 +28,10 @@ namespace LiteDbLib.Controller {
         Regex regexYear = new Regex(@"\\cves\\(\d{4})\\");
         #endregion
 
+        /// <summary>
+        /// Convert raw cve data to db files
+        /// </summary>
+        /// <param name="files">list of cve-json files</param>
         public ConvertCveToDbController(List<string> files) {
             this.files = files; // cve files
 
@@ -56,9 +60,10 @@ namespace LiteDbLib.Controller {
             dbFiles = dbFiles.Order().ToList(); //.Distinct() because of line 45 not neccessary
         }
 
-        /**
-         * Compiles json data into LiteDB Collections
-         */
+        /// <summary>
+        /// Compiles json data into LiteDB Collections
+        /// </summary>
+        /// <returns>True if successful. False if unsuccessful.</returns>
         public bool ConvertRawCve() {
             try {
                 foreach (string file in files) {

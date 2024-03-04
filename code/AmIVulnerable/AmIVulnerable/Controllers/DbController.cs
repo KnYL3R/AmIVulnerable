@@ -13,11 +13,10 @@ namespace AmIVulnerable.Controllers {
     [ApiController]
     public class DbController : ControllerBase {
 
-        /**
-         * Get-route checking if raw cve data is in directory
-         * OK if exists
-         * No Content if doesnt exist
-         */
+        /// <summary>
+        /// Get-route checking if raw cve data is in directory
+        /// </summary>
+        /// <returns>OK, if exists. No Content, if doesnt exist</returns>
         [HttpGet]
         [Route("CheckRawDir")]
         public IActionResult IsRawDataThere() {
@@ -31,10 +30,10 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
-        /**
-         * Get-route converting raw cve data to db data
-         * OK if successful
-         */
+        /// <summary>
+        /// Get-route converting raw cve data to db data
+        /// </summary>
+        /// <returns>OK if successful</returns>
         [HttpGet]
         [Route("ConvertRawDirToDb")]
         public IActionResult ConvertRawFile() {
@@ -43,6 +42,7 @@ namespace AmIVulnerable.Controllers {
             string path = $"{AppDomain.CurrentDomain.BaseDirectory}raw";
             ExploreFolder(path, fileList);
 
+            //filter for json files
             foreach (int i in Enumerable.Range(0, fileList.Count)) {
                 if (!Regex.IsMatch(fileList[i], @"CVE-[-\S]+.json")) {
                     indexToDelete.Add(i);
@@ -61,6 +61,11 @@ namespace AmIVulnerable.Controllers {
             return Ok();
         }
 
+        /// <summary>
+        /// Adds file names of all files of a folder and its subfolders to a list
+        /// </summary>
+        /// <param name="folderPath">path to target folder</param>
+        /// <param name="fileList">list of files</param>
         private static void ExploreFolder(string folderPath, List<string> fileList) {
             try {
                 fileList.AddRange(Directory.GetFiles(folderPath));
@@ -74,6 +79,13 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
+        /// <summary>
+        /// Check for an cve entry of a package with all its versions
+        /// </summary>
+        /// <param name="packageName">Name of package to search</param>
+        /// <param name="isDbSearch">true: search db, false: search raw-json</param>
+        /// <param name="packageVersion">Version of package to search</param>
+        /// <returns>Ok with result. NoContent if empty.</returns>
         [HttpPost]
         [Route("checkSinglePackage")]
         public IActionResult CheckSinglePackage([FromHeader] string packageName,
@@ -104,6 +116,11 @@ namespace AmIVulnerable.Controllers {
             return Ok();
         }
 
+        /// <summary>
+        /// Search package in raw-json data
+        /// </summary>
+        /// <param name="packageName">Name of package to search</param>
+        /// <returns>List of CveResults</returns>
         private List<CveResult> SearchInJson(string packageName) {
             List<string> fileList = new List<string>();
             List<int> indexToDelete = new List<int>();
@@ -145,6 +162,11 @@ namespace AmIVulnerable.Controllers {
             return results;
         }
 
+        /// <summary>
+        /// Search for a list of packages
+        /// </summary>
+        /// <param name="packages">List of tuple: package, version</param>
+        /// <returns>OK, if exists. OK, if no package list searched. NoContent if not found.</returns>
         [HttpPost]
         [Route("checkPackageList")]
         public async Task<IActionResult> CheckPackageListAsync([FromBody] List<Tuple<string, string>> packages) {
