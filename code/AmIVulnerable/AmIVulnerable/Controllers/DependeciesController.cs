@@ -125,11 +125,11 @@ namespace AmIVulnerable.Controllers {
         }
 
         /// <summary>
-        /// ??
+        /// Analyse list of node packages, compare dependencies of each with cve and return list of NodePackageResult
         /// </summary>
-        /// <param name="depTree"></param>
-        /// <returns></returns>
-        private async Task<List<NodePackageResult?>?> analyzeTreeAsync(List<NodePackage> depTree) {
+        /// <param name="depTree">List of all top level node packages.</param>
+        /// <returns>List of NodePackageResult.</returns>
+        private async Task<List<NodePackageResult?>> analyzeTreeAsync(List<NodePackage> depTree) {
             List<Tuple<string, string>> nodePackages = [];
             // preperation list
             foreach (NodePackage x in depTree) {
@@ -162,7 +162,7 @@ namespace AmIVulnerable.Controllers {
                     resulstList.Add(temp);
                 }
             }
-            return resulstList ?? [];
+            return resulstList;
         }
 
         /// <summary>
@@ -210,10 +210,10 @@ namespace AmIVulnerable.Controllers {
         }
 
         /// <summary>
-        /// 
+        /// If Package is cve tracked, return true. Check all dependencies recursively.
         /// </summary>
         /// <param name="package"></param>
-        /// <returns></returns>
+        /// <returns>True if any dependency is tracked. False if no dependencies are tracked.</returns>
         private bool depCheck(NodePackageResult package) {
             foreach (NodePackageResult x in package.Dependencies) {
                 bool isTracked = depCheck(x);
