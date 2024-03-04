@@ -54,7 +54,6 @@ namespace AmIVulnerable.Controllers {
             ConvertCveToDbController ccdbc = new ConvertCveToDbController(fileList);
 
             using (Operation.Time($"Konvertieren der Datenbank")) {
-                //return true/false, if false return internal error?
                 ccdbc.ConvertRawCve();
             }
 
