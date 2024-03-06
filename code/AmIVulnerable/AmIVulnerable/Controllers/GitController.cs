@@ -8,6 +8,12 @@ namespace AmIVulnerable.Controllers {
     [ApiController]
     public class GitController : ControllerBase {
 
+        /// <summary>
+        /// API-Post route to clone a git repository
+        /// </summary>
+        /// <param name="cveRaw">Use raw cve data.</param>
+        /// <param name="data">Tuple of url and tag.</param>
+        /// <returns>OK if successful. BadRequest if error when cloning.</returns>
         [HttpPost]
         [Route("clone")]
         public IActionResult CloneRepo([FromHeader] bool cveRaw, [FromBody] Tuple<string, string> data) {
@@ -38,6 +44,13 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
+        /// <summary>
+        /// Clone a git repository.
+        /// </summary>
+        /// <param name="url">URL of git project to clone.</param>
+        /// <param name="tag">Tag of git project.</param>
+        /// <param name="dir">Directory where to clone project into.</param>
+        /// <returns></returns>
         private static async Task Clone(string url, string tag, string dir){
             await Task.Run(() => {
                 if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + dir)) {
@@ -72,6 +85,10 @@ namespace AmIVulnerable.Controllers {
             });
         }
 
+        /// <summary>
+        /// Removes read only access of files.
+        /// </summary>
+        /// <param name="path">File path to folder where all read only attributes of files need to be removed.</param>
         private static void RemoveReadOnlyAttribute(string path) {
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
 
@@ -83,7 +100,11 @@ namespace AmIVulnerable.Controllers {
                 RemoveReadOnlyAttribute(subDirectory.FullName);
             }
         }
-
+        
+        /// <summary>
+        /// Status of git clone command
+        /// </summary>
+        /// <returns>OK if clone finished. NoContent if not finished.</returns>
         [HttpGet]
         [Route("cloneStatus")]
         public IActionResult CloneStatus() {

@@ -13,6 +13,11 @@ namespace AmIVulnerable.Controllers {
     [ApiController]
     public class DependeciesController : ControllerBase {
 
+        /// <summary>
+        /// Extract dependecies of different project types as json
+        /// </summary>
+        /// <param name="projectType">Type of project to extract dependencies from</param>
+        /// <returns>OK if known project type. BadRequest if unknown project type.</returns>
         [HttpGet]
         [Route("ExtractTree")]
         public IActionResult ExtractDependencies([FromHeader] ProjectType projectType) {
@@ -30,6 +35,11 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
+        /// <summary>
+        /// Extract dependecies of different project types as json and extract resulting dependency trees of vulnerabilities
+        /// </summary>
+        /// <param name="projectType">Type of project to extract dependencies from</param>
+        /// <returns>OK if vulnerability found. 299 if no vulnerability found. BadRequest if unknown project type is searched.</returns>
         [HttpGet]
         [Route("ExtractAndAnalyzeTree")]
         public async Task<IActionResult> ExtractAndAnalyzeTreeAsync([FromHeader] ProjectType projectType) {
@@ -53,6 +63,11 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
+        /// <summary>
+        /// Starts a process that runs a command.
+        /// </summary>
+        /// <param name="prog">Programm used for commands</param>
+        /// <param name="command">Command used for programm</param>
         private void ExecuteCommand(string prog, string command) {
             ProcessStartInfo process = new ProcessStartInfo {
                 FileName = "cmd",
@@ -65,6 +80,11 @@ namespace AmIVulnerable.Controllers {
             runProcess.WaitForExit();
         }
 
+        /// <summary>
+        /// Extracts a tree from node project
+        /// </summary>
+        /// <param name="filePath">File path to rawAnalyze/tree.json</param>
+        /// <returns>List of vulnerable packages.</returns>
         private List<NodePackage> ExtractTree(string filePath) {
             List<NodePackage> packages = [];
             using (JsonDocument jsonDocument = JsonDocument.Parse(F.ReadAllText(filePath))) {
@@ -80,6 +100,11 @@ namespace AmIVulnerable.Controllers {
             return packages;
         }
 
+        /// <summary>
+        /// Extracts dependencies of a single dependency.
+        /// </summary>
+        /// <param name="dependency">Dependency that is searched for sundependencies and versions.</param>
+        /// <returns>NodePackage with all found dependencies and versions.</returns>
         private NodePackage ExtractDependencyInfo(JsonProperty dependency) {
             NodePackage nodePackage = new NodePackage {
                 Name = dependency.Name
@@ -99,7 +124,12 @@ namespace AmIVulnerable.Controllers {
             return nodePackage;
         }
 
-        private async Task<List<NodePackageResult?>?> analyzeTreeAsync(List<NodePackage> depTree) {
+        /// <summary>
+        /// Analyse list of node packages, compare dependencies of each with cve and return list of NodePackageResult
+        /// </summary>
+        /// <param name="depTree">List of all top level node packages.</param>
+        /// <returns>List of NodePackageResult.</returns>
+        private async Task<List<NodePackageResult?>> analyzeTreeAsync(List<NodePackage> depTree) {
             List<Tuple<string, string>> nodePackages = [];
             // preperation list
             foreach (NodePackage x in depTree) {
@@ -132,9 +162,14 @@ namespace AmIVulnerable.Controllers {
                     resulstList.Add(temp);
                 }
             }
-            return resulstList ?? [];
+            return resulstList;
         }
 
+        /// <summary>
+        /// Searches for all node package dependencies of a single node package.
+        /// </summary>
+        /// <param name="nodePackage">Node package to search</param>
+        /// <returns>List of all node package dependencies of a single node package.</returns>
         private List<NodePackage> analyzeSubtree(NodePackage nodePackage) {
             List<NodePackage> res = [];
             foreach(NodePackage x in nodePackage.Dependencies) {
@@ -144,6 +179,12 @@ namespace AmIVulnerable.Controllers {
             return res;
         }
 
+        /// <summary>
+        /// Compares node package dependencies with cve data.
+        /// </summary>
+        /// <param name="package">Package to search for cve tracked dependencies.</param>
+        /// <param name="cveData">List of CveResult data.</param>
+        /// <returns>NodePackageResult with all dependencies and status if it is a cve tracked dependency.</returns>
         private NodePackageResult? checkVulnerabilities(NodePackage package, List<CveResult> cveData) {
             NodePackageResult r = new NodePackageResult() {
                 Name = "",
@@ -168,6 +209,11 @@ namespace AmIVulnerable.Controllers {
             return r;
         }
 
+        /// <summary>
+        /// If Package is cve tracked, return true. Check all dependencies recursively.
+        /// </summary>
+        /// <param name="package"></param>
+        /// <returns>True if any dependency is tracked. False if no dependencies are tracked.</returns>
         private bool depCheck(NodePackageResult package) {
             foreach (NodePackageResult x in package.Dependencies) {
                 bool isTracked = depCheck(x);

@@ -6,6 +6,10 @@ namespace AmIVulnerable.Controllers {
     [Controller]
     public class ViewController : Controller {
 
+        /// <summary>
+        /// API-Get request to show json-ld data.
+        /// </summary>
+        /// <returns>Json-ld data as html</returns>
         [HttpGet]
         [Route("json-ld")]
         public IActionResult JsonLd () {
