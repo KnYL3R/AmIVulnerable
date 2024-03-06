@@ -1,12 +1,4 @@
 \section{Analyse} \label{sec:Analyse}
-    (4)
-    (sub)
-    Laufzeitmessungen nach Datenbankerstellung (etwa 1 std rechnen)
-        JSON-Datei Suche VS LiteDB suche (60 min vs 8 s): Rechnung nach wie vielen Suchanfragen sich das ganze gelohnt hat (nach etwa einer)
-    Laufzeitanalyse Mono-Suche und Pipeline-Suche auf LiteDB
-        Wie ist LiteDB-Suche zu verschnellern
-        Vergleich der Messungen
-        Erklärung der Pipeline (Diagramme) (Wie und Warum, LiteDB ist File-Basier und deswegen kann auf mehreren Dateien gesucht werden falls genug threads zur verfügung stehen)
-    Ausblick
-        Ziel: schneller als NIST API sein (so und so viele Sekunden übers Netz im vergleich zu so und so vielen sekunden über unsere API)
-        Um Ziel zu erreichen: Andere Datenbank verwenden um Lesezugriffe optimieren
+    \input{subsections/laufzeitmessungen.tex}
+    \input{subsections/laufzeitanalyse.tex}
+    \input{subsections/ausblick.tex}
