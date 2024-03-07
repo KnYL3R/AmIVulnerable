@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,19 +8,19 @@
 <body>
     <h1>CVE Result JSON-LD</h1>
 
-<pre lang="csharp">
-namespace Modells {
+    <h3>CveNumber</h3>
+    <label>
+        String Wert, der die CVE-Nummer aus den offiziellen Datensatz der Mitre-Cooperation angibt.
+    </label>
 
-    public class CveResult {
+    <h3>Version</h3>
+    <label>
+        Betroffene Version, die beachtet werden muss.
+    </label>
 
-        public string CveNumber { get; set; } = "";
-        public string Version { get; set; } = "";
-        public string Designation { get; set; } = "";
-
-        public CveResult() {
-        }
-    }
-}
-</pre>
+    <h3>Designation</h3>
+    <label>
+        Name des Paketes, welches untersucht wurde
+    </label>
 </body>
 </html>
