@@ -1,0 +1,78 @@
+@startuml
+
+    namespace AmIVulnerable.Controllers {
+        class DbController {
+            ' Inhalt
+        }
+
+        class DependenciesController {
+            ' Inhalt
+        }
+        
+        class GitController {
+            ' Inhalt
+        }
+
+        class ViewController {
+            ' Inhalt
+        }
+    }
+
+    namespace LiteDbLib.Controller {
+        class ConvertCveToDbController {
+            - static string saveDir
+            - List<string> files
+            - List<string> dbFiles
+            - readonly string tableName = "cve"
+            - Regex regexYear = new Regex(@"\\cves\\(\d{4})\\")
+            ---
+            + ConvertCveToDbController(List<string> files)
+            + bool ConvertRawCve()
+        }
+
+        class SearchDbController {
+            - static string SaveDir
+            - List<string> dbFiles
+            - readonly string tableName = "cve"
+
+            + SearchDbController()
+            + List<CveResult> SearchSinglePackage(string designation)
+            + async Task<List<CveResult>> SearchPackagesAsList(List<string> designations)
+            + List<CveResult> SearchPackagesAsListMono(List<string> designations)
+            - List<CveResult> SearchInDb(string dbFile, string designation)
+        }
+    }
+
+    namespace Modells {
+        namespace Packages {
+            class NodePackage {
+                + string Name { get; set; } = "";
+                + string Version { get; set; } = "";
+                + List<NodePackage> Dependencies { get; set; } = [];
+            }
+
+            class NodePackageResult {
+                + string Name { get; set; } = "";
+                + string Version { get; set; } = "";
+                + bool isCveTracked { get; set; } = false;
+                + List<NodePackageResult> Dependencies { get; set; } = [];
+            }
+        }
+
+        note "Klassendarstellung der CVE-Daten;\nfür Detail Datei ''CVEcomp.cs'' konsultieren" as CveCompNote
+        CveCompNote .. CVEcomp
+        class CVEcomp {
+        }
+
+        class CveResult {
+            + string CveNumber { get; set; } = "";
+            + string Version { get; set; } = "";
+            + string Designation { get; set; } = "";
+        }
+
+        enum ProjectType {
+                NodeJs = 0
+        }
+    }
+
+@enduml
