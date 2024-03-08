@@ -1,24 +1,33 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 80
-EXPOSE 443
-
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
+
+# Modells
+WORKDIR /src/Modells
+COPY Modells/Modells.csproj .
+RUN dotnet restore Modells.csproj
+
+# LiteDbLib
+WORKDIR /src/LiteDbLib
+COPY LiteDbLib/LiteDbLib.csproj .
+RUN dotnet restore LiteDbLib.csproj
+
+# API
+WORKDIR /src/AmIVulnerable
+COPY AmIVulnerable/AmIVulnerable.csproj .
+RUN dotnet restore AmIVulnerable.csproj
+
+# API build
 WORKDIR /src
-COPY ["AmIVulnerable/AmIVulnerable.csproj", "AmIVulnerable/"]
-RUN dotnet restore "./AmIVulnerable/./AmIVulnerable.csproj"
 COPY . .
-WORKDIR "/src/AmIVulnerable"
-RUN dotnet build "./AmIVulnerable.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build AmIVulnerable/AmIVulnerable.csproj -c Release -o /app/build
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./AmIVulnerable.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish AmIVulnerable/AmIVulnerable.csproj -c Release -o /app/publish /p:UseAppHost=false
 
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
+COPY AmIVulnerable/Controllers/Views /app/Controllers/Views
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "AmIVulnerable.dll"]
+
+EXPOSE 80
+EXPOSE 443

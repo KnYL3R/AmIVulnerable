@@ -13,7 +13,7 @@ namespace AmIVulnerable.Controllers {
         [HttpGet]
         [Route("json-ld")]
         public IActionResult JsonLd () {
-            string path = Path.Combine(Directory.GetCurrentDirectory() + @"\Controllers\Views", "json-ld.html");
+            string path = Path.Combine(Directory.GetCurrentDirectory() + @"/Controllers/Views", "json-ld.html");
 
             return Content(System.IO.File.ReadAllText(path), "text/html");
         }
