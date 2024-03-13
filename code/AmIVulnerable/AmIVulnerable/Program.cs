@@ -17,11 +17,11 @@ namespace AmIVulnerable {
 
             WebApplication app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment()) {
+            //// Configure the HTTP request pipeline.
+            //if (app.Environment.IsDevelopment()) {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            //}
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -33,10 +33,12 @@ namespace AmIVulnerable {
                     )
                 .CreateLogger();
 
+            // Allow CORS
+            app.UseCors(x => x.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin());
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
