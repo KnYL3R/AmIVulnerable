@@ -1,0 +1,10 @@
+\subsection{NIST-API} \label{sec:NIST-API}
+Es werden zwei CVE-API's vom NIST angeboten:
+\begin{itemize}
+    \item CVE \\
+    Hier lassen sich Informationen zu einer oder mehreren CVE's erhalten.
+    Durch das Vorhandensein von mehr als 240.000 Einträgen wird eine offsetbasierte Paginierung der Daten durchgeführt um Anfragen für große Sammlungen zu beantworten.
+    \item CVE Change History \\
+    Hier lassen sich Informationen über Änderungen einer CVE oder einer Sammlung von CVE's erhalten.
+\end{itemize}
+Für das Projekt wurde die erste API genutzt, die unter \href{https://services.nvd.nist.gov/rest/json/cves/2.0}{https://services.nvd.nist.gov/rest/json/cves/2.0} verfügbar ist.
