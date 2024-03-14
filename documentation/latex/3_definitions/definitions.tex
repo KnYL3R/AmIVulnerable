@@ -1,2 +1,39 @@
 \section{Definitionen} \label{sec:Definitionen}
-\input{3_definitions/cve.tex}
+\begin{itemize}
+    \item \textbf{CVE (Common Vulnerabilities and Exposures):} \\
+    
+    Der Aufgabe Einschätzung der Sicherheit und Einhaltung von Standards hat sich die Mitre Corporation gestellt; eine us-amerikanische Forschungsabteilung der "National Cybersecurity FFRDC", die staatliche Finanzierung genießt.
+    CVE nennt sich ihr Referenziersystem und stellt dabei die englische Abkürzung \glqq Common Vulnerabilities and Exposures\grqq~dar.
+    \\
+    \glqq Common Vulnerabilities and Exposures\grqq~bzw. häufige Schwachstellen und Risiken sind als Liste öffentlich verfügbar.
+    In dieser Liste werden nur die Schwachstellen betrachtet, die durch eine der 364 \glqq CVE Numbering Authority's\grqq (CNA's) eine CVE-Nummer zugewiesen bekommen haben.\cite{}
+    Eine CVE-Nummer beinhaltet wiederum keine technischen Informationen zur Betroffenen Software- oder Hardwarekomponente sondern Produktname, Version, eine Beschreibung der Schwachstelle und gegebenenfalls werden Hinweise zur Behebung vermerkt.
+    Diese Informationen müssen über andere Services oder Datenbanken, wie z.B. in der \glqq U.S. National Vulnerability Database\grqq~oder der \glqq CERT/CC Vulnerability Notes Database\grqq.
+
+    \item \textbf{Direkte Abhängigkeiten:} \\
+    In der Softwareentwicklung ist eine Abhängigkeit ein Softwarepaket, welches von der Anwendung selbst benötigt wird, um korrekt zu funktionieren.
+    Diese Abhängigkeiten können direkt oder indirekt sein.
+    Indirekte Abhängigkeiten sind solche, die durch andere Abhängigkeiten eingeführt werden.
+    Direkte Abhängigkeiten sind typischerweise externe Softwarekomponenten oder Bibliotheken.
+    Diese werden auch als Paket bezeichnet. 
+
+    \item \textbf{Transitive Abhängigkeiten:} \\
+    Transitive Abhängigkeiten sind indirekte Abhängigkeiten, die durch andere Abhängigkeiten benötigt werden.
+    Wenn nun eine Applikation ein Paket einbindet welches ein weiteres Paket selbst benötigt, so ist dieses eine transitive Abhängigkeit der Applikation.
+    Somit können sich rekursiv Abhängigkeitsbäume aufspannen, die teils sogar gleiche Pakete in verschiedenen Versionen einbinden.
+    
+    \item \textbf{API (Application Programming Interface):} \\
+    Eine API definiert eine Reihe von Regeln und Mechanismen, über die verschiedene Softwarekomponenten miteinander interagieren können.
+    Somit bieten stellen sie Schnittstelle zwischen verschiedenen Systemen dar.
+    Sie legt fest, wie Softwaremodule oder -anwendungen miteinander kommunizieren, indem sie Funktionen, Methoden, Protokolle und Datenstrukturen bereitstellt.
+    Um eine API zu nutzen müssen diese Festlegungen eingehalten werden.
+    
+    
+    \item \textbf{JSON (JavaScript Object Notation):} \\
+    JSON ist ein in der Webentwicklung verbreitetes Datenformat.
+    Genutzt wird dieses um strukturierte Daten zu speichern und auszutauschen.
+    Basierend auf einer einfachen Syntax, die auf Schlüssel-Wert-Paaren und verschachtelten Datenstrukturen basiert ermöglicht es für Mensch sowie Maschine eine gute Les- und Parsbarkeit.
+    JSON wird häufig für die Übertragung von Daten zwischen Client und Server.
+    Dabei ist es programmiersprachenunabhängig verwendet allerdings Konventionen ählnich der von C, C++ oder C\#.
+
+\end{itemize}
