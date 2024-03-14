@@ -23,15 +23,17 @@ RUN dotnet build AmIVulnerable/AmIVulnerable.csproj -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish AmIVulnerable/AmIVulnerable.csproj -c Release -o /app/publish /p:UseAppHost=false
 
-FROM node:latest AS nodeANDgit
-# npm and git installation
-RUN apt-get update && apt-get install -y git && apt-get install -y nodejs npm
-
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY AmIVulnerable/Controllers/Views /app/Controllers/Views
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "AmIVulnerable.dll"]
+
+# Install NodeJS and git
+RUN apt-get update
+RUN apt-get install -y curl gnupg
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+RUN apt-get install -y nodejs git
 
 EXPOSE 80
 EXPOSE 443

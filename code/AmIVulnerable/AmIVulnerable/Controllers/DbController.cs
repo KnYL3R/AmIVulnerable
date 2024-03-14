@@ -1,21 +1,29 @@
 ﻿using LiteDbLib.Controller;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Modells;
+using MySql.Data.MySqlClient;
+using Mysqlx.Crud;
 using Newtonsoft.Json;
 using SerilogTimings;
 using System.Text.RegularExpressions;
 
 namespace AmIVulnerable.Controllers {
 
+    /// <summary></summary>
     [Route("api/[controller]")]
     [ApiController]
     public class DbController : ControllerBase {
 
-        /// <summary>
-        /// Get-route checking if raw cve data is in directory
-        /// </summary>
+        /// <summary></summary>
+        private readonly IConfiguration Configuration;
+
+        /// <summary></summary>
+        /// <param name="configuration"></param>
+        public DbController(IConfiguration configuration) {
+            Configuration = configuration;
+        }
+
+        /// <summary>Get-route checking if raw cve data is in directory.</summary>
         /// <returns>OK, if exists. No Content, if doesnt exist</returns>
         [HttpGet]
         [Route("CheckRawDir")]
@@ -30,9 +38,7 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
-        /// <summary>
-        /// Get-route converting raw cve data to db data
-        /// </summary>
+        /// <summary>Get-route converting raw cve data to db data.</summary>
         /// <returns>OK if successful</returns>
         [HttpGet]
         [Route("ConvertRawDirToDb")]
@@ -59,6 +65,70 @@ namespace AmIVulnerable.Controllers {
 
             return Ok();
         }
+
+        /// <summary></summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ConvertRawCveToDb")]
+        public IActionResult ConvertRawFilesToMySql() {
+            List<string> fileList = new List<string>();
+            List<int> indexToDelete = new List<int>();
+            string path = $"{AppDomain.CurrentDomain.BaseDirectory}raw";
+            ExploreFolder(path, fileList);
+
+            //filter for json files
+            foreach (int i in Enumerable.Range(0, fileList.Count)) {
+                if (!Regex.IsMatch(fileList[i], @"CVE-[-\S]+.json")) {
+                    indexToDelete.Add(i);
+                }
+            }
+            foreach (int i in Enumerable.Range(0, indexToDelete.Count)) {
+                fileList.RemoveAt(indexToDelete[i] - i);
+            }
+
+            try {
+                // MySql Connection
+                MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
+                connection.Open();
+
+                MySqlCommand cmdTable = new MySqlCommand("" +
+                    "CREATE TABLE IF NOT EXIST cve(" +
+                    "cve_number VARCHAR(15) PRIMARY KEY NOT NULL," +
+                    "designation VARCHAR(100) NOT NULL," +
+                    "version_affected TEXT NOT NULL" +
+                    ")",
+                    connection
+                );
+                cmdTable.ExecuteNonQuery();
+
+                string insertIntoString = "INSERT INTO cve(cve_number, designation, version_affected) VALUES";
+                foreach (string x in fileList) {
+                    CVEcomp cve = JsonConvert.DeserializeObject<CVEcomp>(System.IO.File.ReadAllText(x))!;
+                    string affected = "";
+                    foreach (Affected y in cve.containers.cna.affected) {
+                        foreach (Modells.Version z in y.versions) {
+                            affected += z.version + $"({z.status}) |";
+                        }
+                    }
+                    insertIntoString += $"('{cve.cveMetadata.cveId}', '{cve.containers.cna.affected[0].product}', '{affected}'),";
+                    Console.WriteLine(insertIntoString);
+                }
+                insertIntoString += ";";
+                MySqlCommand cmdInsert = new MySqlCommand(insertIntoString, connection);
+                int insertIndex = cmdInsert.ExecuteNonQuery();
+
+                MySqlCommand cmdIndexCreated = new MySqlCommand("CREATE INDEX idx_designation ON cve (designation);", connection);
+                cmdIndexCreated.ExecuteNonQuery();
+
+                connection.Close();
+                return Ok(insertIndex);
+            }
+            catch (Exception ex) {
+                BadRequest(ex.Message);
+            }
+            return StatusCode(500);
+        }
+
 
         /// <summary>
         /// Adds file names of all files of a folder and its subfolders to a list

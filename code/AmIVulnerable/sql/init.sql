@@ -1,4 +1,4 @@
-CREATE TABLE cve.cve (
+CREATE TABLE IF NOT EXIST cve.cve (
     cve_number VARCHAR(15) PRIMARY KEY NOT NULL,
     designation VARCHAR(100) NOT NULL,
     version_affected TEXT NOT NULL
