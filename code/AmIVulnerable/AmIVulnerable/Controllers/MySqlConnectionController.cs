@@ -21,7 +21,7 @@ namespace AmIVulnerable.Controllers {
                 try {
                     MySqlConnection c = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
 
-                    MySqlCommand cmd = new MySqlCommand("SELECT * FROM cve", c);
+                    MySqlCommand cmd = new MySqlCommand("SELECT cve_number, designation FROM cve.cve", c);
 
                     c.Open();
                     MySqlDataReader reader = cmd.ExecuteReader();

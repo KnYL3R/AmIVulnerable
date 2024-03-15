@@ -1,7 +1,9 @@
-CREATE TABLE IF NOT EXIST cve.cve (
-    cve_number VARCHAR(15) PRIMARY KEY NOT NULL,
-    designation VARCHAR(100) NOT NULL,
-    version_affected TEXT NOT NULL
+/*
+CREATE TABLE IF NOT EXISTS cve.cve(
+    cve_number VARCHAR(20) PRIMARY KEY NOT NULL,
+    designation VARCHAR(500) NOT NULL,
+    version_affected TEXT NOT NULL,
+    full_text MEDIUMTEXT NOT NULL
 );
 
 INSERT INTO cve (cve_number, designation, version_affected)
@@ -19,3 +21,4 @@ VALUES  ('CVE-2016-582384','dummy 1','< 1.0.3'),
         ('CVE-2018-312397','dummy 2','> 1.5.6');
 
 CREATE INDEX idx_designation ON cve (designation);
+*/

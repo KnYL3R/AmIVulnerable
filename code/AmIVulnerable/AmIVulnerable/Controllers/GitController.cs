@@ -53,17 +53,16 @@ namespace AmIVulnerable.Controllers {
         private static async Task Clone(string url, string tag, string dir){
             try {
                 await Task.Run(() => {
-                    if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + dir)) {
-                        string targetDir = AppDomain.CurrentDomain.BaseDirectory + dir;
-                        RemoveReadOnlyAttribute(targetDir);
-                        Directory.Delete(targetDir, true);
+                    if (Directory.Exists(dir)) {
+                        RemoveReadOnlyAttribute(dir);
+                        Directory.Delete(dir, true);
                     }
                     if (tag.Equals("")) {
-                        Process.Start("git.exe", $"clone {url} {AppDomain.CurrentDomain.BaseDirectory}{dir}");
+                        Process.Start("git", $"clone {url} {dir}");
                     }
                     else {
                         try {
-                            Process.Start("git.exe", $"clone {url} --branch {tag} {AppDomain.CurrentDomain.BaseDirectory}{dir}");
+                            Process.Start("git", $"clone {url} --branch {tag} {dir}");
                         }
                         catch (Exception ex) {
                             Console.WriteLine("Error with clone, tag?\n" + ex.Message);
