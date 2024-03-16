@@ -28,7 +28,7 @@ namespace AmIVulnerable {
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.File(
-                    path: AppDomain.CurrentDomain.BaseDirectory + "Log/Logs.txt",
+                    path: "Log/Logs.txt",
                     rollingInterval: RollingInterval.Day
                     )
                 .CreateLogger();

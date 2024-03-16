@@ -1,10 +1,11 @@
 ﻿using LiteDbLib.Controller;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Modells;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using SerilogTimings;
-using System.Configuration.Internal;
+using System.Data;
 using System.Text.RegularExpressions;
 
 namespace AmIVulnerable.Controllers {
@@ -23,6 +24,7 @@ namespace AmIVulnerable.Controllers {
             Configuration = configuration;
         }
 
+        #region Controller
         /// <summary>Get-route checking if raw cve data is in directory.</summary>
         /// <returns>OK, if exists. No Content, if doesnt exist</returns>
         [HttpGet]
@@ -38,6 +40,7 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
+        #region oldcode
         /// <summary>Get-route converting raw cve data to db data.</summary>
         /// <returns>OK if successful</returns>
         [HttpGet]
@@ -65,6 +68,7 @@ namespace AmIVulnerable.Controllers {
 
             return Ok();
         }
+        #endregion
 
         /// <summary></summary>
         /// <returns></returns>
@@ -89,8 +93,7 @@ namespace AmIVulnerable.Controllers {
 
                 try {
                     // MySql Connection
-                    //MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
-                    MySqlConnection connection = new MySqlConnection("Server=localhost;Port=3306;Uid=u;Pwd=p;Database=cve;SslMode=None;");
+                    MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
 
                     connection.Open();
                     MySqlCommand cmdTable = new MySqlCommand("" +
@@ -153,28 +156,7 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
-
-        /// <summary>
-        /// Adds file names of all files of a folder and its subfolders to a list
-        /// </summary>
-        /// <param name="folderPath">path to target folder</param>
-        /// <param name="fileList">list of files</param>
-        private static void ExploreFolder(string folderPath, List<string> fileList) {
-            try {
-                fileList.AddRange(Directory.GetFiles(folderPath));
-
-                foreach (string subfolder in Directory.GetDirectories(folderPath)) {
-                    ExploreFolder(subfolder, fileList);
-                }
-            }
-            catch (Exception ex) {
-                Console.WriteLine($"{ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Check for an cve entry of a package with all its versions
-        /// </summary>
+        /// <summary>Check for an cve entry of a package with all its versions</summary>
         /// <param name="packageName">Name of package to search</param>
         /// <param name="isDbSearch">true: search db, false: search raw-json</param>
         /// <param name="packageVersion">Version of package to search</param>
@@ -184,11 +166,37 @@ namespace AmIVulnerable.Controllers {
         public IActionResult CheckSinglePackage([FromHeader] string packageName,
                                                     [FromHeader] bool isDbSearch = true,
                                                     [FromHeader] string? packageVersion = "") {
+            if (isDbSearch) {
+                using (Operation.Time($"Complete Time for Query-SingleSearch after Package \"{packageName}\"")) {
+                    List<CveResult> results = [];
+                    DataTable dtResult = SearchInMySql(packageName);
+                    // convert the result
+                    foreach (DataRow x in dtResult.Rows) {
+                        results.Add(new CveResult() {
+                            CveNumber = x["cve_number"].ToString() ?? "",
+                            Designation = x["designation"].ToString() ?? "",
+                            Version = x["version_affected"].ToString() ?? ""
+                        });
+                    }
+                    // return's
+                    if (results.Count > 0) {
+                        return Ok(JsonConvert.SerializeObject(results));
+                    }
+                    else {
+                        return NoContent();
+                    }
+                }
+            }
+            else {
+                // find all json files of cve                    
+                return Ok(JsonConvert.SerializeObject(SearchInJson(packageName)));
+            }
+            #region oldcode
             if (packageVersion!.Equals("")) { // search all versions
                 if (isDbSearch) {
                     SearchDbController searchDbController = new SearchDbController();
                     List<CveResult> res = [];
-                    using(Operation.Time($"Package \"{packageName}\"")) {
+                    using (Operation.Time($"Package \"{packageName}\"")) {
                         res = searchDbController.SearchSinglePackage(packageName);
                     }
                     if (res.Count > 0) {
@@ -207,11 +215,81 @@ namespace AmIVulnerable.Controllers {
                 // TODO: search after a specific version
             }
             return Ok();
+            #endregion
         }
 
         /// <summary>
-        /// Search package in raw-json data
+        /// Search for a list of packages
         /// </summary>
+        /// <param name="packages">List of tuple: package, version</param>
+        /// <returns>OK, if exists. OK, if no package list searched. NoContent if not found.</returns>
+        [HttpPost]
+        [Route("checkPackageList")]
+        public async Task<IActionResult> CheckPackageListAsync([FromBody] List<Tuple<string, string>> packages) {
+            List<CveResult> results = [];
+            using (Operation.Time($"Complete Time for Query-Search after List of Packages")) {
+                foreach (Tuple<string, string> x in packages) {
+                    DataTable dtResult = SearchInMySql(x.Item1);
+                    // convert the result
+                    foreach (DataRow y in dtResult.Rows) {
+                        results.Add(new CveResult() {
+                            CveNumber = y["cve_number"].ToString() ?? "",
+                            Designation = y["designation"].ToString() ?? "",
+                            Version = y["version_affected"].ToString() ?? ""
+                        });
+                    }
+                }
+            }
+            return Ok(results.Count == 0 ? "No result" : JsonConvert.SerializeObject(results));
+            #region oldcode
+            if (packages.Count > 0) {
+                SearchDbController searchDbController = new SearchDbController();
+                List<CveResult> resultsOld = [];
+                List<string> strings = [];
+                foreach (Tuple<string, string> item in packages) {
+                    strings.Add(item.Item1);
+                    if (item.Item1.Equals("")) {
+                        continue;
+                    }
+                    using (Operation.Time($"Time by mono {item.Item1}")) {
+                        resultsOld.AddRange(searchDbController.SearchSinglePackage(item.Item1));
+                    }
+                }
+                using (Operation.Time($"Time by pipe")) {
+                    resultsOld = await searchDbController.SearchPackagesAsList(strings);
+                }
+                if (resultsOld.Count > 0) {
+                    return Ok(JsonConvert.SerializeObject(resultsOld));
+                }
+                else {
+                    return NoContent();
+                }
+            }
+            return Ok("No package List delivered.");
+            #endregion
+        }
+        #endregion
+
+        #region Internal function(s)
+        /// <summary>
+        /// Adds file names of all files of a folder and its subfolders to a list
+        /// </summary>
+        /// <param name="folderPath">path to target folder</param>
+        /// <param name="fileList">list of files</param>
+        private static void ExploreFolder(string folderPath, List<string> fileList) {
+            try {
+                fileList.AddRange(Directory.GetFiles(folderPath));
+
+                foreach (string subfolder in Directory.GetDirectories(folderPath)) {
+                    ExploreFolder(subfolder, fileList);
+                }
+            }
+            catch (Exception ex) {
+                Console.WriteLine($"{ex.Message}");
+            }
+        }
+
+        /// <summary>Search package in raw-json data</summary>
         /// <param name="packageName">Name of package to search</param>
         /// <returns>List of CveResults</returns>
         private List<CveResult> SearchInJson(string packageName) {
@@ -255,38 +333,26 @@ namespace AmIVulnerable.Controllers {
             return results;
         }
 
-        /// <summary>
-        /// Search for a list of packages
-        /// </summary>
-        /// <param name="packages">List of tuple: package, version</param>
-        /// <returns>OK, if exists. OK, if no package list searched. NoContent if not found.</returns>
-        [HttpPost]
-        [Route("checkPackageList")]
-        public async Task<IActionResult> CheckPackageListAsync([FromBody] List<Tuple<string, string>> packages) {
-            if (packages.Count > 0) {
-                SearchDbController searchDbController = new SearchDbController();
-                List<CveResult> results = [];
-                List<string> strings = [];
-                foreach (Tuple<string, string> item in packages) {
-                    strings.Add(item.Item1);
-                    if (item.Item1.Equals("")) {
-                        continue;
-                    }
-                    using (Operation.Time($"Time by mono {item.Item1}")) {
-                        results.AddRange(searchDbController.SearchSinglePackage(item.Item1));
-                    }
-                }
-                using (Operation.Time($"Time by pipe")) {
-                    results = await searchDbController.SearchPackagesAsList(strings);
-                }
-                if (results.Count > 0) {
-                    return Ok(JsonConvert.SerializeObject(results));
-                }
-                else {
-                    return NoContent();
-                }
+        private DataTable SearchInMySql(string packageName) {
+            // MySql Connection
+            //MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
+            MySqlConnection connection = new MySqlConnection("Server=localhost;Port=3306;Uid=u;Pwd=p;Database=cve;SslMode=None;");
+
+            MySqlCommand cmd = new MySqlCommand($"" +
+                $"SELECT cve_number, designation, version_affected " +
+                $"FROM cve.cve " +
+                $"WHERE designation='{packageName}';", connection);
+
+            DataTable dataTable = new DataTable();
+            using (Operation.Time($"Query-Time for Package \"{packageName}\"")) {
+                // read the result
+                connection.Open();
+                MySqlDataReader reader = cmd.ExecuteReader();
+                dataTable.Load(reader);
+                connection.Close();
             }
-            return Ok("No package List delivered.");
+            return dataTable;
         }
+        #endregion
     }
 }
