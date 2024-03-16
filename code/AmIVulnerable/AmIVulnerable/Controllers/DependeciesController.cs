@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Modells;
 using Modells.Packages;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using SerilogTimings;
+using System.Data;
 using System.Diagnostics;
 using System.Text.Json;
 using F = System.IO.File;
@@ -12,6 +15,15 @@ namespace AmIVulnerable.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class DependeciesController : ControllerBase {
+
+        /// <summary></summary>
+        private readonly IConfiguration Configuration;
+
+        /// <summary></summary>
+        /// <param name="configuration"></param>
+        public DependeciesController(IConfiguration configuration) {
+            Configuration = configuration;
+        }
 
         /// <summary>
         /// Extract dependecies of different project types as json
@@ -43,23 +55,25 @@ namespace AmIVulnerable.Controllers {
         [HttpGet]
         [Route("ExtractAndAnalyzeTree")]
         public async Task<IActionResult> ExtractAndAnalyzeTreeAsync([FromHeader] ProjectType projectType) {
-            switch (projectType) {
-                case ProjectType.NodeJs: {
-                        ExecuteCommand("npm", "install");
-                        ExecuteCommand("del", "tree.json");
-                        ExecuteCommand("npm", "list --all --json >> tree.json");
-                        List<NodePackage> depTree = ExtractTree("rawAnalyze/tree.json");
-                        List<NodePackageResult> resTree = await analyzeTreeAsync(depTree)?? [];
-                        if (resTree.Count != 0) {
-                            return Ok(JsonConvert.SerializeObject(resTree));
+            using (Operation.Time($"ExtractAndAnalyzeTreeAsync called with procjectType {projectType.ToString()}")) {
+                switch (projectType) {
+                    case ProjectType.NodeJs: {
+                            ExecuteCommand("npm", "install");
+                            ExecuteCommand("del", "tree.json");
+                            ExecuteCommand("npm", "list --all --json >> tree.json");
+                            List<NodePackage> depTree = ExtractTree("rawAnalyze/tree.json");
+                            List<NodePackageResult> resTree = await analyzeTreeAsync(depTree) ?? [];
+                            if (resTree.Count != 0) {
+                                return Ok(JsonConvert.SerializeObject(resTree));
+                            }
+                            else {
+                                return StatusCode(299, "Keine Schwachstelle gefunden.");
+                            }
                         }
-                        else {
-                            return StatusCode(299, "Keine Schwachstelle gefunden.");
+                    default: {
+                            return BadRequest();
                         }
-                    }
-                default: {
-                        return BadRequest();
-                    }
+                }
             }
         }
 
@@ -141,7 +155,35 @@ namespace AmIVulnerable.Controllers {
                     }
                 }
             }
+
             // analyze list
+            List<CveResult> cveResults = [];
+            foreach (Tuple<string, string> x in nodePackages) {
+                DataTable dtResult = SearchInMySql(x.Item1);
+                // convert the result
+                foreach (DataRow y in dtResult.Rows) {
+                    cveResults.Add(new CveResult() {
+                        CveNumber = y["cve_number"].ToString() ?? "",
+                        Designation = y["designation"].ToString() ?? "",
+                        Version = y["version_affected"].ToString() ?? ""
+                    });
+                }
+            }
+
+            // find the critical points
+            if (cveResults.Count == 0) {
+                return null;
+            }
+            List<NodePackageResult?> resulstList = [];
+            foreach (NodePackage x in depTree) {
+                NodePackageResult? temp = checkVulnerabilities(x, cveResults);
+                if (temp is not null) {
+                    resulstList.Add(temp);
+                }
+            }
+            return resulstList;
+
+            #region oldcode
             SearchDbController searchDbController = new SearchDbController();
             List<string> designation = [];
             foreach (Tuple<string, string> x in nodePackages) {
@@ -155,7 +197,7 @@ namespace AmIVulnerable.Controllers {
             if (results.Count == 0) {
                 return null;
             }
-            List<NodePackageResult?> resulstList = [];
+            List<NodePackageResult?> resulstListOld = [];
             foreach (NodePackage x in depTree) {
                 NodePackageResult? temp = checkVulnerabilities(x, results);
                 if (temp is not null) {
@@ -163,6 +205,7 @@ namespace AmIVulnerable.Controllers {
                 }
             }
             return resulstList;
+            #endregion
         }
 
         /// <summary>
@@ -229,6 +272,26 @@ namespace AmIVulnerable.Controllers {
             }
             isTrue:
             return true;
+        }
+
+        private DataTable SearchInMySql(string packageName) {
+            // MySql Connection
+            MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
+
+            MySqlCommand cmd = new MySqlCommand($"" +
+                $"SELECT cve_number, designation, version_affected " +
+                $"FROM cve.cve " +
+                $"WHERE designation='{packageName}';", connection);
+
+            DataTable dataTable = new DataTable();
+            using (Operation.Time($"Query-Time for Package \"{packageName}\"")) {
+                // read the result
+                connection.Open();
+                MySqlDataReader reader = cmd.ExecuteReader();
+                dataTable.Load(reader);
+                connection.Close();
+            }
+            return dataTable;
         }
     }
 }
