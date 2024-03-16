@@ -335,8 +335,7 @@ namespace AmIVulnerable.Controllers {
 
         private DataTable SearchInMySql(string packageName) {
             // MySql Connection
-            //MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
-            MySqlConnection connection = new MySqlConnection("Server=localhost;Port=3306;Uid=u;Pwd=p;Database=cve;SslMode=None;");
+            MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
 
             MySqlCommand cmd = new MySqlCommand($"" +
                 $"SELECT cve_number, designation, version_affected " +

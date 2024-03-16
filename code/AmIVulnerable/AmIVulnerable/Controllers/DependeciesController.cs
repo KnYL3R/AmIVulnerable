@@ -48,8 +48,8 @@ namespace AmIVulnerable.Controllers {
                         ExecuteCommand("npm", "install");
                         ExecuteCommand("del", "tree.json");
                         ExecuteCommand("npm", "list --all --json >> tree.json");
-                        List<NodePackage> depTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze/tree.json");
-                        List<NodePackageResult> resTree = await analyzeTreeAsync(depTree) ?? [];
+                        List<NodePackage> depTree = ExtractTree("rawAnalyze/tree.json");
+                        List<NodePackageResult> resTree = await analyzeTreeAsync(depTree)?? [];
                         if (resTree.Count != 0) {
                             return Ok(JsonConvert.SerializeObject(resTree));
                         }
@@ -70,9 +70,9 @@ namespace AmIVulnerable.Controllers {
         /// <param name="command">Command used for programm</param>
         private void ExecuteCommand(string prog, string command) {
             ProcessStartInfo process = new ProcessStartInfo {
-                FileName = "cmd",
+                FileName = "bash",
                 RedirectStandardInput = true,
-                WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze",
+                WorkingDirectory = "rawAnalyze",
             };
             Process runProcess = Process.Start(process)!;
             runProcess.StandardInput.WriteLine($"{prog} {command}");
