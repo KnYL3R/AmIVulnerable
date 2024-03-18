@@ -162,11 +162,19 @@ namespace AmIVulnerable.Controllers {
                 DataTable dtResult = SearchInMySql(x.Item1);
                 // convert the result
                 foreach (DataRow y in dtResult.Rows) {
-                    cveResults.Add(new CveResult() {
+                    CveResult z = new CveResult() {
                         CveNumber = y["cve_number"].ToString() ?? "",
                         Designation = y["designation"].ToString() ?? "",
                         Version = y["version_affected"].ToString() ?? ""
-                    });
+                    };
+                    CVEcomp temp = JsonConvert.DeserializeObject<CVEcomp>(y["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
+                    try {
+                        z.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
+                        z.Description = temp.containers.cna.descriptions[0];
+                    }
+                    finally {
+                        cveResults.Add(z);
+                    }
                 }
             }
 

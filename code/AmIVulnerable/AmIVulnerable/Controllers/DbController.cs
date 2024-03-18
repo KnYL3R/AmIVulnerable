@@ -172,11 +172,19 @@ namespace AmIVulnerable.Controllers {
                     DataTable dtResult = SearchInMySql(packageName);
                     // convert the result
                     foreach (DataRow x in dtResult.Rows) {
-                        results.Add(new CveResult() {
+                        CveResult y = new CveResult() {
                             CveNumber = x["cve_number"].ToString() ?? "",
                             Designation = x["designation"].ToString() ?? "",
                             Version = x["version_affected"].ToString() ?? ""
-                        });
+                        };
+                        CVEcomp temp = JsonConvert.DeserializeObject<CVEcomp>(x["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
+                        try {
+                            y.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
+                            y.Description = temp.containers.cna.descriptions[0];
+                        }
+                        finally {
+                            results.Add(y);
+                        }
                     }
                     // return's
                     if (results.Count > 0) {
@@ -231,12 +239,20 @@ namespace AmIVulnerable.Controllers {
                 foreach (Tuple<string, string> x in packages) {
                     DataTable dtResult = SearchInMySql(x.Item1);
                     // convert the result
-                    foreach (DataRow y in dtResult.Rows) {
-                        results.Add(new CveResult() {
+                    foreach(DataRow y in dtResult.Rows) {
+                        CveResult z = new CveResult() {
                             CveNumber = y["cve_number"].ToString() ?? "",
                             Designation = y["designation"].ToString() ?? "",
                             Version = y["version_affected"].ToString() ?? ""
-                        });
+                        };
+                        CVEcomp temp = JsonConvert.DeserializeObject<CVEcomp>(y["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
+                        try {
+                            z.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
+                            z.Description = temp.containers.cna.descriptions[0];
+                        }
+                        finally {
+                            results.Add(z);
+                        }
                     }
                 }
             }
@@ -338,7 +354,7 @@ namespace AmIVulnerable.Controllers {
             MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
 
             MySqlCommand cmd = new MySqlCommand($"" +
-                $"SELECT cve_number, designation, version_affected " +
+                $"SELECT cve_number, designation, version_affected, full_text " +
                 $"FROM cve.cve " +
                 $"WHERE designation='{packageName}';", connection);
 
