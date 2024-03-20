@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LibGit2Sharp;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Policy;
 using CM = System.Configuration.ConfigurationManager;
 
 namespace AmIVulnerable.Controllers {
@@ -7,6 +9,17 @@ namespace AmIVulnerable.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class GitController : ControllerBase {
+
+        /// <summary></summary>
+        private readonly IConfiguration Configuration;
+
+        /// <summary></summary>
+        /// <param name="configuration"></param>
+        public GitController(IConfiguration configuration) {
+            Configuration = configuration;
+        }
+
+        private static bool isFinished = false;
 
         /// <summary>
         /// API-Post route to clone a git repository
@@ -43,6 +56,32 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
+        [HttpGet]
+        [Route("pullCveAndConvert")]
+        public async Task<IActionResult> PullAndConvertCveFiles() {
+             try {
+                ProcessStartInfo process = new ProcessStartInfo {
+                    FileName = "cmd",
+                    RedirectStandardInput = true,
+                    WorkingDirectory = $"",
+                };
+
+                Process runProcess = Process.Start(process)!;
+                runProcess.StandardInput.WriteLine($"git " +
+                    $"clone {CM.AppSettings["StandardCveUrlPlusTag"]!} " +  // git url
+                    $"--branch cve_2023-12-31_at_end_of_day " +             // tag
+                    $"raw");                                                // target dir
+                runProcess.StandardInput.WriteLine($"exit");
+                runProcess.WaitForExit();
+
+                DbController dbC = new DbController(Configuration);
+                return dbC.ConvertRawFilesToMySql();
+            }
+            catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
+        }
+
         /// <summary>
         /// Clone a git repository.
         /// </summary>
@@ -62,7 +101,7 @@ namespace AmIVulnerable.Controllers {
                     }
                     else {
                         try {
-                            Process.Start("git", $"clone {url} --branch {tag} {dir}");
+                            Process.Start("git", $"clone {url} --branch {tag} {AppDomain.CurrentDomain.BaseDirectory}{dir}");
                         }
                         catch (Exception ex) {
                             Console.WriteLine("Error with clone, tag?\n" + ex.Message);
