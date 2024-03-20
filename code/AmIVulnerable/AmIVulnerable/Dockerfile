@@ -5,10 +5,10 @@ WORKDIR /src/Modells
 COPY Modells/Modells.csproj .
 RUN dotnet restore Modells.csproj
 
-# LiteDbLib
-WORKDIR /src/LiteDbLib
-COPY LiteDbLib/LiteDbLib.csproj .
-RUN dotnet restore LiteDbLib.csproj
+# # LiteDbLib
+# WORKDIR /src/LiteDbLib
+# COPY LiteDbLib/LiteDbLib.csproj .
+# RUN dotnet restore LiteDbLib.csproj
 
 # API
 WORKDIR /src/AmIVulnerable
