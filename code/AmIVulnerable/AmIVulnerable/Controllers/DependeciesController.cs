@@ -1,5 +1,4 @@
-﻿using LiteDbLib.Controller;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Modells;
 using Modells.Packages;
 using MySql.Data.MySqlClient;
@@ -194,29 +193,28 @@ namespace AmIVulnerable.Controllers {
                 }
             }
             return resulstList;
-
             #region oldcode
-            SearchDbController searchDbController = new SearchDbController();
-            List<string> designation = [];
-            foreach (Tuple<string, string> x in nodePackages) {
-                designation.Add(x.Item1);
-            }
+            //SearchDbController searchDbController = new SearchDbController();
+            //List<string> designation = [];
+            //foreach (Tuple<string, string> x in nodePackages) {
+            //    designation.Add(x.Item1);
+            //}
 
-            List<CveResult> results = await searchDbController.SearchPackagesAsList(designation);
-            //List<CveResult> results = searchDbController.SearchPackagesAsListMono(designation);
+            //List<CveResult> results = await searchDbController.SearchPackagesAsList(designation);
+            ////List<CveResult> results = searchDbController.SearchPackagesAsListMono(designation);
 
-            // find the critical points
-            if (results.Count == 0) {
-                return null;
-            }
-            List<NodePackageResult?> resulstListOld = [];
-            foreach (NodePackage x in depTree) {
-                NodePackageResult? temp = checkVulnerabilities(x, results);
-                if (temp is not null) {
-                    resulstList.Add(temp);
-                }
-            }
-            return resulstList;
+            //// find the critical points
+            //if (results.Count == 0) {
+            //    return null;
+            //}
+            //List<NodePackageResult?> resulstListOld = [];
+            //foreach (NodePackage x in depTree) {
+            //    NodePackageResult? temp = checkVulnerabilities(x, results);
+            //    if (temp is not null) {
+            //        resulstList.Add(temp);
+            //    }
+            //}
+            //return resulstList;
             #endregion
         }
 

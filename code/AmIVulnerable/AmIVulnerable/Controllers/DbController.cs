@@ -1,5 +1,4 @@
-﻿using LiteDbLib.Controller;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Modells;
 using MySql.Data.MySqlClient;
@@ -41,33 +40,33 @@ namespace AmIVulnerable.Controllers {
         }
 
         #region oldcode
-        /// <summary>Get-route converting raw cve data to db data.</summary>
-        /// <returns>OK if successful</returns>
-        [HttpGet]
-        [Route("ConvertRawDirToDb")]
-        public IActionResult ConvertRawFile() {
-            List<string> fileList = new List<string>();
-            List<int> indexToDelete = new List<int>();
-            string path = $"{AppDomain.CurrentDomain.BaseDirectory}raw";
-            ExploreFolder(path, fileList);
+        ///// <summary>Get-route converting raw cve data to db data.</summary>
+        ///// <returns>OK if successful</returns>
+        //[HttpGet]
+        //[Route("ConvertRawDirToDb")]
+        //public IActionResult ConvertRawFile() {
+        //    List<string> fileList = new List<string>();
+        //    List<int> indexToDelete = new List<int>();
+        //    string path = $"{AppDomain.CurrentDomain.BaseDirectory}raw";
+        //    ExploreFolder(path, fileList);
 
-            //filter for json files
-            foreach (int i in Enumerable.Range(0, fileList.Count)) {
-                if (!Regex.IsMatch(fileList[i], @"CVE-[-\S]+.json")) {
-                    indexToDelete.Add(i);
-                }
-            }
-            foreach (int i in Enumerable.Range(0, indexToDelete.Count)) {
-                fileList.RemoveAt(indexToDelete[i] - i);
-            }
-            ConvertCveToDbController ccdbc = new ConvertCveToDbController(fileList);
+        //    //filter for json files
+        //    foreach (int i in Enumerable.Range(0, fileList.Count)) {
+        //        if (!Regex.IsMatch(fileList[i], @"CVE-[-\S]+.json")) {
+        //            indexToDelete.Add(i);
+        //        }
+        //    }
+        //    foreach (int i in Enumerable.Range(0, indexToDelete.Count)) {
+        //        fileList.RemoveAt(indexToDelete[i] - i);
+        //    }
+        //    ConvertCveToDbController ccdbc = new ConvertCveToDbController(fileList);
 
-            using (Operation.Time($"Konvertieren der Datenbank")) {
-                ccdbc.ConvertRawCve();
-            }
+        //    using (Operation.Time($"Konvertieren der Datenbank")) {
+        //        ccdbc.ConvertRawCve();
+        //    }
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
         #endregion
 
         /// <summary></summary>
@@ -200,29 +199,29 @@ namespace AmIVulnerable.Controllers {
                 return Ok(JsonConvert.SerializeObject(SearchInJson(packageName)));
             }
             #region oldcode
-            if (packageVersion!.Equals("")) { // search all versions
-                if (isDbSearch) {
-                    SearchDbController searchDbController = new SearchDbController();
-                    List<CveResult> res = [];
-                    using (Operation.Time($"Package \"{packageName}\"")) {
-                        res = searchDbController.SearchSinglePackage(packageName);
-                    }
-                    if (res.Count > 0) {
-                        return Ok(JsonConvert.SerializeObject(res));
-                    }
-                    else {
-                        return NoContent();
-                    }
-                }
-                else {
-                    // find all json files of cve                    
-                    return Ok(JsonConvert.SerializeObject(SearchInJson(packageName)));
-                }
-            }
-            else {
-                // TODO: search after a specific version
-            }
-            return Ok();
+            //if (packageVersion!.Equals("")) { // search all versions
+            //    if (isDbSearch) {
+            //        SearchDbController searchDbController = new SearchDbController();
+            //        List<CveResult> res = [];
+            //        using (Operation.Time($"Package \"{packageName}\"")) {
+            //            res = searchDbController.SearchSinglePackage(packageName);
+            //        }
+            //        if (res.Count > 0) {
+            //            return Ok(JsonConvert.SerializeObject(res));
+            //        }
+            //        else {
+            //            return NoContent();
+            //        }
+            //    }
+            //    else {
+            //        // find all json files of cve                    
+            //        return Ok(JsonConvert.SerializeObject(SearchInJson(packageName)));
+            //    }
+            //}
+            //else {
+            //    // TODO: search after a specific version
+            //}
+            //return Ok();
             #endregion
         }
 
@@ -258,30 +257,30 @@ namespace AmIVulnerable.Controllers {
             }
             return Ok(results.Count == 0 ? "No result" : JsonConvert.SerializeObject(results));
             #region oldcode
-            if (packages.Count > 0) {
-                SearchDbController searchDbController = new SearchDbController();
-                List<CveResult> resultsOld = [];
-                List<string> strings = [];
-                foreach (Tuple<string, string> item in packages) {
-                    strings.Add(item.Item1);
-                    if (item.Item1.Equals("")) {
-                        continue;
-                    }
-                    using (Operation.Time($"Time by mono {item.Item1}")) {
-                        resultsOld.AddRange(searchDbController.SearchSinglePackage(item.Item1));
-                    }
-                }
-                using (Operation.Time($"Time by pipe")) {
-                    resultsOld = await searchDbController.SearchPackagesAsList(strings);
-                }
-                if (resultsOld.Count > 0) {
-                    return Ok(JsonConvert.SerializeObject(resultsOld));
-                }
-                else {
-                    return NoContent();
-                }
-            }
-            return Ok("No package List delivered.");
+            //if (packages.Count > 0) {
+            //    SearchDbController searchDbController = new SearchDbController();
+            //    List<CveResult> resultsOld = [];
+            //    List<string> strings = [];
+            //    foreach (Tuple<string, string> item in packages) {
+            //        strings.Add(item.Item1);
+            //        if (item.Item1.Equals("")) {
+            //            continue;
+            //        }
+            //        using (Operation.Time($"Time by mono {item.Item1}")) {
+            //            resultsOld.AddRange(searchDbController.SearchSinglePackage(item.Item1));
+            //        }
+            //    }
+            //    using (Operation.Time($"Time by pipe")) {
+            //        resultsOld = await searchDbController.SearchPackagesAsList(strings);
+            //    }
+            //    if (resultsOld.Count > 0) {
+            //        return Ok(JsonConvert.SerializeObject(resultsOld));
+            //    }
+            //    else {
+            //        return NoContent();
+            //    }
+            //}
+            //return Ok("No package List delivered.");
             #endregion
         }
         #endregion
