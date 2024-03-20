@@ -1,2 +1,6 @@
 \subsection{Besondere Merkmale} \label{sec:Besondere Merkmale}
-Besondere Merkmale
+Durch die große Menge an CVE-Daten, die als Schachstellen-Suchbasis dient, können diese nicht vor jeder Anfrage erneut abgerufen werden.
+Somit ist es notwendig diese abzuspeichern und ggf. nur zu aktualisieren.
+\\ \\
+Da das Rückgabeformat der API JSON ist und bei Analyse eines ganzen Repositories hier Abhängigkeitsbäume aufgezeigt werden ist die Rückgabe dann teils schlecht händisch zu durchsuchen.
+Deshalb ist es empfohlen ein Frontendservice an den entsprechenden Endpunkt anzuknüpfen.
