@@ -1,6 +1,9 @@
 \subsection{Besondere Merkmale} \label{sec:Besondere Merkmale}
-Durch die große Menge an CVE-Daten, die als Schachstellen-Suchbasis dient, können diese nicht vor jeder Anfrage erneut abgerufen werden.
-Somit ist es notwendig diese abzuspeichern und ggf. nur zu aktualisieren.
+Dadurchm dass diese API bei schachstellenbefallenen Abhängigkeiten den Abhängigkeitsbaum darstelle ist für den Nutzer eine hohe Granularität und Transparenz der Abhängigkeit gegenüber gegeben.
+Somit können Aufwand bei Ersatz oder Anpassung an dieser besser eingeschätzt und die Entscheidung der Dringlichkeit dieser Arbeiten besser gefällt werden.
 \\ \\
-Da das Rückgabeformat der API JSON ist und bei Analyse eines ganzen Repositories hier Abhängigkeitsbäume aufgezeigt werden ist die Rückgabe dann teils schlecht händisch zu durchsuchen.
-Deshalb ist es empfohlen ein Frontendservice an den entsprechenden Endpunkt anzuknüpfen.
+Durch die große Menge an CVE-Daten, die als Schwachstellen-Suchbasis dient, und dadurch, dass diese Datenbasis immer nur erweitert wird ist der der API ermöglicht nur die aktuell neuesten Änderungen herunterzuladen und einzupflegen.
+Damit ist es nicht notwendig bei jeglichen Aktualisierungen die gesamte Datenbasis ernuet herunterzuladen.
+\\ \\
+Durch die lokal vorliegende Datenbasis ist das Suchen auf dieser deutlich schneller als diese Daten immer erneut anzufragen.
+Somit kann mit einer niedrigeren Laufzeit in z.B. CI/CD intergrationen dieser gerechnet werden als andere Tools.

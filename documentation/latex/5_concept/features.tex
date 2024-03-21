@@ -1,8 +1,10 @@
 \subsection{Funktionalitäten} \label{sec:Funktionalitäten}
-Folgende Features werden durch die API-Endpunkte bereitgestellt:
-\begin{itemize}
-    \item Bei Angabe einer Paketbezeichnung erhalte ich die Information ob dieses Sicherheitslücken hat und welche diese sind.
-    \item Bei Angabe einer Liste von Paketbezeichnungen erhalte ich eine Liste solcher Informationen zu allen Paketen.
-    \item Bei Angabe eines Git-Repositories wird dieses auf Abhängigkeiten und deren Schachstellen analysiert.
-        Ich erhalte für jedes, in diesem Repository eingebunenes, schwachstellenbehaftete Paket einen Abhängigkeitsbaum.
-\end{itemize}
+Bei der Umsetzung dieser API sind verschidene Funktionalitäten zu implementieren.
+\begin{enumerate}
+    \item Einladen und Konvertieren der Schachstellendaten und persistente Speicherung dieser in einer internen Datenbank.
+    \item Überprüfung von Abhängigkeiten auf Sicherheitslücken mittels Abgleich zu einer internen Schachstellendatenbank.
+    \item Clonen eines Repositories von Github.
+    \item Überprüfung von allen Abhängigkeiten eines Repositories mittels Abgleich zu einer internen Schachstellendatenbank.
+    \item Rückgabe eines Abhängigkeitsbaums für alle Abhängigkeiten mit Sicherheitslücken. 
+\end{enumerate}
+Diese Funktionalitäten setzten teils mehrere interne Abläufe voraus und beinhalten mehrere Endpunkte der API.
