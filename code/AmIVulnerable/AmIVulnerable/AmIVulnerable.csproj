@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LiteDbLib\LiteDbLib.csproj" />
+    <ProjectReference Include="..\Modells\Modells.csproj" />
   </ItemGroup>
 
 </Project>

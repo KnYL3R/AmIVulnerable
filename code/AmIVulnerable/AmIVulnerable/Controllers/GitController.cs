@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LibGit2Sharp;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Policy;
 using CM = System.Configuration.ConfigurationManager;
 
 namespace AmIVulnerable.Controllers {
@@ -7,6 +9,17 @@ namespace AmIVulnerable.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class GitController : ControllerBase {
+
+        /// <summary></summary>
+        private readonly IConfiguration Configuration;
+
+        /// <summary></summary>
+        /// <param name="configuration"></param>
+        public GitController(IConfiguration configuration) {
+            Configuration = configuration;
+        }
+
+        private static bool isFinished = false;
 
         /// <summary>
         /// API-Post route to clone a git repository
@@ -19,7 +32,6 @@ namespace AmIVulnerable.Controllers {
         public IActionResult CloneRepo([FromHeader] bool cveRaw, [FromBody] Tuple<string, string> data) {
         //public IActionResult CloneRepo([FromHeader] string? url) {
             try {
-                CM.AppSettings["CloneFinished"] = "false";
                 if (cveRaw) {
                     if (data.Item1.Equals("")) { // nothing, so use standard
                         if (data.Item2.Equals("")) { //nothing, so use standard
@@ -44,6 +56,32 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
+        [HttpGet]
+        [Route("pullCveAndConvert")]
+        public async Task<IActionResult> PullAndConvertCveFiles() {
+             try {
+                ProcessStartInfo process = new ProcessStartInfo {
+                    FileName = "cmd",
+                    RedirectStandardInput = true,
+                    WorkingDirectory = $"",
+                };
+
+                Process runProcess = Process.Start(process)!;
+                runProcess.StandardInput.WriteLine($"git " +
+                    $"clone {CM.AppSettings["StandardCveUrlPlusTag"]!} " +  // git url
+                    $"--branch cve_2023-12-31_at_end_of_day " +             // tag
+                    $"raw");                                                // target dir
+                runProcess.StandardInput.WriteLine($"exit");
+                runProcess.WaitForExit();
+
+                DbController dbC = new DbController(Configuration);
+                return dbC.ConvertRawFilesToMySql();
+            }
+            catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
+        }
+
         /// <summary>
         /// Clone a git repository.
         /// </summary>
@@ -52,37 +90,40 @@ namespace AmIVulnerable.Controllers {
         /// <param name="dir">Directory where to clone project into.</param>
         /// <returns></returns>
         private static async Task Clone(string url, string tag, string dir){
-            await Task.Run(() => {
-                if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + dir)) {
-                    string targetDir = AppDomain.CurrentDomain.BaseDirectory + dir;
-                    RemoveReadOnlyAttribute(targetDir);
-                    Directory.Delete(targetDir, true);
-                }
-                if (tag.Equals("")) {
-                    Process.Start("git.exe", $"clone {url} {AppDomain.CurrentDomain.BaseDirectory}{dir}");
-                }
-                else {
-                    try {
-                        Process.Start("git.exe", $"clone {url} --branch {tag} {AppDomain.CurrentDomain.BaseDirectory}{dir}");
+            try {
+                await Task.Run(() => {
+                    if (Directory.Exists(dir)) {
+                        RemoveReadOnlyAttribute(dir);
+                        Directory.Delete(dir, true);
                     }
-                    catch (Exception ex) {
-                        Console.WriteLine("Error with clone, tag?\n" + ex.Message);
-                        return; // leave CloneFinished false
+                    if (tag.Equals("")) {
+                        Process.Start("git", $"clone {url} {dir}");
                     }
-                }
-                #region For Reminder
-                //if (s) {
-                //    Repository.Clone(url, AppDomain.CurrentDomain.BaseDirectory + "raw", new CloneOptions {
-                //        BranchName = "cve_2023-12-31_at_end_of_day",
-                //        IsBare = true,
-                //    });
-                //}
-                //else {
-                //    Repository.Clone(url, AppDomain.CurrentDomain.BaseDirectory + "raw");
-                //}
-                #endregion
-                CM.AppSettings["CloneFinished"] = "true";
-            });
+                    else {
+                        try {
+                            Process.Start("git", $"clone {url} --branch {tag} {AppDomain.CurrentDomain.BaseDirectory}{dir}");
+                        }
+                        catch (Exception ex) {
+                            Console.WriteLine("Error with clone, tag?\n" + ex.Message);
+                            return; // leave CloneFinished false
+                        }
+                    }
+                    #region For Reminder
+                    //if (s) {
+                    //    Repository.Clone(url, AppDomain.CurrentDomain.BaseDirectory + "raw", new CloneOptions {
+                    //        BranchName = "cve_2023-12-31_at_end_of_day",
+                    //        IsBare = true,
+                    //    });
+                    //}
+                    //else {
+                    //    Repository.Clone(url, AppDomain.CurrentDomain.BaseDirectory + "raw");
+                    //}
+                    #endregion
+                });
+            }
+            catch (Exception ex) {
+                await Console.Out.WriteLineAsync(ex.StackTrace);
+            }
         }
 
         /// <summary>
@@ -98,21 +139,6 @@ namespace AmIVulnerable.Controllers {
 
             foreach (DirectoryInfo subDirectory in directoryInfo.GetDirectories()) {
                 RemoveReadOnlyAttribute(subDirectory.FullName);
-            }
-        }
-        
-        /// <summary>
-        /// Status of git clone command
-        /// </summary>
-        /// <returns>OK if clone finished. NoContent if not finished.</returns>
-        [HttpGet]
-        [Route("cloneStatus")]
-        public IActionResult CloneStatus() {
-            if (CM.AppSettings["CloneFinished"]!.Equals("true")) {
-                return Ok();
-            }
-            else {
-                return NoContent();
             }
         }
     }
