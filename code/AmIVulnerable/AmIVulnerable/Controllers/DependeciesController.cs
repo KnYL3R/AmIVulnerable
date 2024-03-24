@@ -15,14 +15,13 @@ namespace AmIVulnerable.Controllers {
     [ApiController]
     public class DependeciesController : ControllerBase {
 
-        /// <summary></summary>
+        #region Config
         private readonly IConfiguration Configuration;
 
-        /// <summary></summary>
-        /// <param name="configuration"></param>
         public DependeciesController(IConfiguration configuration) {
             Configuration = configuration;
         }
+        #endregion
 
         /// <summary>
         /// Extract dependecies of different project types as json

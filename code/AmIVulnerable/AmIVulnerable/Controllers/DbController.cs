@@ -9,19 +9,18 @@ using System.Text.RegularExpressions;
 
 namespace AmIVulnerable.Controllers {
 
-    /// <summary></summary>
+    /// <summary>Interact direct with the database, like create the cve-table or request packages.</summary>
     [Route("api/[controller]")]
     [ApiController]
     public class DbController : ControllerBase {
 
-        /// <summary></summary>
+        #region Config
         private readonly IConfiguration Configuration;
 
-        /// <summary></summary>
-        /// <param name="configuration"></param>
         public DbController(IConfiguration configuration) {
             Configuration = configuration;
         }
+        #endregion
 
         #region Controller
         /// <summary>Get-route checking if raw cve data is in directory.</summary>
@@ -39,38 +38,8 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
-        #region oldcode
-        ///// <summary>Get-route converting raw cve data to db data.</summary>
-        ///// <returns>OK if successful</returns>
-        //[HttpGet]
-        //[Route("ConvertRawDirToDb")]
-        //public IActionResult ConvertRawFile() {
-        //    List<string> fileList = new List<string>();
-        //    List<int> indexToDelete = new List<int>();
-        //    string path = $"{AppDomain.CurrentDomain.BaseDirectory}raw";
-        //    ExploreFolder(path, fileList);
-
-        //    //filter for json files
-        //    foreach (int i in Enumerable.Range(0, fileList.Count)) {
-        //        if (!Regex.IsMatch(fileList[i], @"CVE-[-\S]+.json")) {
-        //            indexToDelete.Add(i);
-        //        }
-        //    }
-        //    foreach (int i in Enumerable.Range(0, indexToDelete.Count)) {
-        //        fileList.RemoveAt(indexToDelete[i] - i);
-        //    }
-        //    ConvertCveToDbController ccdbc = new ConvertCveToDbController(fileList);
-
-        //    using (Operation.Time($"Konvertieren der Datenbank")) {
-        //        ccdbc.ConvertRawCve();
-        //    }
-
-        //    return Ok();
-        //}
-        #endregion
-
-        /// <summary></summary>
-        /// <returns></returns>
+        /// <summary>By call the raw cve.json's will be inserted in the MySql-Database.</summary>
+        /// <returns>The status, if the database is finished created.</returns>
         [HttpGet]
         [Route("ConvertRawCveToDb")]
         public IActionResult ConvertRawFilesToMySql() {
@@ -94,7 +63,7 @@ namespace AmIVulnerable.Controllers {
                     // MySql Connection
                     MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
 
-                    connection.Open();
+                    // Create the Table cve.cve if it is not already there.
                     MySqlCommand cmdTable = new MySqlCommand("" +
                         "CREATE TABLE IF NOT EXISTS cve.cve(" +
                         "cve_number VARCHAR(20) PRIMARY KEY NOT NULL," +
@@ -102,6 +71,7 @@ namespace AmIVulnerable.Controllers {
                         "version_affected TEXT NOT NULL," +
                         "full_text MEDIUMTEXT NOT NULL" +
                         ")", connection);
+                    connection.Open();
                     cmdTable.ExecuteNonQuery();
                     connection.Close();
 
