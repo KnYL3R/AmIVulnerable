@@ -5,6 +5,7 @@ namespace AmIVulnerable.Controllers {
     [Route("views")]
     [Controller]
     public class ViewController : Controller {
+        
         [HttpGet]
         [Route("cveResult")]
         public IActionResult CveResultLdGet() {
@@ -13,6 +14,10 @@ namespace AmIVulnerable.Controllers {
             return Content(System.IO.File.ReadAllText(path), "text/html");
         }
 
+        /// <summary>
+        /// API-Get request to show json-ld data.
+        /// </summary>
+        /// <returns>Json-ld data as html</returns>
         [HttpGet]
         [Route("nodePackageResult")]
         public IActionResult NodePackageResultLdGet() {

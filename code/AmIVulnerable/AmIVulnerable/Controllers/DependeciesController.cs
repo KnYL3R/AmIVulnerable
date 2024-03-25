@@ -1,9 +1,10 @@
-﻿using LiteDbLib.Controller;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Modells;
 using Modells.Packages;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using SerilogTimings;
+using System.Data;
 using System.Diagnostics;
 using System.Text.Json;
 using F = System.IO.File;
@@ -14,6 +15,19 @@ namespace AmIVulnerable.Controllers {
     [ApiController]
     public class DependeciesController : ControllerBase {
 
+        #region Config
+        private readonly IConfiguration Configuration;
+
+        public DependeciesController(IConfiguration configuration) {
+            Configuration = configuration;
+        }
+        #endregion
+
+        /// <summary>
+        /// Extract dependecies of different project types as json
+        /// </summary>
+        /// <param name="projectType">Type of project to extract dependencies from</param>
+        /// <returns>OK if known project type. BadRequest if unknown project type.</returns>
         [HttpGet]
         [Route("ExtractTree")]
         public IActionResult ExtractDependencies([FromHeader] ProjectType projectType) {
@@ -23,12 +37,7 @@ namespace AmIVulnerable.Controllers {
                         ExecuteCommand("npm", "list --all --json >> tree.json");
                         List<NodePackage> resTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze/tree.json");
                         F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze/depTree.json", JsonConvert.SerializeObject(resTree));
-
-                        JObject jsonLdObject = new JObject {
-                            { "@context", "https://localhost:7203/views/nodePackageResult" },
-                            { "data", JsonConvert.SerializeObject(resTree) }
-                        };
-                        return Ok(JsonConvert.SerializeObject(jsonLdObject));
+                        return Ok(JsonConvert.SerializeObject(resTree));
                     }
                 default: {
                         return BadRequest();
@@ -36,38 +45,46 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
+        /// <summary>
+        /// Extract dependecies of different project types as json and extract resulting dependency trees of vulnerabilities
+        /// </summary>
+        /// <param name="projectType">Type of project to extract dependencies from</param>
+        /// <returns>OK if vulnerability found. 299 if no vulnerability found. BadRequest if unknown project type is searched.</returns>
         [HttpGet]
         [Route("ExtractAndAnalyzeTree")]
         public async Task<IActionResult> ExtractAndAnalyzeTreeAsync([FromHeader] ProjectType projectType) {
-            switch (projectType) {
-                case ProjectType.NodeJs: {
-                        ExecuteCommand("npm", "install");
-                        ExecuteCommand("del", "tree.json");
-                        ExecuteCommand("npm", "list --all --json >> tree.json");
-                        List<NodePackage> depTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze/tree.json");
-                        List<NodePackageResult> resTree = await analyzeTreeAsync(depTree) ?? [];
-                        if (resTree.Count != 0) {
-                            JObject jsonLdObject = new JObject {
-                                { "@context", "https://localhost:7203/views/nodePackageResult" },
-                                { "data", JsonConvert.SerializeObject(resTree) }
-                            };
-                            return Ok(JsonConvert.SerializeObject(jsonLdObject));
+            using (Operation.Time($"ExtractAndAnalyzeTreeAsync called with procjectType {projectType.ToString()}")) {
+                switch (projectType) {
+                    case ProjectType.NodeJs: {
+                            ExecuteCommand("npm", "install");
+                            ExecuteCommand("del", "tree.json");
+                            ExecuteCommand("npm", "list --all --json >> tree.json");
+                            List<NodePackage> depTree = ExtractTree("rawAnalyze/tree.json");
+                            List<NodePackageResult> resTree = await analyzeTreeAsync(depTree) ?? [];
+                            if (resTree.Count != 0) {
+                                return Ok(JsonConvert.SerializeObject(resTree));
+                            }
+                            else {
+                                return StatusCode(299, "Keine Schwachstelle gefunden.");
+                            }
                         }
-                        else {
-                            return StatusCode(299, "Keine Schwachstelle gefunden.");
+                    default: {
+                            return BadRequest();
                         }
-                    }
-                default: {
-                        return BadRequest();
-                    }
+                }
             }
         }
 
+        /// <summary>
+        /// Starts a process that runs a command.
+        /// </summary>
+        /// <param name="prog">Programm used for commands</param>
+        /// <param name="command">Command used for programm</param>
         private void ExecuteCommand(string prog, string command) {
             ProcessStartInfo process = new ProcessStartInfo {
-                FileName = "cmd",
+                FileName = "bash",
                 RedirectStandardInput = true,
-                WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze",
+                WorkingDirectory = "rawAnalyze",
             };
             Process runProcess = Process.Start(process)!;
             runProcess.StandardInput.WriteLine($"{prog} {command}");
@@ -75,6 +92,11 @@ namespace AmIVulnerable.Controllers {
             runProcess.WaitForExit();
         }
 
+        /// <summary>
+        /// Extracts a tree from node project
+        /// </summary>
+        /// <param name="filePath">File path to rawAnalyze/tree.json</param>
+        /// <returns>List of vulnerable packages.</returns>
         private List<NodePackage> ExtractTree(string filePath) {
             List<NodePackage> packages = [];
             using (JsonDocument jsonDocument = JsonDocument.Parse(F.ReadAllText(filePath))) {
@@ -90,6 +112,11 @@ namespace AmIVulnerable.Controllers {
             return packages;
         }
 
+        /// <summary>
+        /// Extracts dependencies of a single dependency.
+        /// </summary>
+        /// <param name="dependency">Dependency that is searched for sundependencies and versions.</param>
+        /// <returns>NodePackage with all found dependencies and versions.</returns>
         private NodePackage ExtractDependencyInfo(JsonProperty dependency) {
             NodePackage nodePackage = new NodePackage {
                 Name = dependency.Name
@@ -109,7 +136,12 @@ namespace AmIVulnerable.Controllers {
             return nodePackage;
         }
 
-        private async Task<List<NodePackageResult?>?> analyzeTreeAsync(List<NodePackage> depTree) {
+        /// <summary>
+        /// Analyse list of node packages, compare dependencies of each with cve and return list of NodePackageResult
+        /// </summary>
+        /// <param name="depTree">List of all top level node packages.</param>
+        /// <returns>List of NodePackageResult.</returns>
+        private async Task<List<NodePackageResult?>> analyzeTreeAsync(List<NodePackage> depTree) {
             List<Tuple<string, string>> nodePackages = [];
             // preperation list
             foreach (NodePackage x in depTree) {
@@ -121,30 +153,75 @@ namespace AmIVulnerable.Controllers {
                     }
                 }
             }
+
             // analyze list
-            SearchDbController searchDbController = new SearchDbController();
-            List<string> designation = [];
+            List<CveResult> cveResults = [];
             foreach (Tuple<string, string> x in nodePackages) {
-                designation.Add(x.Item1);
+                DataTable dtResult = SearchInMySql(x.Item1);
+                // convert the result
+                foreach (DataRow y in dtResult.Rows) {
+                    CveResult z = new CveResult() {
+                        CveNumber = y["cve_number"].ToString() ?? "",
+                        Designation = y["designation"].ToString() ?? "",
+                        Version = y["version_affected"].ToString() ?? ""
+                    };
+                    CVEcomp temp = JsonConvert.DeserializeObject<CVEcomp>(y["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
+                    try {
+                        if (temp.containers.cna.metrics.Count != 0) {
+                            z.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
+                        }
+                        if (temp.containers.cna.descriptions.Count != 0) {
+                            z.Description = temp.containers.cna.descriptions[0];
+                        }
+                    }
+                    finally {
+                        cveResults.Add(z);
+                    }
+                }
             }
 
-            List<CveResult> results = await searchDbController.SearchPackagesAsList(designation);
-            //List<CveResult> results = searchDbController.SearchPackagesAsListMono(designation);
-
             // find the critical points
-            if (results.Count == 0) {
+            if (cveResults.Count == 0) {
                 return null;
             }
             List<NodePackageResult?> resulstList = [];
             foreach (NodePackage x in depTree) {
-                NodePackageResult? temp = checkVulnerabilities(x, results);
+                NodePackageResult? temp = checkVulnerabilities(x, cveResults);
                 if (temp is not null) {
                     resulstList.Add(temp);
                 }
             }
-            return resulstList ?? [];
+            return resulstList;
+            #region oldcode
+            //SearchDbController searchDbController = new SearchDbController();
+            //List<string> designation = [];
+            //foreach (Tuple<string, string> x in nodePackages) {
+            //    designation.Add(x.Item1);
+            //}
+
+            //List<CveResult> results = await searchDbController.SearchPackagesAsList(designation);
+            ////List<CveResult> results = searchDbController.SearchPackagesAsListMono(designation);
+
+            //// find the critical points
+            //if (results.Count == 0) {
+            //    return null;
+            //}
+            //List<NodePackageResult?> resulstListOld = [];
+            //foreach (NodePackage x in depTree) {
+            //    NodePackageResult? temp = checkVulnerabilities(x, results);
+            //    if (temp is not null) {
+            //        resulstList.Add(temp);
+            //    }
+            //}
+            //return resulstList;
+            #endregion
         }
 
+        /// <summary>
+        /// Searches for all node package dependencies of a single node package.
+        /// </summary>
+        /// <param name="nodePackage">Node package to search</param>
+        /// <returns>List of all node package dependencies of a single node package.</returns>
         private List<NodePackage> analyzeSubtree(NodePackage nodePackage) {
             List<NodePackage> res = [];
             foreach(NodePackage x in nodePackage.Dependencies) {
@@ -154,6 +231,12 @@ namespace AmIVulnerable.Controllers {
             return res;
         }
 
+        /// <summary>
+        /// Compares node package dependencies with cve data.
+        /// </summary>
+        /// <param name="package">Package to search for cve tracked dependencies.</param>
+        /// <param name="cveData">List of CveResult data.</param>
+        /// <returns>NodePackageResult with all dependencies and status if it is a cve tracked dependency.</returns>
         private NodePackageResult? checkVulnerabilities(NodePackage package, List<CveResult> cveData) {
             NodePackageResult r = new NodePackageResult() {
                 Name = "",
@@ -178,6 +261,11 @@ namespace AmIVulnerable.Controllers {
             return r;
         }
 
+        /// <summary>
+        /// If Package is cve tracked, return true. Check all dependencies recursively.
+        /// </summary>
+        /// <param name="package"></param>
+        /// <returns>True if any dependency is tracked. False if no dependencies are tracked.</returns>
         private bool depCheck(NodePackageResult package) {
             foreach (NodePackageResult x in package.Dependencies) {
                 bool isTracked = depCheck(x);
@@ -193,6 +281,26 @@ namespace AmIVulnerable.Controllers {
             }
             isTrue:
             return true;
+        }
+
+        private DataTable SearchInMySql(string packageName) {
+            // MySql Connection
+            MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
+
+            MySqlCommand cmd = new MySqlCommand($"" +
+                $"SELECT cve_number, designation, version_affected, full_text " +
+                $"FROM cve.cve " +
+                $"WHERE designation='{packageName}';", connection);
+
+            DataTable dataTable = new DataTable();
+            using (Operation.Time($"Query-Time for Package \"{packageName}\"")) {
+                // read the result
+                connection.Open();
+                MySqlDataReader reader = cmd.ExecuteReader();
+                dataTable.Load(reader);
+                connection.Close();
+            }
+            return dataTable;
         }
     }
 }
