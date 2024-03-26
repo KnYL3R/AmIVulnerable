@@ -3,6 +3,7 @@ using Modells;
 using Modells.Packages;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SerilogTimings;
 using System.Data;
 using System.Diagnostics;
@@ -37,7 +38,12 @@ namespace AmIVulnerable.Controllers {
                         ExecuteCommand("npm", "list --all --json >> tree.json");
                         List<NodePackage> resTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze/tree.json");
                         F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze/depTree.json", JsonConvert.SerializeObject(resTree));
-                        return Ok(JsonConvert.SerializeObject(resTree));
+
+                        JObject jsonLdObject = new JObject {
+                                    { "@context", "https://localhost:7203/views/nodePackageResult" },
+                                    { "data", JsonConvert.SerializeObject(resTree) }
+                                };
+                        return Ok(JsonConvert.SerializeObject(jsonLdObject));
                     }
                 default: {
                         return BadRequest();
@@ -62,7 +68,11 @@ namespace AmIVulnerable.Controllers {
                             List<NodePackage> depTree = ExtractTree("rawAnalyze/tree.json");
                             List<NodePackageResult> resTree = await analyzeTreeAsync(depTree) ?? [];
                             if (resTree.Count != 0) {
-                                return Ok(JsonConvert.SerializeObject(resTree));
+                                JObject jsonLdObject = new JObject {
+                                    { "@context", "https://localhost:7203/views/nodePackageResult" },
+                                    { "data", JsonConvert.SerializeObject(resTree) }
+                                };
+                                return Ok(JsonConvert.SerializeObject(jsonLdObject));
                             }
                             else {
                                 return StatusCode(299, "Keine Schwachstelle gefunden.");

@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Modells;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SerilogTimings;
 using System.Data;
 using System.Text.RegularExpressions;
@@ -157,7 +158,11 @@ namespace AmIVulnerable.Controllers {
                     }
                     // return's
                     if (results.Count > 0) {
-                        return Ok(JsonConvert.SerializeObject(results));
+                        JObject jsonLdObject = new JObject {
+                                    { "@context", "https://localhost:7203/views/cveResult" },
+                                    { "data", JsonConvert.SerializeObject(results) }
+                                };
+                        return Ok(JsonConvert.SerializeObject(jsonLdObject));
                     }
                     else {
                         return NoContent();
@@ -166,7 +171,12 @@ namespace AmIVulnerable.Controllers {
             }
             else {
                 // find all json files of cve                    
-                return Ok(JsonConvert.SerializeObject(SearchInJson(packageName)));
+                List<CveResult> results = SearchInJson(packageName);
+                JObject jsonLdObject = new JObject {
+                                    { "@context", "https://localhost:7203/views/cveResult" },
+                                    { "data", JsonConvert.SerializeObject(results) }
+                                };
+                return Ok(JsonConvert.SerializeObject(jsonLdObject));
             }
             #region oldcode
             //if (packageVersion!.Equals("")) { // search all versions
@@ -225,7 +235,12 @@ namespace AmIVulnerable.Controllers {
                     }
                 }
             }
-            return Ok(results.Count == 0 ? "No result" : JsonConvert.SerializeObject(results));
+
+            JObject jsonLdObject = new JObject {
+                                    { "@context", "https://localhost:7203/views/cveResult" },
+                                    { "data", JsonConvert.SerializeObject(results) }
+                                };
+            return Ok(results.Count == 0 ? "No result" : JsonConvert.SerializeObject(jsonLdObject));
             #region oldcode
             //if (packages.Count > 0) {
             //    SearchDbController searchDbController = new SearchDbController();
