@@ -8,18 +8,69 @@
 <body>
     <h1>Node Project JSON-LD</h1>
 
-<pre lang="csharp">
-namespace Modells.Packages {
-    public class NodePackageResult {
-        public string Name { get; set; } = "";
-        public string Version { get; set; } = "";
-        public bool isCveTracked { get; set; } = false;
-        public List<NodePackageResult> Dependencies { get; set; } = [];
+    <h3>Name</h3>
+    <label>
+        Name des Paketes, welches untersucht wurde.
+    </label>
 
-        public NodePackageResult() {
-        }
-    }
-}
-</pre>
+    <h3>Version</h3>
+    <label>
+        Betroffene Version, die beachtet werden muss.
+    </label>
+
+    <h3>isCveTracked</h3>
+    <label>
+        Boolscher Wert, der angibt, ob das aktuelle Paket in den CVE-Daten gefunden wurde, oder ob es aufgelistet ist, weil eines seiner Abhängigkeiten auffällig ist.
+    </label>
+
+    <h3>Description</h3>
+    <label>
+        Dieser Einträg besteht aus den folgenden Subeinträgen:
+    </label>
+
+    <h4>lang</h4>
+    <label>
+        Sprache.
+    </label>
+    <h4>cweId</h4>
+    <label>
+        Common Weakness Enumeration, ist eine Sammlung von standardisierten Namen und Beschreibungen für häufige Software-Schwachstellen.
+    </label>
+    <h4>description</h4>
+    <label>
+        Nähere Beschreibung des Produktes.
+    </label>
+    <h4>type</h4>
+    <label style="color: red">
+        suche...
+    </label>
+    <h4>value</h4>
+    <label>
+        siehe `description`
+    </label>
+    <h4>supportingMedia</h4>
+    <label style="color: red">
+        siehe CVE-2019-10952.json für Vervollständigung
+    </label>
+
+    <h3>CvssV31</h3>
+    <label>
+        Beinhaltet folgende Werte, deren Erklärung sich aus den Namen ableitet:
+        <ul>
+            <li>version</li>
+            <li>attackVector</li>
+            <li>attackComplexity</li>
+            <li>privilegesRequired</li>
+            <li>userInteraction</li>
+            <li>scope</li>
+            <li>confidentialityImpact</li>
+            <li>integrityImpact</li>
+            <li>availabilityImpact</li>
+            <li>baseScore</li>
+            <li>baseSeverity</li>
+            <li>vectorString</li>
+        </ul>
+    </label>
+
 </body>
 </html>
