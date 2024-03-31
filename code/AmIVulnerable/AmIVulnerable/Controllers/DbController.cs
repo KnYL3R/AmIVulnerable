@@ -226,8 +226,12 @@ namespace AmIVulnerable.Controllers {
                         };
                         CVEcomp temp = JsonConvert.DeserializeObject<CVEcomp>(y["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
                         try {
-                            z.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
-                            z.Description = temp.containers.cna.descriptions[0];
+                            if (temp.containers.cna.metrics.Count != 0) {
+                                z.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
+                            }
+                            if (temp.containers.cna.descriptions.Count != 0) {
+                                z.Description = temp.containers.cna.descriptions[0];
+                            }
                         }
                         finally {
                             results.Add(z);
