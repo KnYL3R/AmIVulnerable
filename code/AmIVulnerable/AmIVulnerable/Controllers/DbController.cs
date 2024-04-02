@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Modells;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using NuGet.Protocol.Plugins;
 using SerilogTimings;
 using System.Data;
 using System.Diagnostics;
@@ -127,6 +129,8 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
+        /// <summary></summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("")]
         public IActionResult UpdateCveDatabase() {
@@ -241,6 +245,43 @@ namespace AmIVulnerable.Controllers {
                 }
                 catch (Exception ex) {
                     return BadRequest(ex.StackTrace + "\n\n" + ex.Message);
+                }
+            }
+        }
+
+        /// <summary></summary>
+        /// <param name="cve_number"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getFullTextFromCveNumber")]
+        public IActionResult GetFullTextCve([FromHeader] string? cve_number) {
+            using (Operation.Time("GetFullTextCve")) {
+                if (cve_number is null) {
+                    return BadRequest("Empty Header");
+                }
+                try {
+                    // MySql Connection
+                    MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
+
+                    connection.Open();
+                    MySqlCommand cmdIndexCreated = new MySqlCommand($"" +
+                        $"SELECT full_text " +
+                        $"FROM cve.cve " +
+                        $"WHERE cve_number = '{cve_number}';", connection);
+                    MySqlDataReader reader = cmdIndexCreated.ExecuteReader();
+                    DataTable resDataTable = new DataTable();
+                    resDataTable.Load(reader);
+                    connection.Close();
+
+                    if (resDataTable.Rows.Count == 0) {
+                        return NoContent();
+                    }
+
+                    return Ok(JsonConvert.SerializeObject(resDataTable.Rows[0]["full_text"].ToString()));
+                }
+                catch (Exception ex) {
+                    return BadRequest(ex.StackTrace + "\n\n" + ex.Message);
+
                 }
             }
         }
