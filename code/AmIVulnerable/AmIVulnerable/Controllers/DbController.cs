@@ -132,7 +132,7 @@ namespace AmIVulnerable.Controllers {
         /// <summary></summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("")]
+        [Route("Update")]
         public IActionResult UpdateCveDatabase() {
             using (Operation.Time("UpdateCveDatabase")) {
                 try {
@@ -141,8 +141,8 @@ namespace AmIVulnerable.Controllers {
 
                     MySqlCommand cmdTestIfTableExist = new MySqlCommand($"" +
                         $"SELECT COUNT(*) " +
-                        $"FROM information_schema.TABLES" +
-                        $"WHERE (TABLE_SCHEMA = 'cve') AND (TABLE_NAME = 'cve')", connection);
+                        $"FROM information_schema.TABLES " +
+                        $"WHERE (TABLE_SCHEMA = 'cve') AND (TABLE_NAME = 'cve');", connection);
                     
                     connection.Open();
                     int count = cmdTestIfTableExist.ExecuteNonQuery();
@@ -155,7 +155,7 @@ namespace AmIVulnerable.Controllers {
                     //start update process
                     try {
                         ProcessStartInfo process = new ProcessStartInfo {
-                            FileName = "cmd",
+                            FileName = "bash",
                             RedirectStandardInput = true,
                             WorkingDirectory = $"",
                         };
@@ -188,7 +188,7 @@ namespace AmIVulnerable.Controllers {
                     }
 
                     // Drop Index for faster insert
-                    MySqlCommand cmdIndexDrop = new MySqlCommand("DROP INDEX idx_designation ON cve;", connection);
+                    MySqlCommand cmdIndexDrop = new MySqlCommand("CALL drop_index_on_designation_if_exists();", connection);
                     
                     connection.Open();
                     cmdIndexDrop.ExecuteNonQuery();
@@ -201,7 +201,7 @@ namespace AmIVulnerable.Controllers {
                             "VALUES(@cve, @des, @ver, @ful) " +
                             "ON DUPLICATE KEY UPDATE " +
                             "version_affected = @ver" +
-                            "full_text = @ful";
+                            "full_text = @ful;" ;
                         MySqlCommand cmdInsert = new MySqlCommand(insertIntoString, connection);
 
                         string json = System.IO.File.ReadAllText(x);

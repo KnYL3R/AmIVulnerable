@@ -59,7 +59,7 @@ namespace AmIVulnerable.Controllers {
         public async Task<IActionResult> PullAndConvertCveFiles() {
              try {
                 ProcessStartInfo process = new ProcessStartInfo {
-                    FileName = "cmd",
+                    FileName = "bash",
                     RedirectStandardInput = true,
                     WorkingDirectory = $"",
                 };
