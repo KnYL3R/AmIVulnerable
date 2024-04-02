@@ -5,7 +5,9 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using SerilogTimings;
 using System.Data;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
+using CM = System.Configuration.ConfigurationManager;
 
 namespace AmIVulnerable.Controllers {
 
@@ -43,7 +45,7 @@ namespace AmIVulnerable.Controllers {
         [HttpGet]
         [Route("ConvertRawCveToDb")]
         public IActionResult ConvertRawFilesToMySql() {
-            using (Operation.Time("TaskDuration")) {
+            using (Operation.Time("ConvertRawCveToDb")) {
                 List<string> fileList = new List<string>();
                 List<int> indexToDelete = new List<int>();
                 string path = "raw";
@@ -118,6 +120,124 @@ namespace AmIVulnerable.Controllers {
                     connection.Close();
 
                     return Ok(insertIndex);
+                }
+                catch (Exception ex) {
+                    return BadRequest(ex.StackTrace + "\n\n" + ex.Message);
+                }
+            }
+        }
+
+        [HttpGet]
+        [Route("")]
+        public IActionResult UpdateCveDatabase() {
+            using (Operation.Time("UpdateCveDatabase")) {
+                try {
+                    // MySql Connection
+                    MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
+
+                    MySqlCommand cmdTestIfTableExist = new MySqlCommand($"" +
+                        $"SELECT COUNT(*) " +
+                        $"FROM information_schema.TABLES" +
+                        $"WHERE (TABLE_SCHEMA = 'cve') AND (TABLE_NAME = 'cve')", connection);
+                    
+                    connection.Open();
+                    int count = cmdTestIfTableExist.ExecuteNonQuery();
+                    connection.Close();
+
+                    if (count == 0) {
+                        return BadRequest("Table not exist!\nPlease download the cve and create a database before try to update it.");
+                    }
+
+                    //start update process
+                    try {
+                        ProcessStartInfo process = new ProcessStartInfo {
+                            FileName = "cmd",
+                            RedirectStandardInput = true,
+                            WorkingDirectory = $"",
+                        };
+
+                        Process runProcess = Process.Start(process)!;
+                        runProcess.StandardInput.WriteLine($"git " +
+                            $"clone {CM.AppSettings["StandardCveUrlPlusTag"]!} " +  // git url
+                            $"raw");                                                // target dir
+                        runProcess.StandardInput.WriteLine($"exit");
+                        runProcess.WaitForExit();
+                    }
+                    catch (Exception ex) {
+                        return BadRequest(ex.StackTrace);
+                    }
+
+                    //read the file List
+                    List<string> fileList = new List<string>();
+                    List<int> indexToDelete = new List<int>();
+                    string path = "raw";
+                    ExploreFolder(path, fileList);
+
+                    //filter for json files
+                    foreach (int i in Enumerable.Range(0, fileList.Count)) {
+                        if (!Regex.IsMatch(fileList[i], @"CVE-[-\S]+.json")) {
+                            indexToDelete.Add(i);
+                        }
+                    }
+                    foreach (int i in Enumerable.Range(0, indexToDelete.Count)) {
+                        fileList.RemoveAt(indexToDelete[i] - i);
+                    }
+
+                    // Drop Index for faster insert
+                    MySqlCommand cmdIndexDrop = new MySqlCommand("DROP INDEX idx_designation ON cve;", connection);
+                    
+                    connection.Open();
+                    cmdIndexDrop.ExecuteNonQuery();
+                    connection.Close();
+
+                    //start insert/update in MySQL
+                    int insertAndUpdateIndex = 0;
+                    foreach (string x in fileList) {
+                        string insertIntoString = "INSERT INTO cve(cve_number, designation, version_affected, full_text) " +
+                            "VALUES(@cve, @des, @ver, @ful) " +
+                            "ON DUPLICATE KEY UPDATE " +
+                            "version_affected = @ver" +
+                            "full_text = @ful";
+                        MySqlCommand cmdInsert = new MySqlCommand(insertIntoString, connection);
+
+                        string json = System.IO.File.ReadAllText(x);
+                        CVEcomp cve = JsonConvert.DeserializeObject<CVEcomp>(json)!;
+
+                        string affected = "";
+                        foreach (Affected y in cve.containers.cna.affected) {
+                            foreach (Modells.Version z in y.versions) {
+                                affected += z.version + $"({z.status}) |";
+                            }
+                        }
+                        if (affected.Length > 25_000) {
+                            affected = "to long -> view full_text";
+                        }
+                        string product = "n/a";
+                        try {
+                            product = cve.containers.cna.affected[0].product;
+                            if (product.Length > 500) {
+                                product = product[0..500];
+                            }
+                        }
+                        catch {
+                            product = "n/a";
+                        }
+                        cmdInsert.Parameters.AddWithValue("@cve", cve.cveMetadata.cveId);
+                        cmdInsert.Parameters.AddWithValue("@des", product);
+                        cmdInsert.Parameters.AddWithValue("@ver", affected);
+                        cmdInsert.Parameters.AddWithValue("@ful", JsonConvert.SerializeObject(cve, Formatting.None));
+
+                        connection.Open();
+                        insertAndUpdateIndex += cmdInsert.ExecuteNonQuery();
+                        connection.Close();
+                    }
+
+                    connection.Open();
+                    MySqlCommand cmdIndexCreated = new MySqlCommand("CREATE INDEX idx_designation ON cve (designation);", connection);
+                    cmdIndexCreated.ExecuteNonQuery();
+                    connection.Close();
+
+                    return Ok(insertAndUpdateIndex);
                 }
                 catch (Exception ex) {
                     return BadRequest(ex.StackTrace + "\n\n" + ex.Message);
