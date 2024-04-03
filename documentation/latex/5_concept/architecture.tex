@@ -2,15 +2,15 @@
 Um eine API umzusetzen sind verschiedene Komponenten nötig:
 \begin{enumerate}
     \item \textbf{Datenbank} \\
-        In der Datenbank sind alle CVE-Daten, die zu Durchsuchen sind zu persistieren.
-        Diese Daten dienen als Grundlage der Durchsuchung von Projekten und Paketen nach Schachstellen.
-        Wichtig sind hier schnelle Lesezugriffe, da diese beim Durchsuchen der Datenbank die größte Laufzeiteinsparung bringen. 
+        In der Datenbank sind alle CVE-Daten zu persistieren, welche zu durchsuchen sind.
+        Diese Daten dienen als Grundlage der Identifizierung von Schachstellen in Paketen innerhalb von Projekten.
+        Wichtig sind hier schnelle Lesezugriffe, da diese beim Abfragen der Datenbank die größte Laufzeiteinsparung bringen. 
     \item \textbf{Controller} \\
         Controller einer API nehmen HTTP-Anfragen entgegen und reagieren darauf.
         Hier wird die Hauptaufgabe der API geschehen, da alle Funktionalitäten, sei es Datenbankabfragen, Klonen eines zu untersuchenden Repositories oder die Untersuchung dieses, in einem solchen implementiert oder aufgerufen werden müssen.
     \item \textbf{Datenmodelle} \\
-        Um Daten korrekt in die Datenbank füllen sowie beim herstellen des Resultat-Json's werden Datenmodelle genutzt.
+        Um Daten korrekt in die Datenbank einzufügen, um ein Resultat-JSON zu erzeugen oder die Paketliste intern zu verarbeiten -- dazu sind Datenmodelle nötig.
     \item \textbf{Konvertierung von und in JSON} \\
         Beim Einlesen der CVE-Daten in die Datenbank ist eine Konvertierung vom vorhandenen JSON-Format in Einträge der Datenbank vorzunehmen.  
-        Die aus der Datenbank genutzten, durch den Controller verarbeiteten, Daten müssen nun schließlich noch als JSON dem Benutzer übermittelt werden.
+        Die aus der Datenbank genutzten, durch den Controller verarbeiteten, Daten müssen nun schließlich im JSON-Format dem Benutzer übermittelt werden.
 \end{enumerate}
