@@ -31,50 +31,37 @@ namespace AmIVulnerable.Controllers {
         /// <returns>Ok with result. NoContent if empty.</returns>
         [HttpPost]
         [Route("checkSinglePackage")]
-        public IActionResult CheckSinglePackage([FromHeader] string packageName,
-                                                    [FromHeader] bool isDbSearch = true,
-                                                    [FromHeader] string? packageVersion = "") {
-            if (isDbSearch) {
-                using (Operation.Time($"Complete Time for Query-SingleSearch after Package \"{packageName}\"")) {
-                    List<CveResult> results = [];
-                    DataTable dtResult = SearchInMySql(packageName);
-                    // convert the result
-                    foreach (DataRow x in dtResult.Rows) {
-                        CveResult y = new CveResult() {
-                            CveNumber = x["cve_number"].ToString() ?? "",
-                            Designation = x["designation"].ToString() ?? "",
-                            Version = x["version_affected"].ToString() ?? ""
-                        };
-                        CVEcomp temp = JsonConvert.DeserializeObject<CVEcomp>(x["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
-                        try {
-                            y.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
-                            y.Description = temp.containers.cna.descriptions[0];
-                        }
-                        finally {
-                            results.Add(y);
-                        }
+        public IActionResult CheckSinglePackage([FromHeader] PackageForApi packageName) {
+            using (Operation.Time($"Complete Time for Query-SingleSearch after Package \"{packageName}\"")) {
+                List<CveResult> results = [];
+                DataTable dtResult = SearchInMySql(packageName.PackageName);
+                // convert the result
+                foreach (DataRow x in dtResult.Rows) {
+                    CveResult y = new CveResult() {
+                        CveNumber = x["cve_number"].ToString() ?? "",
+                        Designation = x["designation"].ToString() ?? "",
+                        Version = x["version_affected"].ToString() ?? ""
+                    };
+                    CVEcomp temp = JsonConvert.DeserializeObject<CVEcomp>(x["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
+                    try {
+                        y.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
+                        y.Description = temp.containers.cna.descriptions[0];
                     }
-                    // return's
-                    if (results.Count > 0) {
-                        JObject jsonLdObject = new JObject {
-                                    { "@context", "https://localhost:7203/views/cveResult" },
-                                    { "data", JsonConvert.SerializeObject(results) }
-                                };
-                        return Ok(jsonLdObject);
-                    }
-                    else {
-                        return NoContent();
+                    finally {
+                        results.Add(y);
                     }
                 }
-            }
-            else {
-                // find all json files of cve                    
-                List<CveResult> results = SearchInJson(packageName);
-                JObject jsonLdObject = new JObject {
-                                    { "@context", "https://localhost:7203/views/cveResult" },
-                                    { "data", JsonConvert.SerializeObject(results) }
-                                };
-                return Ok(JsonConvert.SerializeObject(jsonLdObject));
+                // return's
+                if (results.Count > 0) {
+                    JObject jsonLdObject = new JObject {
+                                { "@context", "https://localhost:7203/views/cveResult" },
+                                { "data", JsonConvert.SerializeObject(results) }
+                            };
+                    return Ok(jsonLdObject);
+                }
+                else {
+                    return NoContent();
+                }
             }
         }
 
@@ -85,11 +72,11 @@ namespace AmIVulnerable.Controllers {
         /// <returns>OK, if exists. OK, if no package list searched. NoContent if not found.</returns>
         [HttpPost]
         [Route("checkPackageList")]
-        public async Task<IActionResult> CheckPackageListAsync([FromBody] List<Tuple<string, string>> packages) {
+        public async Task<IActionResult> CheckPackageListAsync([FromBody] List<PackageForApi> packages) {
             List<CveResult> results = [];
             using (Operation.Time($"Complete Time for Query-Search after List of Packages")) {
-                foreach (Tuple<string, string> x in packages) {
-                    DataTable dtResult = SearchInMySql(x.Item1);
+                foreach (PackageForApi x in packages) {
+                    DataTable dtResult = SearchInMySql(x.PackageName);
                     // convert the result
                     foreach(DataRow y in dtResult.Rows) {
                         CveResult z = new CveResult() {
