@@ -24,108 +24,6 @@ namespace AmIVulnerable.Controllers {
         #endregion
 
         #region Controller
-        /// <summary>Get-route checking if raw cve data is in directory.</summary>
-        /// <returns>OK, if exists. No Content, if doesnt exist</returns>
-        [HttpGet]
-        [Route("CheckRawDir")]
-        public IActionResult IsRawDataThere() {
-            string path = "raw";
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
-            if (directoryInfo.GetDirectories().Length != 0) {
-                return Ok();
-            }
-            else {
-                return NoContent();
-            }
-        }
-
-        /// <summary>By call the raw cve.json's will be inserted in the MySql-Database.</summary>
-        /// <returns>The status, if the database is finished created.</returns>
-        [HttpGet]
-        [Route("ConvertRawCveToDb")]
-        public IActionResult ConvertRawFilesToMySql() {
-            using (Operation.Time("TaskDuration")) {
-                List<string> fileList = new List<string>();
-                List<int> indexToDelete = new List<int>();
-                string path = "raw";
-                ExploreFolder(path, fileList);
-
-                //filter for json files
-                foreach (int i in Enumerable.Range(0, fileList.Count)) {
-                    if (!Regex.IsMatch(fileList[i], @"CVE-[-\S]+.json")) {
-                        indexToDelete.Add(i);
-                    }
-                }
-                foreach (int i in Enumerable.Range(0, indexToDelete.Count)) {
-                    fileList.RemoveAt(indexToDelete[i] - i);
-                }
-
-                try {
-                    // MySql Connection
-                    MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
-
-                    // Create the Table cve.cve if it is not already there.
-                    MySqlCommand cmdTable = new MySqlCommand("" +
-                        "CREATE TABLE IF NOT EXISTS cve.cve(" +
-                        "cve_number VARCHAR(20) PRIMARY KEY NOT NULL," +
-                        "designation VARCHAR(500) NOT NULL," +
-                        "version_affected TEXT NOT NULL," +
-                        "full_text MEDIUMTEXT NOT NULL" +
-                        ")", connection);
-                    connection.Open();
-                    cmdTable.ExecuteNonQuery();
-                    connection.Close();
-
-                    int insertIndex = 0;
-                    foreach (string x in fileList) {
-                        string insertIntoString = "INSERT INTO cve(cve_number, designation, version_affected, full_text) VALUES(@cve, @des, @ver, @ful)";
-                        MySqlCommand cmdInsert = new MySqlCommand(insertIntoString, connection);
-
-                        string json = System.IO.File.ReadAllText(x);
-                        CVEcomp cve = JsonConvert.DeserializeObject<CVEcomp>(json)!;
-
-                        string affected = "";
-                        foreach (Affected y in cve.containers.cna.affected) {
-                            foreach (Modells.Version z in y.versions) {
-                                affected += z.version + $"({z.status}) |";
-                            }
-                        }
-                        if (affected.Length > 25_000) {
-                            affected = "to long -> view full_text";
-                        }
-                        string product = "n/a";
-                        try {
-                            product = cve.containers.cna.affected[0].product;
-                            if (product.Length > 500) {
-                                product = product[0..500];
-                            }
-                        }
-                        catch {
-                            product = "n/a";
-                        }
-                        cmdInsert.Parameters.AddWithValue("@cve", cve.cveMetadata.cveId);
-                        cmdInsert.Parameters.AddWithValue("@des", product);
-                        cmdInsert.Parameters.AddWithValue("@ver", affected);
-                        cmdInsert.Parameters.AddWithValue("@ful", JsonConvert.SerializeObject(cve, Formatting.None));
-
-                        connection.Open();
-                        insertIndex += cmdInsert.ExecuteNonQuery();
-                        connection.Close();
-                    }
-
-                    connection.Open();
-                    MySqlCommand cmdIndexCreated = new MySqlCommand("CREATE INDEX idx_designation ON cve (designation);", connection);
-                    cmdIndexCreated.ExecuteNonQuery();
-                    connection.Close();
-
-                    return Ok(insertIndex);
-                }
-                catch (Exception ex) {
-                    return BadRequest(ex.StackTrace + "\n\n" + ex.Message);
-                }
-            }
-        }
-
         /// <summary>Check for an cve entry of a package with all its versions</summary>
         /// <param name="packageName">Name of package to search</param>
         /// <param name="isDbSearch">true: search db, false: search raw-json</param>
@@ -162,7 +60,7 @@ namespace AmIVulnerable.Controllers {
                                     { "@context", "https://localhost:7203/views/cveResult" },
                                     { "data", JsonConvert.SerializeObject(results) }
                                 };
-                        return Ok(JsonConvert.SerializeObject(jsonLdObject));
+                        return Ok(jsonLdObject);
                     }
                     else {
                         return NoContent();
@@ -178,31 +76,6 @@ namespace AmIVulnerable.Controllers {
                                 };
                 return Ok(JsonConvert.SerializeObject(jsonLdObject));
             }
-            #region oldcode
-            //if (packageVersion!.Equals("")) { // search all versions
-            //    if (isDbSearch) {
-            //        SearchDbController searchDbController = new SearchDbController();
-            //        List<CveResult> res = [];
-            //        using (Operation.Time($"Package \"{packageName}\"")) {
-            //            res = searchDbController.SearchSinglePackage(packageName);
-            //        }
-            //        if (res.Count > 0) {
-            //            return Ok(JsonConvert.SerializeObject(res));
-            //        }
-            //        else {
-            //            return NoContent();
-            //        }
-            //    }
-            //    else {
-            //        // find all json files of cve                    
-            //        return Ok(JsonConvert.SerializeObject(SearchInJson(packageName)));
-            //    }
-            //}
-            //else {
-            //    // TODO: search after a specific version
-            //}
-            //return Ok();
-            #endregion
         }
 
         /// <summary>
@@ -244,33 +117,7 @@ namespace AmIVulnerable.Controllers {
                                     { "@context", "https://localhost:7203/views/cveResult" },
                                     { "data", JsonConvert.SerializeObject(results) }
                                 };
-            return Ok(results.Count == 0 ? "No result" : JsonConvert.SerializeObject(jsonLdObject));
-            #region oldcode
-            //if (packages.Count > 0) {
-            //    SearchDbController searchDbController = new SearchDbController();
-            //    List<CveResult> resultsOld = [];
-            //    List<string> strings = [];
-            //    foreach (Tuple<string, string> item in packages) {
-            //        strings.Add(item.Item1);
-            //        if (item.Item1.Equals("")) {
-            //            continue;
-            //        }
-            //        using (Operation.Time($"Time by mono {item.Item1}")) {
-            //            resultsOld.AddRange(searchDbController.SearchSinglePackage(item.Item1));
-            //        }
-            //    }
-            //    using (Operation.Time($"Time by pipe")) {
-            //        resultsOld = await searchDbController.SearchPackagesAsList(strings);
-            //    }
-            //    if (resultsOld.Count > 0) {
-            //        return Ok(JsonConvert.SerializeObject(resultsOld));
-            //    }
-            //    else {
-            //        return NoContent();
-            //    }
-            //}
-            //return Ok("No package List delivered.");
-            #endregion
+            return Ok(results.Count == 0 ? "No result" : jsonLdObject);
         }
         #endregion
 

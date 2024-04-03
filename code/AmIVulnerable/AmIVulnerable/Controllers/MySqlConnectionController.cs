@@ -30,17 +30,10 @@ namespace AmIVulnerable.Controllers {
                     reader.Close();
                     c.Close();
 
-                    string r = "";
-                    foreach (DataRow row in dataTable.Rows) {
-                        foreach (object? item in row.ItemArray) {
-                            r += item;
-                        }
-                    }
-
-                    return Ok(r);
+                    return Ok();
                 }
                 catch (Exception ex) {
-                    return BadRequest(ex.ToString());
+                    return BadRequest(ex.StackTrace!.ToString());
                 }
             }
         }
