@@ -200,7 +200,7 @@ namespace AmIVulnerable.Controllers {
                         string insertIntoString = "INSERT INTO cve(cve_number, designation, version_affected, full_text) " +
                             "VALUES(@cve, @des, @ver, @ful) " +
                             "ON DUPLICATE KEY UPDATE " +
-                            "version_affected = @ver" +
+                            "version_affected = @ver, " +
                             "full_text = @ful;" ;
                         MySqlCommand cmdInsert = new MySqlCommand(insertIntoString, connection);
 
