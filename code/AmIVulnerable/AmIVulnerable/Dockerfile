@@ -5,28 +5,24 @@ WORKDIR /src/Modells
 COPY Modells/Modells.csproj .
 RUN dotnet restore Modells.csproj
 
-# # LiteDbLib
-# WORKDIR /src/LiteDbLib
-# COPY LiteDbLib/LiteDbLib.csproj .
-# RUN dotnet restore LiteDbLib.csproj
-
 # API
 WORKDIR /src/AmIVulnerable
 COPY AmIVulnerable/AmIVulnerable.csproj .
 RUN dotnet restore AmIVulnerable.csproj
 
 # API build
+RUN dotnet dev-certs https --trust
 WORKDIR /src
 COPY . .
 RUN dotnet build AmIVulnerable/AmIVulnerable.csproj -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish AmIVulnerable/AmIVulnerable.csproj -c Release -o /app/publish /p:UseAppHost=false
-RUN dotnet dev-certs https --trust
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY AmIVulnerable/Controllers/Views /app/Controllers/Views
+COPY --from=publish /root/.dotnet/corefx/cryptography/x509stores/my/* /root/.dotnet/corefx/cryptography/x509stores/my/
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "AmIVulnerable.dll"]
 
