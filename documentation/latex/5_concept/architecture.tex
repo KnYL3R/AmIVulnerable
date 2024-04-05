@@ -1,16 +1,57 @@
 \subsection{Architektur} \label{sec:Architektur}
-Um eine API umzusetzen sind verschiedene Komponenten nötig:
-\begin{enumerate}
-    \item \textbf{Datenbank} \\
-        In der Datenbank sind alle CVE-Daten zu persistieren, welche zu durchsuchen sind.
-        Diese Daten dienen als Grundlage der Identifizierung von Schachstellen in Paketen innerhalb von Projekten.
-        Wichtig sind hier schnelle Lesezugriffe, da diese beim Abfragen der Datenbank die größte Laufzeiteinsparung bringen. 
-    \item \textbf{Controller} \\
-        Controller einer API nehmen HTTP-Anfragen entgegen und reagieren darauf.
-        Hier wird die Hauptaufgabe der API geschehen, da alle Funktionalitäten, sei es Datenbankabfragen, Klonen eines zu untersuchenden Repositories oder die Untersuchung dieses, in einem solchen implementiert oder aufgerufen werden müssen.
-    \item \textbf{Datenmodelle} \\
-        Um Daten korrekt in die Datenbank einzufügen, um ein Resultat-JSON zu erzeugen oder die Paketliste intern zu verarbeiten -- dazu sind Datenmodelle nötig.
-    \item \textbf{Konvertierung von und in JSON} \\
-        Beim Einlesen der CVE-Daten in die Datenbank ist eine Konvertierung vom vorhandenen JSON-Format in Einträge der Datenbank vorzunehmen.  
-        Die aus der Datenbank genutzten, durch den Controller verarbeiteten, Daten müssen nun schließlich im JSON-Format dem Benutzer übermittelt werden.
-\end{enumerate}
+    Um eine API umzusetzen sind verschiedene Komponenten nötig:
+    \begin{enumerate}
+        \item \textbf{Datenbank} \\
+            In der Datenbank sind alle CVE-Daten zu persistieren, welche zu durchsuchen sind.
+            Diese Daten dienen als Grundlage der Identifizierung von Schachstellen in Paketen innerhalb von Projekten.
+            Wichtig sind hier schnelle Lesezugriffe, da diese beim Abfragen der Datenbank die größte Laufzeiteinsparung bringen. 
+        \item \textbf{Controller} \\
+            Controller einer API nehmen HTTP-Anfragen entgegen und reagieren darauf.
+            Hier wird die Hauptaufgabe der API geschehen, da alle Funktionalitäten, sei es Datenbankabfragen, Klonen eines zu untersuchenden Repositories oder die Untersuchung dieses, in einem solchen implementiert oder aufgerufen werden müssen.
+        \item \textbf{Datenmodelle} \\
+            Um Daten korrekt in die Datenbank einzufügen, um ein Resultat-JSON zu erzeugen oder die Paketliste intern zu verarbeiten -- dazu sind Datenmodelle nötig.
+        \item \textbf{Konvertierung von und in JSON} \\
+            Beim Einlesen der CVE-Daten in die Datenbank ist eine Konvertierung vom vorhandenen JSON-Format in Einträge der Datenbank vorzunehmen.  
+            Die aus der Datenbank genutzten, durch den Controller verarbeiteten, Daten müssen nun schließlich im JSON-Format dem Benutzer übermittelt werden.
+    \end{enumerate}
+
+    \textcolor{red}{
+        5. bleibt Architektur, 6. API (kann umbenannt werden), darunter 5 Unterpunkte: 1. V1, 2. Verifikation V1 (fktnl, nicht fktnl Anforderungen), 3. Experimente, 4. V2, 5. Verifikation V2 (Unterschiede zu V1 betrachten und)
+        \begin{enumerate}
+            \item Architektur V1 (LiteDB), alle Controller erwähnen, LiteDB, Datenmodelle, Konvertierung von und in Json zu Controller (oben die Punkte), nur ein Container für API (inklusive DB darin)
+            \begin{itemize}
+                \item removed Controller-Endpoints:
+                \item Db/CheckRawDir (check if the downloaded cve-dir is ready to convert)
+                \item Db/ConvertRawDirToDb (Convert the downloaded cve to LiteDB)
+                \item Git/cloneStatus (if the current clone is finished)
+            \end{itemize}
+            \item Verifikation V1, sind die Ausgaben den Vorgaben entsprechend (funktional)
+            \begin{itemize}
+                \item api/Db/checkSinglePackage
+                \item api/Db/checkPackageList
+                \item api/Dependecies/ExtractTree
+                \item api/Dependecies/ExtractAndAnalyzeTree
+            \end{itemize}
+            \item Verifikation V1 (nicht-funktional)
+            \begin{itemize}
+                \item Skalierbarkeit und Laufzeiteffizienz (siehe risks.tex)
+                \item JSON-LD (Branch: 30-json-ld...)
+                \item GEGENCHECK BEI UNS VS NIST API ODER ANDERE CVE DATENBANK
+            \end{itemize}
+            \item Experimente
+            \begin{itemize}
+                \item Laufzeitmessungen LiteDB (Mono vs. Pipe -- schon schneller, aber nicht genug $\rightarrow$ fragments/searchStatistics.md)
+                \item conclusio geht es schneller mit einer relationalen Datenbank?
+            \end{itemize}
+            \item Architektur V2 (MySQL)
+            \begin{itemize}
+                \item Was hat sich geändert -- nur code, Endpunkte identisch, oder die 3 oberen entfernt
+                \item neuer Container für die DB
+            \end{itemize}
+            \item Verifikation V2
+            \begin{itemize}
+                \item Endpunkte Ausgaben V1 vs. V2 vergleichen -- Überraschung folgt
+                \item Laufzeitvergleich LiteDB vs. MySQL $\rightarrow$ fragments/mysql-measure.md
+            \end{itemize}
+        \end{enumerate}
+    }
