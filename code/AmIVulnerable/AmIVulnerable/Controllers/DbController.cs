@@ -4,8 +4,10 @@ using Modells;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NuGet.Protocol;
 using SerilogTimings;
 using System.Data;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace AmIVulnerable.Controllers {
@@ -31,7 +33,7 @@ namespace AmIVulnerable.Controllers {
         /// <returns>Ok with result. NoContent if empty.</returns>
         [HttpPost]
         [Route("checkSinglePackage")]
-        public IActionResult CheckSinglePackage([FromHeader] PackageForApi packageName) {
+        public IActionResult CheckSinglePackage([FromBody] PackageForApi packageName) {
             using (Operation.Time($"Complete Time for Query-SingleSearch after Package \"{packageName}\"")) {
                 List<CveResult> results = [];
                 DataTable dtResult = SearchInMySql(packageName.PackageName);
@@ -44,8 +46,12 @@ namespace AmIVulnerable.Controllers {
                     };
                     CVEcomp temp = JsonConvert.DeserializeObject<CVEcomp>(x["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
                     try {
-                        y.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
-                        y.Description = temp.containers.cna.descriptions[0];
+                        if (temp.containers.cna.metrics.Count != 0) {
+                            y.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
+                        }
+                        if (temp.containers.cna.descriptions.Count != 0) {
+                            y.Description = temp.containers.cna.descriptions[0];
+                        }
                     }
                     finally {
                         results.Add(y);
@@ -53,11 +59,11 @@ namespace AmIVulnerable.Controllers {
                 }
                 // return's
                 if (results.Count > 0) {
-                    JObject jsonLdObject = new JObject {
-                                { "@context", "https://localhost:7203/views/cveResult" },
-                                { "data", JsonConvert.SerializeObject(results) }
-                            };
-                    return Ok(jsonLdObject);
+                    JsonLdObject resultAsJsonLd = new JsonLdObject() {
+                        Context = "https://localhost:7203/views/cveResult",
+                        Data = results
+                    };
+                    return Ok(resultAsJsonLd);
                 }
                 else {
                     return NoContent();
@@ -78,7 +84,7 @@ namespace AmIVulnerable.Controllers {
                 foreach (PackageForApi x in packages) {
                     DataTable dtResult = SearchInMySql(x.PackageName);
                     // convert the result
-                    foreach(DataRow y in dtResult.Rows) {
+                    foreach (DataRow y in dtResult.Rows) {
                         CveResult z = new CveResult() {
                             CveNumber = y["cve_number"].ToString() ?? "",
                             Designation = y["designation"].ToString() ?? "",
@@ -100,11 +106,11 @@ namespace AmIVulnerable.Controllers {
                 }
             }
 
-            JObject jsonLdObject = new JObject {
-                                    { "@context", "https://localhost:7203/views/cveResult" },
-                                    { "data", JsonConvert.SerializeObject(results) }
-                                };
-            return Ok(results.Count == 0 ? "No result" : jsonLdObject);
+            JsonLdObject resultAsJsonLd = new JsonLdObject() {
+                Context = "https://localhost:7203/views/cveResult",
+                Data = results
+            };
+            return Ok(results.Count == 0 ? "No result" : resultAsJsonLd);
         }
         #endregion
 
