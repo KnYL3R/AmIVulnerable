@@ -35,6 +35,7 @@ namespace AmIVulnerable.Controllers {
             switch (projectType) {
                 case ProjectType.NodeJs: {
                         ExecuteCommand("npm", "install");
+                        ExecuteCommand("rm", "tree.json");
                         ExecuteCommand("npm", "list --all --json >> tree.json");
                         List<NodePackage> resTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze/tree.json");
                         F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze/depTree.json", JsonConvert.SerializeObject(resTree));
@@ -63,7 +64,7 @@ namespace AmIVulnerable.Controllers {
                 switch (projectType) {
                     case ProjectType.NodeJs: {
                             ExecuteCommand("npm", "install");
-                            ExecuteCommand("del", "tree.json");
+                            ExecuteCommand("rm", "tree.json");
                             ExecuteCommand("npm", "list --all --json >> tree.json");
                             List<NodePackage> depTree = ExtractTree("rawAnalyze/tree.json");
                             List<NodePackageResult> resTree = await AnalyzeTreeAsync(depTree) ?? [];
