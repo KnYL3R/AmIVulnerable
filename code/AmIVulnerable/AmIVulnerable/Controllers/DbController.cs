@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Modells;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using NuGet.Protocol.Plugins;
 using SerilogTimings;
 using System.Data;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
+using CM = System.Configuration.ConfigurationManager;
 
 namespace AmIVulnerable.Controllers {
 
@@ -43,7 +47,7 @@ namespace AmIVulnerable.Controllers {
         [HttpGet]
         [Route("ConvertRawCveToDb")]
         public IActionResult ConvertRawFilesToMySql() {
-            using (Operation.Time("TaskDuration")) {
+            using (Operation.Time("ConvertRawCveToDb")) {
                 List<string> fileList = new List<string>();
                 List<int> indexToDelete = new List<int>();
                 string path = "raw";
@@ -121,6 +125,168 @@ namespace AmIVulnerable.Controllers {
                 }
                 catch (Exception ex) {
                     return BadRequest(ex.StackTrace + "\n\n" + ex.Message);
+                }
+            }
+        }
+
+        /// <summary>Update the Database, if it exists already.</summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Update")]
+        public IActionResult UpdateCveDatabase() {
+            using (Operation.Time("UpdateCveDatabase")) {
+                try {
+                    // MySql Connection
+                    MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
+
+                    MySqlCommand cmdTestIfTableExist = new MySqlCommand($"" +
+                        $"SELECT COUNT(*) " +
+                        $"FROM information_schema.TABLES " +
+                        $"WHERE (TABLE_SCHEMA = 'cve') AND (TABLE_NAME = 'cve');", connection);
+                    
+                    connection.Open();
+                    int count = cmdTestIfTableExist.ExecuteNonQuery();
+                    connection.Close();
+
+                    if (count == 0) {
+                        return BadRequest("Table does not exist!\nPlease download cve data and create the database before trying to update it using the update route!");
+                    }
+
+                    //start update process
+                    try {
+                        ProcessStartInfo process = new ProcessStartInfo {
+                            FileName = "bash",
+                            RedirectStandardInput = true,
+                            WorkingDirectory = $"",
+                        };
+
+                        Process runProcess = Process.Start(process)!;
+                        runProcess.StandardInput.WriteLine($"git " +
+                            $"clone {CM.AppSettings["StandardCveUrlPlusTag"]!} " +  // git url
+                            $"raw");                                                // target dir
+                        runProcess.StandardInput.WriteLine($"exit");
+                        runProcess.WaitForExit();
+                    }
+                    catch (Exception ex) {
+                        return BadRequest(ex.StackTrace);
+                    }
+
+                    //read the file List
+                    List<string> fileList = new List<string>();
+                    List<int> indexToDelete = new List<int>();
+                    string path = "raw";
+                    ExploreFolder(path, fileList);
+
+                    //filter for json files
+                    foreach (int i in Enumerable.Range(0, fileList.Count)) {
+                        if (!Regex.IsMatch(fileList[i], @"CVE-[-\S]+.json")) {
+                            indexToDelete.Add(i);
+                        }
+                    }
+                    foreach (int i in Enumerable.Range(0, indexToDelete.Count)) {
+                        fileList.RemoveAt(indexToDelete[i] - i);
+                    }
+
+                    // Drop Index for faster insert
+                    MySqlCommand cmdIndexDrop = new MySqlCommand("CALL drop_index_on_designation_if_exists();", connection);
+                    
+                    connection.Open();
+                    cmdIndexDrop.ExecuteNonQuery();
+                    connection.Close();
+
+                    //start insert/update in MySQL
+                    int insertAndUpdateIndex = 0;
+                    foreach (string x in fileList) {
+                        string insertIntoString = "INSERT INTO cve(cve_number, designation, version_affected, full_text) " +
+                            "VALUES(@cve, @des, @ver, @ful) " +
+                            "ON DUPLICATE KEY UPDATE " +
+                            "version_affected = @ver, " +
+                            "full_text = @ful;" ;
+                        MySqlCommand cmdInsert = new MySqlCommand(insertIntoString, connection);
+
+                        string json = System.IO.File.ReadAllText(x);
+                        CVEcomp cve = JsonConvert.DeserializeObject<CVEcomp>(json)!;
+
+                        string affected = "";
+                        foreach (Affected y in cve.containers.cna.affected) {
+                            foreach (Modells.Version z in y.versions) {
+                                affected += z.version + $"({z.status}) |";
+                            }
+                        }
+                        if (affected.Length > 25_000) {
+                            affected = "to long -> view full_text";
+                        }
+                        string product = "n/a";
+                        try {
+                            product = cve.containers.cna.affected[0].product;
+                            if (product.Length > 500) {
+                                product = product[0..500];
+                            }
+                            if (product.Equals("")) {
+                                product = "n/a";
+                            }
+                        }
+                        catch {
+                            product = "n/a";
+                        }
+                        cmdInsert.Parameters.AddWithValue("@cve", cve.cveMetadata.cveId);
+                        cmdInsert.Parameters.AddWithValue("@des", product);
+                        cmdInsert.Parameters.AddWithValue("@ver", affected);
+                        cmdInsert.Parameters.AddWithValue("@ful", JsonConvert.SerializeObject(cve, Formatting.None));
+
+                        connection.Open();
+                        insertAndUpdateIndex += cmdInsert.ExecuteNonQuery();
+                        connection.Close();
+                    }
+
+                    connection.Open();
+                    MySqlCommand cmdIndexCreated = new MySqlCommand("CREATE INDEX idx_designation ON cve (designation);", connection);
+                    cmdIndexCreated.ExecuteNonQuery();
+                    connection.Close();
+
+                    return Ok(insertAndUpdateIndex);
+                }
+                catch (Exception ex) {
+                    return BadRequest(ex.StackTrace + "\n\n" + ex.Message);
+                }
+            }
+        }
+
+        /// <summary>Return the full text of a cve, when it is requested.</summary>
+        /// <param name="cve_number"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getFullTextFromCveNumber")]
+        public IActionResult GetFullTextCve([FromHeader] string? cve_number) {
+            using (Operation.Time("GetFullTextCve")) {
+                if (cve_number is null) {
+                    return BadRequest("Empty Header");
+                }
+                try {
+                    // MySql Connection
+                    MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
+
+                    connection.Open();
+                    MySqlCommand cmdIndexCreated = new MySqlCommand($"" +
+                        $"SELECT full_text " +
+                        $"FROM cve.cve " +
+                        $"WHERE cve_number = '{cve_number}';", connection);
+                    MySqlDataReader reader = cmdIndexCreated.ExecuteReader();
+                    DataTable resDataTable = new DataTable();
+                    resDataTable.Load(reader);
+                    connection.Close();
+
+                    if (resDataTable.Rows.Count == 0) {
+                        return NoContent();
+                    }
+
+                    CVEcomp? cVEcomp = JsonConvert.DeserializeObject<CVEcomp>(resDataTable.Rows[0]["full_text"].ToString()!);
+
+                    return Ok(cVEcomp);
+                }
+                catch (Exception ex) {
+                    return BadRequest(ex.StackTrace + "\n\n" + ex.Message);
+
                 }
             }
         }

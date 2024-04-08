@@ -1,7 +1,5 @@
-﻿using LibGit2Sharp;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Security.Policy;
 using CM = System.Configuration.ConfigurationManager;
 
 namespace AmIVulnerable.Controllers {
@@ -61,7 +59,7 @@ namespace AmIVulnerable.Controllers {
         public async Task<IActionResult> PullAndConvertCveFiles() {
              try {
                 ProcessStartInfo process = new ProcessStartInfo {
-                    FileName = "cmd",
+                    FileName = "bash",
                     RedirectStandardInput = true,
                     WorkingDirectory = $"",
                 };
