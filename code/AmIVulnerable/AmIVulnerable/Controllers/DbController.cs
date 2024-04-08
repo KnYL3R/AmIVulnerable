@@ -1,16 +1,10 @@
-﻿using LibGit2Sharp;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Modells;
 using MySql.Data.MySqlClient;
-using MySqlX.XDevAPI.Relational;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NuGet.Protocol;
 using SerilogTimings;
 using System.Data;
-using System.Net.Http.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace AmIVulnerable.Controllers {
