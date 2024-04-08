@@ -131,7 +131,7 @@ namespace AmIVulnerable.Controllers {
 
         /// <summary></summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Route("Update")]
         public IActionResult UpdateCveDatabase() {
             using (Operation.Time("UpdateCveDatabase")) {
@@ -221,6 +221,9 @@ namespace AmIVulnerable.Controllers {
                             product = cve.containers.cna.affected[0].product;
                             if (product.Length > 500) {
                                 product = product[0..500];
+                            }
+                            if (product.Equals("")) {
+                                product = "n/a";
                             }
                         }
                         catch {
