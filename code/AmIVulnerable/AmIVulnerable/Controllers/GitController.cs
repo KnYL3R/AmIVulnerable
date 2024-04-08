@@ -23,45 +23,9 @@ namespace AmIVulnerable.Controllers {
         public GitController(IConfiguration configuration) {
             Configuration = configuration;
         }
-
-        private static bool isFinished = false;
         #endregion
 
         #region Controller
-        /// <summary>
-        /// API-Post route to clone a git repository
-        /// </summary>
-        /// <param name="cveRaw">Use raw cve data.</param>
-        /// <param name="data">Tuple of url and tag.</param>
-        /// <returns>OK if successful. BadRequest if error when cloning.</returns>
-        [HttpPost]
-        [Route("clone")]
-        public IActionResult CloneRepo([FromHeader] bool cveRaw, [FromBody] Tuple<string, string> data) {
-            //public IActionResult CloneRepo([FromHeader] string? url) {
-            try {
-                if (cveRaw) {
-                    if (data.Item1.Equals("")) { // nothing, so use standard
-                        if (data.Item2.Equals("")) { //nothing, so use standard
-                            _ = Clone(CM.AppSettings["StandardCveUrlPlusTag"]!, "cve_2023-12-31_at_end_of_day", "raw");
-
-                        }
-                        else {
-                            _ = Clone(CM.AppSettings["StandardCveUrlPlusTag"]!, data.Item2, "raw");
-                        }
-                    }
-                    else {
-                        _ = Clone(data.Item1, data.Item2, "raw");
-                    }
-                }
-                else {
-                    _ = Clone(data.Item1, data.Item2, "rawAnalyze");
-                }
-                return Ok();
-            }
-            catch (Exception ex) {
-                return BadRequest(ex.Message);
-            }
-        }
 
         /// <summary></summary>
         /// <param name="repoObject"></param>
@@ -109,7 +73,7 @@ namespace AmIVulnerable.Controllers {
 
         /// <summary></summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Route("pullCveAndConvert")]
         public IActionResult PullAndConvertCveFiles() {
             try {
@@ -126,8 +90,6 @@ namespace AmIVulnerable.Controllers {
                     $"raw");                                                // target dir
                 runProcess.StandardInput.WriteLine($"exit");
                 runProcess.WaitForExit();
-
-                DbController dbC = new DbController(Configuration);
 
                 #region
                 using (Operation.Time("ConvertRawCveToDb")) {
@@ -211,7 +173,6 @@ namespace AmIVulnerable.Controllers {
                     }
                 }
                 #endregion
-                //return dbC.ConvertRawFilesToMySql();
             }
             catch (Exception ex) {
                 return BadRequest(ex.Message);
