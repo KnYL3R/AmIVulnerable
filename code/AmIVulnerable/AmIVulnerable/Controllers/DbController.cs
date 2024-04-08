@@ -149,7 +149,7 @@ namespace AmIVulnerable.Controllers {
                     connection.Close();
 
                     if (count == 0) {
-                        return BadRequest("Table does not exist!\nPlease download cve data and create the database before trying to update it over the route for that!");
+                        return BadRequest("Table does not exist!\nPlease download cve data and create the database before trying to update it using the update route!");
                     }
 
                     //start update process
