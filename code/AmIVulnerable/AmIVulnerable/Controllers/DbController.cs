@@ -129,7 +129,7 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
-        /// <summary></summary>
+        /// <summary>Update the Database, if it exists already.</summary>
         /// <returns></returns>
         [HttpPost]
         [Route("Update")]
@@ -149,7 +149,7 @@ namespace AmIVulnerable.Controllers {
                     connection.Close();
 
                     if (count == 0) {
-                        return BadRequest("Table not exist!\nPlease download the cve and create a database before try to update it.");
+                        return BadRequest("Table does not exist!\nPlease download cve data and create the database before trying to update it over the route for that!");
                     }
 
                     //start update process
@@ -252,7 +252,7 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
-        /// <summary></summary>
+        /// <summary>Return the full text of a cve, when it is requested.</summary>
         /// <param name="cve_number"></param>
         /// <returns></returns>
         [HttpGet]
@@ -280,7 +280,9 @@ namespace AmIVulnerable.Controllers {
                         return NoContent();
                     }
 
-                    return Ok(JsonConvert.SerializeObject(resDataTable.Rows[0]["full_text"].ToString()));
+                    CVEcomp? cVEcomp = JsonConvert.DeserializeObject<CVEcomp>(resDataTable.Rows[0]["full_text"].ToString()!);
+
+                    return Ok(cVEcomp);
                 }
                 catch (Exception ex) {
                     return BadRequest(ex.StackTrace + "\n\n" + ex.Message);
