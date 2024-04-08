@@ -3,7 +3,6 @@ using Modells;
 using Modells.Packages;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SerilogTimings;
 using System.Data;
 using System.Diagnostics;
@@ -31,14 +30,18 @@ namespace AmIVulnerable.Controllers {
         /// <returns>OK if known project type. BadRequest if unknown project type.</returns>
         [HttpGet]
         [Route("ExtractTree")]
-        public IActionResult ExtractDependencies([FromHeader] ProjectType projectType) {
+        public IActionResult ExtractDependencies([FromHeader] ProjectType projectType,
+                                                    [FromHeader] Guid projectGuid) {
+            if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString())) {
+                return BadRequest("ProjectGuid does not exist.");
+            }
             switch (projectType) {
                 case ProjectType.NodeJs: {
-                        ExecuteCommand("npm", "install");
-                        ExecuteCommand("rm", "tree.json");
-                        ExecuteCommand("npm", "list --all --json >> tree.json");
-                        List<NodePackage> resTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze/tree.json");
-                        F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "rawAnalyze/depTree.json", JsonConvert.SerializeObject(resTree));
+                        ExecuteCommand("npm", "install", projectGuid.ToString());
+                        ExecuteCommand("rm", "tree.json", projectGuid.ToString());
+                        ExecuteCommand("npm", "list --all --json >> tree.json", projectGuid.ToString());
+                        List<NodePackage> resTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString() + "/tree.json");
+                        F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString() + "/depTree.json", JsonConvert.SerializeObject(resTree));
 
                         JsonLdObject resultAsJsonLd = new JsonLdObject() {
                             Context = "https://localhost:7203/views/nodePackageResult",
@@ -59,14 +62,18 @@ namespace AmIVulnerable.Controllers {
         /// <returns>OK if vulnerability found. 299 if no vulnerability found. BadRequest if unknown project type is searched.</returns>
         [HttpGet]
         [Route("ExtractAndAnalyzeTree")]
-        public async Task<IActionResult> ExtractAndAnalyzeTreeAsync([FromHeader] ProjectType projectType) {
-            using (Operation.Time($"ExtractAndAnalyzeTreeAsync called with procjectType {projectType.ToString()}")) {
+        public async Task<IActionResult> ExtractAndAnalyzeTreeAsync([FromHeader] ProjectType projectType,
+                                                                        [FromHeader] Guid projectGuid) {
+            using (Operation.Time($"ExtractAndAnalyzeTreeAsync called with procjectType {projectType}")) {
+                if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString())) {
+                    return BadRequest("ProjectGuid does not exist.");
+                }
                 switch (projectType) {
                     case ProjectType.NodeJs: {
-                            ExecuteCommand("npm", "install");
-                            ExecuteCommand("rm", "tree.json");
-                            ExecuteCommand("npm", "list --all --json >> tree.json");
-                            List<NodePackage> depTree = ExtractTree("rawAnalyze/tree.json");
+                            ExecuteCommand("npm", "install", projectGuid.ToString());
+                            ExecuteCommand("rm", "tree.json", projectGuid.ToString());
+                            ExecuteCommand("npm", "list --all --json >> tree.json", projectGuid.ToString());
+                            List<NodePackage> depTree = ExtractTree(projectGuid.ToString() + "/tree.json");
                             List<NodePackageResult> resTree = await AnalyzeTreeAsync(depTree) ?? [];
                             if (resTree.Count != 0) {
                                 JsonLdObject resultAsJsonLd = new JsonLdObject() {
@@ -91,11 +98,11 @@ namespace AmIVulnerable.Controllers {
         /// </summary>
         /// <param name="prog">Programm used for commands</param>
         /// <param name="command">Command used for programm</param>
-        private void ExecuteCommand(string prog, string command) {
+        private void ExecuteCommand(string prog, string command, string dir) {
             ProcessStartInfo process = new ProcessStartInfo {
                 FileName = "bash",
                 RedirectStandardInput = true,
-                WorkingDirectory = "rawAnalyze",
+                WorkingDirectory = dir,
             };
             Process runProcess = Process.Start(process)!;
             runProcess.StandardInput.WriteLine($"{prog} {command}");
@@ -235,7 +242,7 @@ namespace AmIVulnerable.Controllers {
         /// <returns>List of all node package dependencies of a single node package.</returns>
         private List<NodePackage> AnalyzeSubtree(NodePackage nodePackage) {
             List<NodePackage> res = [];
-            foreach(NodePackage x in nodePackage.Dependencies) {
+            foreach (NodePackage x in nodePackage.Dependencies) {
                 res.AddRange(AnalyzeSubtree(x));
             }
             res.Add(nodePackage);
@@ -281,7 +288,7 @@ namespace AmIVulnerable.Controllers {
             foreach (NodePackageResult x in package.Dependencies) {
                 bool isTracked = DepCheck(x);
                 if (isTracked) {
-                    goto isTrue; 
+                    goto isTrue;
                 }
             }
             if (package.isCveTracked) {
@@ -290,7 +297,7 @@ namespace AmIVulnerable.Controllers {
             else {
                 return false;
             }
-            isTrue:
+        isTrue:
             return true;
         }
 
