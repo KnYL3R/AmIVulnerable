@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LibGit2Sharp;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Modells;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Relational;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NuGet.Protocol;
 using SerilogTimings;
 using System.Data;
+using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
@@ -111,6 +114,38 @@ namespace AmIVulnerable.Controllers {
                 Data = results
             };
             return Ok(results.Count == 0 ? "No result" : resultAsJsonLd);
+        }
+
+        [HttpGet]
+        [Route("CheckGuid")]
+        public IActionResult CheckDownloadedProjectWithGuid([FromHeader] Guid projectGuid) {
+            // MySql Connection
+            MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
+
+            MySqlCommand cmd = new MySqlCommand($"" +
+                $"SELECT * " +
+                $"FROM repositories " +
+                $"WHERE guid='{projectGuid}';", connection);
+
+            DataTable dataTable = new DataTable();
+            connection.Open();
+            MySqlDataReader reader = cmd.ExecuteReader();
+            dataTable.Load(reader);
+            connection.Close();
+
+            if (dataTable.Rows.Count == 1) {
+                object res = new {
+                    guid = dataTable.Rows[0]["guid"].ToString(),
+                    repoUrl = dataTable.Rows[0]["repoUrl"].ToString(),
+                    repoOwner = dataTable.Rows[0]["repoOwner"].ToString(),
+                    repoDesignation = dataTable.Rows[0]["repoDesignation"].ToString(),
+                    tag = dataTable.Rows[0]["tag"].ToString()
+                };
+                return Ok(res);
+            }
+            else {
+                return NotFound("Not found");
+            }
         }
         #endregion
 
