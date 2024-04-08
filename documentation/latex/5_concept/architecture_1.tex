@@ -1,0 +1,47 @@
+\subsubsection{Architektur V1} \label{sec:Architektur}
+    Um eine API umzusetzen und diese zu nutzen sind verschiedene Komponenten nötig:
+    \begin{enumerate}
+        \item \textbf{Framework} \label{arch_1}\\
+            Als API-Grundlage muss ein passendes Framework genutzt werden.
+            Dadurch, dass keine Notwendigkeit für ein Frontend besteht gibt es hier wenig Eingrenzungen.
+            \\ \\
+            Aus Erfahrungsgründen wurde das C\# Framework ASP.NET gewählt.
+            Mit diesem lassen sich unter anderem API-Services bauen.
+            Mittels der für das .NET Framework expliziet vorhandenen IDE \glqq Visual Studio\grqq~bestehen auch native Debugging-Möglichkeiten.
+            Durch die große und aktive Community von ASP.NET ist dieses Framework sehr gut dokumentiert und es existieren viele Open-Source-Bibliotheken.
+        \item \textbf{Datenbank} \label{arch_2}\\
+            In der Datenbank sind alle CVE-Daten zu persistieren, welche zu durchsuchen sind.
+            Diese Daten dienen als Grundlage der Identifizierung von Schachstellen in Paketen innerhalb von Projekten.
+            Wichtig sind hier schnelle Lesezugriffe, da diese beim Abfragen der Datenbank die größte Laufzeiteinsparung bringen.
+            \\ \\
+            Durch die Wahl des Frameworks auf ASP.NET ist es möglich einen \textit{embedded NoSQL-Document-Store} -- LiteDB zu nutzen. % TODO: https://www.litedb.org/
+            Diese ist leicht intern nutzbar und muss nicht separat explizit gestartet und verwaltet werden, womit diese auch im Container der API mit enthalten ist.
+        \item \textbf{Controller} \label{arch_3}\\
+            Controller einer API nehmen HTTP-Anfragen entgegen und reagieren darauf.
+            Hier wird die Hauptaufgabe der API geschehen, da alle Funktionalitäten, sei es Datenbankabfragen, Klonen eines zu untersuchenden Repositories oder die Untersuchung dieses, in einem solchen implementiert oder aufgerufen werden müssen.
+            \\ \\
+            Notwendig sind hier view Controller.
+            Für die Forschungsfrage \ref{one} bzw. \ref{three} muss ein Git-Controller zum nutzen von CVE-Daten sowie zum Erhalt von zu analysierenden Repositories entstehen.
+            In diesem sind Endpunkte zum clonen des CVE-Daten-Repositories sowie zum clonen des Analyse-Repositories zu implementieren. % TODO: clone CVE-DATEN-REPO-LINK
+            \\
+            Weiterhin ist ein Controller für Abhängigkeiten nötig, in dem man aus dem zu analysierenden Repositoriy den Abhängigkeitsbaum extrahiert sowie diesen mit Schwachstellendaten anreichert.
+            \\
+            Für die Untersuchung einzelner Pakete und Listen dieser ist ein weiterer Endpunkt zu implementieren.
+            In diesem ist auch die Update-Funktion der Datenbasis hinzuzufügen.
+            \\
+            Für Forschungsfrage \ref{two} muss in jedem Endpunkt bei korrekter Antwort ein Context mitgeliefert werden, damit der gelieferte Inhalt so durch JSON-LD zu interpretieren ist.
+            Weiterhin sind durch einen Controller die Rückgabedaten zu dokumentieren.
+            Dazu ist zwischen Softwarepaketen und CVE-Einträgen zu unterscheiden.
+        \item \textbf{Datenmodelle} \label{arch_4}\\
+            Um Daten korrekt in die Datenbank einzufügen, um ein Resultat-JSON zu erzeugen oder die Paketliste intern zu verarbeiten -- dazu sind Datenmodelle nötig.
+        \item \textbf{Konvertierung von und in JSON} \label{arch_5}\\
+            Beim Einlesen der CVE-Daten in die Datenbank ist eine Konvertierung vom vorhandenen JSON-Format in Einträge der Datenbank vorzunehmen.  
+            Die aus der Datenbank genutzten, durch den Controller verarbeiteten, Daten müssen nun schließlich im JSON-Format dem Benutzer übermittelt werden.
+            \\ \\
+            Dies muss in den jeweiligen Controllern geschehen.
+            Damit die Daten besser weiterverwendbar sind muss zusätzlich ein Kontext \glqq @context\grqq~hinzugefügt werden.
+        \item \textbf{Container} \\
+            Um die API unabhängig von der Umgebung und möglichst Speicheraufwandsschmal zu nutzen muss die Anwendung \glqq Containerisiert\grqq~werden.
+            \\ \\
+            Für den bau der Containers wird Docker-Compose genutzt.
+    \end{enumerate}

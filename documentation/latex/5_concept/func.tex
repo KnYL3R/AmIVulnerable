@@ -1,11 +1,11 @@
-\subsection{Anforderungen} \label{sec:Anforderungen}
-
-    Bei der Umsetzung dieser API sind verschidene Funktionalitäten zu implementieren.
+\subsection{Funktionale Anforderungen} \label{sec:Funktionale_Anforderungen}
+    Bei der Umsetzung dieser API sind verschidene funktuinale Anforderungen zu implementieren.
     \begin{enumerate}
         \item Einladen und Konvertieren der Schwachstellendaten und persistente Speicherung dieser in einer internen Datenbank.
         \item Überprüfung von Paketen auf Sicherheitslücken mittels Abgleich zur internen Schachstellendatenbank.
         \item Clonen eines Repositories von Github.
         \item Überprüfung von allen Abhängigkeiten eines Repositories mittels Abgleich zur internen Schachstellendatenbank.
-        \item Rückgabe eines Abhängigkeitsbaums für alle Abhängigkeiten mit Sicherheitslücken. 
+        \item Extraktion und Rückgabe eines Abhängigkeitsbaums für alle Abhängigkeiten mit Sicherheitslücken. 
+        \item Aktualisierung der Schwachstellendatenbasis
     \end{enumerate}
     Diese Funktionalitäten setzten teils mehrere interne Abläufe voraus und beinhalten mehrere Endpunkte der API.

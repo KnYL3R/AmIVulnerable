@@ -1,0 +1,26 @@
+\subsection{Implementation V1} \label{sec:Implementation1}
+    Folgende Komponenten wurden für die erste Implementation genutzt:
+    \begin{itemize}
+        \item ASP.NET (C\#)
+        \item LiteDB
+        \item Docker-Compose
+    \end{itemize}
+    Die genutze Datenbank LiteDB wurde folgend genutzt:\\ %TODO 
+    Folgende Datenmodelle wurden zur Nutzung der Daten in der Datenbank angelegt:\\ %TODO 
+    Es wurden außerdem folgende Controller zur Umsetzung der funktionalen Anforderungen implementiert:
+    \begin{itemize}
+        \item Db \\
+            Die in der Architektur (Vgl. \ref{arch_2})
+        \item Dependecies
+        \item Git
+        \item MySqlConnection
+        \item View
+    \end{itemize}
+
+    Implementation V1 (LiteDB), alle Controller erwähnen, LiteDB, Datenmodelle, Konvertierung von und in Json zu Controller (oben die Punkte), nur ein Container für API (inklusive DB darin)
+    \begin{itemize}
+        \item removed Controller-Endpoints:
+        \item Db/CheckRawDir (check if the downloaded cve-dir is ready to convert)
+        \item Db/ConvertRawDirToDb (Convert the downloaded cve to LiteDB)
+        \item Git/cloneStatus (if the current clone is finished)
+    \end{itemize}

@@ -1,12 +1,7 @@
 \section{Implementation} \label{sec:Implementation}
-    Vor der Implementation steht die Entscheidung über die Auswahl der Einzelkomponenten, welche im Abschnitt \ref{sec:Architektur} vorgestellt wurden.
-    \\ \\
-    Zuerst ist die Programmiersprache sowie das genutzte Framework zu definieren.
-    Aus Erfahrungsgründen wurde das C\# Framework ASP.NET gewählt.
-    Mit diesem lassen sich unter anderem API-Services bauen.
-    Mittels der für das .NET Framework expliziet vorhandenen IDE \glqq Visual Studio\grqq~bestehen auch native Debugging-Möglichkeiten.
-    Für .NET gibt es ein \textit{embedded NoSQL-Document-Store} -- LiteDB. % TODO: https://www.litedb.org/
-    Durch die große und aktive Community von ASP.NET ist dieses Framework sehr gut dokumentiert und es existieren viele Open-Source-Bibliotheken.
-    \\ \\
-    Es wurden weiterhin verschiedene Experimente vorgenommen um Teile der Architektur und deren Implementation durch verschiedene Softwarekomponenten zu Vergleichen.
+    \input{6_implementation/implementation_1.tex}
+    \input{6_implementation/verification_1.tex}
     \input{6_implementation/experiments.tex}
+    \input{6_implementation/implementation_2.tex}
+    \input{6_implementation/verification_2.tex}
+
