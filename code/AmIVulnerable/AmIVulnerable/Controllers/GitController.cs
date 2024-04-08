@@ -3,6 +3,7 @@ using Modells;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using SerilogTimings;
+using System.Data;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using CM = System.Configuration.ConfigurationManager;
@@ -59,6 +60,50 @@ namespace AmIVulnerable.Controllers {
             }
             catch (Exception ex) {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary></summary>
+        /// <param name="repoObject"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("cloneRepo")]
+        public async Task<IActionResult> CloneRepoToAnalyze([FromBody] RepoObject repoObject) {
+            if (repoObject.RepoUrl is null) {
+                return BadRequest();
+            }
+
+            // check if repo already cloned
+            DataTable tempTable = ExecuteMySqlCommand($"" +
+                $"SELECT * " +
+                $"FROM cve.repositories " +
+                $"WHERE repoUrl='{repoObject.RepoUrl}' AND tag='{repoObject.RepoTag}';");
+
+            if (tempTable.Rows.Count > 0) {
+                return Ok(tempTable.Rows[0]["guid"]);
+            }
+            else { // clone the repo
+                Guid repoId = Guid.NewGuid();
+                string trimmedUrl = repoObject.RepoUrl[(repoObject.RepoUrl.IndexOf("//") + 2)..(repoObject.RepoUrl.Length)];
+                trimmedUrl = trimmedUrl[(trimmedUrl.IndexOf('/') + 1)..(trimmedUrl.Length)];
+                string owner = trimmedUrl[0..trimmedUrl.IndexOf('/', 1)];
+                string designation = trimmedUrl[(owner.Length + 1)..trimmedUrl.Length];
+                if (designation.Contains('/')) {
+                    designation = designation[0..trimmedUrl.IndexOf('/', owner.Length + 1)];
+                }
+
+                ExecuteMySqlCommand($"" +
+                    $"INSERT INTO cve.repositories (guid, repoUrl, repoOwner, repoDesignation, tag) " +
+                    $"VALUES (" +
+                    $"'{repoId}'," +
+                    $"'{repoObject.RepoUrl}'," +
+                    $"'{owner}'," +
+                    $"'{designation}'," +
+                    $"'{repoObject.RepoTag ?? ""}');");
+
+                await Clone(repoObject.RepoUrl, repoObject.RepoTag ?? "", repoId.ToString());
+
+                return Ok(repoId);
             }
         }
 
@@ -295,6 +340,20 @@ namespace AmIVulnerable.Controllers {
             foreach (DirectoryInfo subDirectory in directoryInfo.GetDirectories()) {
                 RemoveReadOnlyAttribute(subDirectory.FullName);
             }
+        }
+
+        private DataTable ExecuteMySqlCommand(string command) {
+            // MySql Connection
+            MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
+
+            MySqlCommand cmd = new MySqlCommand(command, connection);
+
+            DataTable dataTable = new DataTable();
+            connection.Open();
+            MySqlDataReader reader = cmd.ExecuteReader();
+            dataTable.Load(reader);
+            connection.Close();
+            return dataTable;
         }
         #endregion
     }
