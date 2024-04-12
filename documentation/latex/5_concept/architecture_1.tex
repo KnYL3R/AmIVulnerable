@@ -1,5 +1,5 @@
 \subsubsection{Architektur V1} \label{sec:Architektur}
-    Um eine API umzusetzen und diese zu nutzen sind verschiedene Komponenten nötig:
+    Für die Beantwortung der Forschungsfragen \ref{q:one}, \ref{q:two}, \ref{q:five} und vor allem \ref{q:four} verschiedene Komponenten nötig:
     \begin{enumerate}
         \item \textbf{Framework} \label{arch_1}\\
             Als API-Grundlage muss ein passendes Framework genutzt werden.
@@ -21,7 +21,7 @@
             Hier wird die Hauptaufgabe der API geschehen, da alle Funktionalitäten, sei es Datenbankabfragen, Klonen eines zu untersuchenden Repositories oder die Untersuchung dieses, in einem solchen implementiert oder aufgerufen werden müssen.
             \\ \\
             Notwendig sind hier view Controller.
-            Für die Forschungsfrage \ref{one} bzw. \ref{three} muss ein Git-Controller zum nutzen von CVE-Daten sowie zum Erhalt von zu analysierenden Repositories entstehen.
+            Für die Forschungsfrage \ref{q:two} bzw. \ref{q:four} muss ein Git-Controller zum nutzen von CVE-Daten sowie zum Erhalt von zu analysierenden Repositories entstehen.
             In diesem sind Endpunkte zum clonen des CVE-Daten-Repositories sowie zum clonen des Analyse-Repositories zu implementieren. % TODO: clone CVE-DATEN-REPO-LINK
             \\
             Weiterhin ist ein Controller für Abhängigkeiten nötig, in dem man aus dem zu analysierenden Repositoriy den Abhängigkeitsbaum extrahiert sowie diesen mit Schwachstellendaten anreichert.
@@ -29,7 +29,7 @@
             Für die Untersuchung einzelner Pakete und Listen dieser ist ein weiterer Endpunkt zu implementieren.
             In diesem ist auch die Update-Funktion der Datenbasis hinzuzufügen.
             \\
-            Für Forschungsfrage \ref{two} muss in jedem Endpunkt bei korrekter Antwort ein Context mitgeliefert werden, damit der gelieferte Inhalt so durch JSON-LD zu interpretieren ist.
+            Für Forschungsfrage \ref{q:three} muss in jedem Endpunkt bei korrekter Antwort ein Context mitgeliefert werden, damit der gelieferte Inhalt so durch JSON-LD zu interpretieren ist.
             Weiterhin sind durch einen Controller die Rückgabedaten zu dokumentieren.
             Dazu ist zwischen Softwarepaketen und CVE-Einträgen zu unterscheiden.
         \item \textbf{Datenmodelle} \label{arch_4}\\
@@ -45,3 +45,4 @@
             \\ \\
             Für den bau der Containers wird Docker-Compose genutzt.
     \end{enumerate}
+    Weiterhin muss das JSON-LD-Format für die Rückgabedaten definiert werden (Forschungsfrage \ref{three}).
