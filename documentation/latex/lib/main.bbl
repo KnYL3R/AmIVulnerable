@@ -19,31 +19,90 @@
 
 \refsection{0}
   \datalist[entry]{none/global//global/global}
-    \entry{Buch:Demo}{book}{}
-      \name{author}{1}{}{%
-        {{hash=f0258b6685684c113bad94d91b8fa02a}{%
-           family={Demo},
-           familyi={D\bibinitperiod}}}%
-      }
-      \list{publisher}{1}{%
-        {Demo}%
-      }
-      \strng{namehash}{f0258b6685684c113bad94d91b8fa02a}
-      \strng{fullhash}{f0258b6685684c113bad94d91b8fa02a}
-      \strng{bibnamehash}{f0258b6685684c113bad94d91b8fa02a}
-      \strng{authorbibnamehash}{f0258b6685684c113bad94d91b8fa02a}
-      \strng{authornamehash}{f0258b6685684c113bad94d91b8fa02a}
-      \strng{authorfullhash}{f0258b6685684c113bad94d91b8fa02a}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
-      \field{labelnamesource}{author}
+    \entry{link:RedHatCveDef}{online}{}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labeltitlesource}{title}
-      \field{edition}{Demo}
-      \field{isbn}{000-0-00000-000-0}
-      \field{title}{Demo}
-      \field{titleaddon}{Demo}
-      \field{year}{2023}
+      \field{title}{Was bedeutet CVE?}
+      \field{urlday}{14}
+      \field{urlmonth}{4}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
       \true{nocite}
+      \verb{urlraw}
+      \verb https://web.archive.org/web/20240319193237/https://www.redhat.com/de/topics/security/what-is-cve
+      \endverb
+      \verb{url}
+      \verb https://web.archive.org/web/20240319193237/https://www.redhat.com/de/topics/security/what-is-cve
+      \endverb
+    \endentry
+    \entry{link:CveOrgCnaS}{online}{}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labeltitlesource}{title}
+      \field{title}{CVE Numbering Authorities (CNAs)}
+      \field{urlday}{14}
+      \field{urlmonth}{4}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://web.archive.org/web/20240402032014/https://www.cve.org/ProgramOrganization/CNAs
+      \endverb
+      \verb{url}
+      \verb https://web.archive.org/web/20240402032014/https://www.cve.org/ProgramOrganization/CNAs
+      \endverb
+    \endentry
+    \entry{link:GoogleDependencies}{online}{}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labeltitlesource}{title}
+      \field{title}{Abhängigkeitsverwaltung}
+      \field{urlday}{14}
+      \field{urlmonth}{4}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://web.archive.org/web/20240414153419/https://cloud.google.com/software-supply-chain-security/docs/dependencies?hl=de
+      \endverb
+      \verb{url}
+      \verb https://web.archive.org/web/20240414153419/https://cloud.google.com/software-supply-chain-security/docs/dependencies?hl=de
+      \endverb
+    \endentry
+    \entry{link:DevInsiderDependecyDef}{online}{}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labeltitlesource}{title}
+      \field{title}{Was ist eine Dependency}
+      \field{urlday}{14}
+      \field{urlmonth}{4}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://web.archive.org/web/20231003203304/https://www.dev-insider.de/was-ist-eine-dependency-a-899057/
+      \endverb
+      \verb{url}
+      \verb https://web.archive.org/web/20231003203304/https://www.dev-insider.de/was-ist-eine-dependency-a-899057/
+      \endverb
+    \endentry
+    \entry{link:ApiDef}{online}{}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labeltitlesource}{title}
+      \field{title}{What is an API (Application Programming Interface)?}
+      \field{urlday}{14}
+      \field{urlmonth}{4}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://web.archive.org/web/20240409204350/https://aws.amazon.com/what-is/api/
+      \endverb
+      \verb{url}
+      \verb https://web.archive.org/web/20240409204350/https://aws.amazon.com/what-is/api/
+      \endverb
     \endentry
   \enddatalist
 \endrefsection
