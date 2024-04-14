@@ -186,66 +186,22 @@
             \acro{API}[API]{\textbf{A}pplication \textbf{P}rogramming \textbf{I}nterface}
             \acro{NIST}[NIST]{\textbf{N}ational \textbf{I}nstitute for \textbf{S}tandards and \textbf{T}echnology}
             \acro{CVE}[CVE]{\textbf{C}ommon \textbf{V}ulnerabilities and \textbf{E}xposures}
+            \acro{CNA}[CNA]{\textbf{C}VE \textbf{N}umbering \textbf{A}uthority}
+            \acro{JSON}[JSON]{\textbf{J}ava\textbf{S}cript \textbf{O}bject \textbf{N}otation}
+            \acro{JSON-LD}[JSON-LD]{\textbf{J}ava\textbf{S}cript \textbf{O}bject \textbf{N}otation \textbf{L}inked \textbf{D}ata}
         \end{acronym}
         \section{Messungen} \label{sec:Messungen}
             % TODO: Andere Logs ebenfalls eintragen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            \subsection{MySQL ohne Index} \label{subsec:MySQLOhneIndex}
-                {\shorthandoff{"}
-                {\small
-                \begin{tabularx}{\textwidth}{|l|l|X|}
-                    \hline
-                    \textbf{Zeitstempel} & \textbf{Typ} & \textbf{Nachricht} \\
-                    \hline
-                    \endhead
-                    2024-03-31 16:24:49.065 +00:00 & [INF] & Query-Time for Package "LiteDB" completed in 203.3 ms \\
-                    2024-03-31 16:24:49.272 +00:00 & [INF] & Query-Time for Package "Newtonsoft" completed in 207.2 ms \\
-                    2024-03-31 16:24:49.480 +00:00 & [INF] & Query-Time for Package "NewtonSoft" completed in 207.4 ms \\
-                    2024-03-31 16:24:49.688 +00:00 & [INF] & Query-Time for Package "Crowd" completed in 208.5 ms \\
-                    2024-03-31 16:24:49.895 +00:00 & [INF] & Query-Time for Package "Atlassian" completed in 206.1 ms \\
-                    2024-03-31 16:24:50.102 +00:00 & [INF] & Query-Time for Package "Debian" completed in 206.8 ms \\
-                    2024-03-31 16:24:50.308 +00:00 & [INF] & Query-Time for Package "Ubuntu" completed in 205.8 ms \\
-                    2024-03-31 16:24:50.515 +00:00 & [INF] & Query-Time for Package "Arc42" completed in 207.2 ms \\
-                    2024-03-31 16:24:50.720 +00:00 & [INF] & Query-Time for Package "arc42" completed in 204.6 ms \\
-                    2024-03-31 16:24:50.926 +00:00 & [INF] & Query-Time for Package "cookie" completed in 206.3 ms \\
-                    2024-03-31 16:24:51.133 +00:00 & [INF] & Query-Time for Package "mongoDb" completed in 207.0 ms \\
-                    2024-03-31 16:24:51.340 +00:00 & [INF] & Query-Time for Package "mongoDB" completed in 206.4 ms \\
-                    2024-03-31 16:24:51.548 +00:00 & [INF] & Query-Time for Package "mongodb" completed in 208.0 ms \\
-                    2024-03-31 16:24:51.754 +00:00 & [INF] & Query-Time for Package "parser" completed in 206.5 ms \\
-                    2024-03-31 16:24:51.961 +00:00 & [INF] & Query-Time for Package "LiteDb" completed in 207.0 ms \\
-                    2024-03-31 16:24:52.170 +00:00 & [INF] & Query-Time for Package "php" completed in 208.5 ms \\
-                    2024-03-31 16:24:52.377 +00:00 & [INF] & Query-Time for Package "PHP" completed in 205.7 ms \\
-                    2024-03-31 16:24:52.583 +00:00 & [INF] & Query-Time for Package "Laravel" completed in 205.5 ms \\
-                    2024-03-31 16:24:52.789 +00:00 & [INF] & Query-Time for Package "laravel" completed in 205.2 ms \\
-                    2024-03-31 16:24:52.994 +00:00 & [INF] & Query-Time for Package "LARAVEL" completed in 205.4 ms \\
-                    2024-03-31 16:24:53.201 +00:00 & [INF] & Query-Time for Package "beta" completed in 206.1 ms \\
-                    2024-03-31 16:24:53.407 +00:00 & [INF] & Query-Time for Package "meta" completed in 206.6 ms \\
-                    2024-03-31 16:24:53.617 +00:00 & [INF] & Query-Time for Package "META" completed in 209.3 ms \\
-                    2024-03-31 16:24:53.822 +00:00 & [INF] & Query-Time for Package "express-ejs-layouts" completed in 205.4 ms \\
-                    2024-03-31 16:24:54.030 +00:00 & [INF] & Query-Time for Package "accepts" completed in 207.4 ms \\
-                    2024-03-31 16:24:54.236 +00:00 & [INF] & Query-Time for Package "mime-db" completed in 205.9 ms \\
-                    2024-03-31 16:24:54.441 +00:00 & [INF] & Query-Time for Package "mime-DB" completed in 204.9 ms \\
-                    2024-03-31 16:24:54.646 +00:00 & [INF] & Query-Time for Package "iconv-lite" completed in 204.9 ms \\
-                    2024-03-31 16:24:54.852 +00:00 & [INF] & Query-Time for Package "safer-buffer" completed in 206.4 ms \\
-                    2024-03-31 16:24:55.061 +00:00 & [INF] & Query-Time for Package "raw-body" completed in 208.7 ms \\
-                    2024-03-31 16:24:55.267 +00:00 & [INF] & Query-Time for Package "depd" completed in 205.6 ms \\
-                    2024-03-31 16:24:55.473 +00:00 & [INF] & Query-Time for Package "finalhandler" completed in 205.9 ms \\
-                    2024-03-31 16:24:55.679 +00:00 & [INF] & Query-Time for Package "on-finished" completed in 206.0 ms \\
-                    2024-03-31 16:24:55.885 +00:00 & [INF] & Query-Time for Package "ipaddr.js" completed in 206.5 ms \\
-                    2024-03-31 16:24:56.093 +00:00 & [INF] & Query-Time for Package "encodeurl" completed in 207.7 ms \\
-                    2024-03-31 16:24:56.093 +00:00 & [INF] & Complete Time for Query-Search after List of Packages completed in 7231.9 ms \\
-                    \hline
-                \end{tabularx}
-                }
-                }
+            \input{Appendix/mySqlWithoutIndex.tex}
     \end{appendices}
 
     \newpage
     \phantomsection
     \printbibheading[title={Quellen}]
     \addcontentsline{toc}{section}{Quellen}
-    \printbibliography[type=book, heading=subbibliography, title={Literatur}]
+    % \printbibliography[type=book, heading=subbibliography, title={Literatur}]
     % \newpage
-    % \printbibliography[type=online, heading=subbibliography, title={Links}]
+    \printbibliography[type=online, heading=subbibliography, title={Links}]
     % \newpage
     % \printbibliography[type=article, heading=subbibliography, title={Zeitschriften}]
 
