@@ -1,26 +1,121 @@
 \subsection{Implementation V1} \label{sec:Implementation1}
-    Folgende Komponenten wurden für die erste Implementation genutzt:
+    Folgende Komponenten wurden für die erste Implementation der \ac{API} genutzt:
     \begin{itemize}
-        \item ASP.NET (C\#)
-        \item LiteDB
-        \item Docker-Compose
-    \end{itemize}
-    Die genutze Datenbank LiteDB wurde folgend genutzt:\\ %TODO 
-    Folgende Datenmodelle wurden zur Nutzung der Daten in der Datenbank angelegt:\\ %TODO 
-    Es wurden außerdem folgende Controller zur Umsetzung der funktionalen Anforderungen implementiert:
-    \begin{itemize}
-        \item Db \\
-            Die in der Architektur (Vgl. \ref{arch_2})
-        \item Dependecies
-        \item Git
-        \item MySqlConnection
-        \item View
+        \item Framework ASP.NET (C\#)
+        \item Datenbank LiteDB
+        \item Docker-Compose zur Container-Orchestration
     \end{itemize}
 
-    Implementation V1 (LiteDB), alle Controller erwähnen, LiteDB, Datenmodelle, Konvertierung von und in Json zu Controller (oben die Punkte), nur ein Container für \ac{API} (inklusive DB darin)
+    Die genutzte Datenbank LiteDB wurde folgend genutzt:
     \begin{itemize}
-        \item removed Controller-Endpoints:
-        \item Db/CheckRawDir (check if the downloaded \ac{CVE}-dir is ready to convert)
-        \item Db/ConvertRawDirToDb (Convert the downloaded \ac{CVE} to LiteDB)
-        \item Git/cloneStatus (if the current clone is finished)
+        \item Speicherung aller \ac{CVE}-Daten
+        \item Je Jahr der vorhandenen \ac{CVE}-Daten wurde eine Datenbankdatei angelegt
     \end{itemize}
+
+    Folgende Datenmodelle wurden zur Nutzung der Daten in der Datenbank und/oder zur internen Verarbeitung angelegt:
+    \begin{itemize}
+        \item CVEcomp, für CVE-Complete \\
+            Dieses Modell ist eine komplette Representation eines \ac{CVE}-Eintrags.
+            Für dieses Modell sind viele weitere Klassen notwendig um mit dem JSONSerializer den kompletten Datensatz umwandeln und anschließend in die interne Datenbank einfügen zu können.
+            Es befinden sich als Klassen alle weiteren Subelemente der \ac{JSON}-Datei für die korrekte Verarbeitung im Programm.
+        \item CveResult \\
+            Dieses Modell dient der Rückgabe von \ac{CVE}-Daten bei der Einzelpaket- oder Mehrpaketsuche auf der Datenbasis.
+            Hier wird also ein Objekt oder eine Liste dieses Modells zurückgegeben.
+        \item JsonLdObject \\
+            Mittels diese Modells wird das Verbinden des \ac{JSON-LD} \textit{$@context$} mit dem \textit{$data$} Teil einer Response ermöglicht.
+        % \item PackageForApi %! SIEHE V2
+        % \item RepoObject %! SIEHE V2
+        \item $[$Enum$]$ ProjectType \\
+            Dieses Enum wurde eingeführt, damit bei Nutzung des Repository-Analyze-Endpunkts nicht der Projekttyp als String (z.B. NodeJS) sondern ein Ganzzahlwert anstatt dessen genutzt werden kann.
+            Die Entscheidung dafür fiel, damit mögliche Schreibfehler vom Endnutzer ausgeschlossen werden können.
+    \end{itemize}
+
+    Es wurden außerdem folgende Controller zur Umsetzung der funktionalen Anforderungen implementiert:
+    \begin{itemize}
+        \item DbController \\
+            Dieser Controller dient der Befüllung der Datenbank mit \ac{CVE}-Daten sowie der Nutzung dieser für kleinere Analysen. Dies sind z.B. einzelne Pakete oder Listen von Paketen.
+            \begin{itemize}
+                \item CheckRawDir-Endpunkt \\
+                    Dieser Get-Endpunkt dient zur Überprüfung, ob die Roh-Daten für die \ac{CVE}-LiteDB-Datenbank bereits vollständig Herunterladen wurden.
+                    \\
+                    \textbf{OK} bei Vorhandensein
+                    \\
+                    \textbf{No Content} bei nicht Vorhandensein der Datenbasis
+                \item ConvertRawDirToDb-Endpunkt \\
+                    Dieser Endpunkt dient der Konvertierung des heruntergeladenen \ac{CVE}-Daten-Repositories in die intern nutzbaren LiteDB Datenbankdateien.
+                    Dies ist für die Vermeidung der Volltextsuche auf den \ac{JSON}-Dateien des \ac{CVE}-Repositories zwingend notwendig.
+                    \\
+                    \textbf{OK} wird immer zurückgegeben.
+                \item checkSinglePackage-Endpunkt \\
+                    Durch diesen Post-Endpunkt wird durch einen übergebenen Paketnamen und ggf. dessen Version nach \ac{CVE}-Einträgen zu diesem gesucht.
+                    Falls es diese gibt werden sie als Liste zurückgegeben.
+                    \\
+                    \textbf{OK} bei Vorhandensein mit Rückgabe der Liste
+                    \\
+                    \textbf{No Content} bei nicht Vorhandensein ohne weitere Rückgabe.
+                \item checkPackageList-Endpunkt \\
+                    Durch diesen Post-Endpunkt werden durch eine übergebene Liste eines Tupels aus Paketnamen und Version nach \ac{CVE}-Einträgen zu diesen gesucht.
+                    Falls es diese gibt werden sie als Liste zurückgegeben.
+                    \\
+                    \textbf{OK} bei Vorhandensein mit Rückgabe der \ac{CVE}-Daten-Liste
+                    \\
+                    \textbf{No Content} bei nicht Vorhandensein ohne weitere Rückgabe
+            \end{itemize}
+
+        \item DependeciesController \\
+            Dieser Controller dient der Extraktion des Abhängigkeitsbaumes von Repositories und der Analyse dieser.
+            Dabei bedeutet Analyse eine Untersuchung auf \ac{CVE}-Daten für jegliche im Repository enthaltene Pakete.
+            \begin{itemize}
+                \item ExtractTree-Endpunkt \\
+                    Bei diesem Get-Endpunkt wird je nach Projekttyp, z.B. NodeJs, der Abhängigkeitsbaum extrahiert.
+                    \\
+                    \textbf{OK} mit dem Abhängigkeitsbäumen für alle Abhängigkeiten des Repositories im Response-Body
+                    \\
+                    \textbf{Bad Request} bei nicht Vorhandensein des angegebenen Projekttyps
+                \item ExtractAndAnalyzeTree-Endpunkt \\
+                    Bei diesem Get-Endpunkt handelt es sich um eine Erweiterung des ExtractTree-Endpunkts.
+                    Es der wird zusätzlich für jedes Paket im Repository und in dessen Abhängigkeitsbaum eine Suche auf der CVE-Datenbasis durchgeführt und in der jeweiligen Stelle im Abhängigkeitsbaum das Attribut isCveTracked wahr gesetzt wird.
+                    \\
+                    \textbf{OK} mit dem Analysierten Abhängigkeitsbäumen für alle Abhängigkeiten des Repositories im Response-Body
+                    \\
+                    \textbf{229 Keine Schwachstelle gefunden} bei keiner gefundenen Schwachstelle in allen Abhängigkeitsbäumen
+                    \\
+                    \textbf{Bad Request} bei nicht Vorhandensein des angegebenen Projekttyps
+            \end{itemize}
+
+        \item GitController \\
+            Da die \ac{CVE}-Daten sowie die zu untersuchenden Repositories ihre Datenbasis in GitHub\cite{GITHUB} haben, werden diese durch diesen Controller gecloned.
+            \begin{itemize}
+                \item Clone-Endpunkt \\
+                    Bei deisem Post-Endpunkt wird das CVE-Daten-Repository bzw. das zu analysierende Repository aus GitHub heruntergeladen.
+                    Übergeben wird hier ein Tupel aus Strings, welches die URL und ein Tag beinhaltet sowie einen Boolwert, der angibt, ob es sich um CVE-Daten oder ein Analyserepository handelt.
+                    \\
+                    \textbf{OK} bei erfolgreichem Herunterladen
+                    \\
+                    \textbf{Bad Request} bei nicht erfolgreichem Herunterladen
+            \end{itemize}
+
+        % \item MySqlConnectionController \\ %! V2
+        %     Dieser Controller hat die Aufgabe die Erreichbarkeit der Datenbank zu überprüfen. %! V2
+
+        \item ViewController \\
+            In diesem Controller werden als HTML alle \ac{JSON-LD} Beschreibungen -- siehe $@context$ -- zurückgegeben.
+            \begin{itemize}
+                \item json-ld-Endpunkt \\
+                    In diesem Get-Endpunkt wird die JSON-LD-Definition als ansehbare HTML-Daten dargestellt.
+                    \\
+                    \textbf{OK} mit den HTML-Daten als Inhalt des Response-Bodys 
+            \end{itemize}
+    \end{itemize}
+
+    % Konvertierung von und in \ac{JSON} zu Controller (oben die Punkte)
+    % \begin{itemize}
+    %     \item removed Controller-Endpoints:
+    %     \item Db/CheckRawDir (check if the downloaded \ac{CVE}-dir is ready to convert)
+    %     \item Db/ConvertRawDirToDb (Convert the downloaded \ac{CVE} to LiteDB)
+    %     \item Git/cloneStatus (if the current clone is finished)
+    % \end{itemize}
+
+    Um diese Applikation jetzt unabhängig vom Betriebssystem des Endgerätes zu machen, wurde eine docker-compose-Datei für die Containerisierung erstellt.
+    Dieses referenzierte ein einzelnes Dockerfile mit dem Container der API.
+    Ein eigenständiger Datenbankcontainer ist aufgrund der Eigenart von LiteDB als dateibasierte Datenbank nicht notwendig.
