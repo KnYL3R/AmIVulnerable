@@ -1,0 +1,490 @@
+\subsection{MySQL mit Index} \label{subsec:MySQLMitIndex}
+    \subsubsection{Messung 1 von 10} \label{subsubsec:MySQLMitIndex1von10}
+        {\shorthandoff{"}
+            {\small
+                \begin{tabularx}{\textwidth}{|l|l|X|}
+                    \hline
+                    \textbf{Zeitstempel} & \textbf{Typ} & \textbf{Nachricht} \\
+                    \hline
+                    \endhead
+                    2024-03-31 15:51:16.604 +00:00 & [INF] & Query-Time for Package "LiteDB" completed in 64.0 ms \\
+                    2024-03-31 15:51:16.662 +00:00 & [INF] & Query-Time for Package "Newtonsoft" completed in 1.4 ms \\
+                    2024-03-31 15:51:16.663 +00:00 & [INF] & Query-Time for Package "NewtonSoft" completed in 0.5 ms \\
+                    2024-03-31 15:51:16.664 +00:00 & [INF] & Query-Time for Package "Crowd" completed in 0.7 ms \\
+                    2024-03-31 15:51:16.667 +00:00 & [INF] & Query-Time for Package "Atlassian" completed in 2.5 ms \\
+                    2024-03-31 15:51:16.668 +00:00 & [INF] & Query-Time for Package "Debian" completed in 0.7 ms \\
+                    2024-03-31 15:51:16.669 +00:00 & [INF] & Query-Time for Package "Ubuntu" completed in 0.7 ms \\
+                    2024-03-31 15:51:16.670 +00:00 & [INF] & Query-Time for Package "Arc42" completed in 0.7 ms \\
+                    2024-03-31 15:51:16.670 +00:00 & [INF] & Query-Time for Package "arc42" completed in 0.5 ms \\
+                    2024-03-31 15:51:16.671 +00:00 & [INF] & Query-Time for Package "cookie" completed in 0.7 ms \\
+                    2024-03-31 15:51:16.672 +00:00 & [INF] & Query-Time for Package "mongoDb" completed in 0.8 ms \\
+                    2024-03-31 15:51:16.672 +00:00 & [INF] & Query-Time for Package "mongoDB" completed in 0.5 ms \\
+                    2024-03-31 15:51:16.673 +00:00 & [INF] & Query-Time for Package "mongodb" completed in 0.5 ms \\
+                    2024-03-31 15:51:16.674 +00:00 & [INF] & Query-Time for Package "parser" completed in 0.7 ms \\
+                    2024-03-31 15:51:16.675 +00:00 & [INF] & Query-Time for Package "LiteDb" completed in 0.6 ms \\
+                    2024-03-31 15:51:16.680 +00:00 & [INF] & Query-Time for Package "php" completed in 5.6 ms \\
+                    2024-03-31 15:51:16.693 +00:00 & [INF] & Query-Time for Package "PHP" completed in 1.5 ms \\
+                    2024-03-31 15:51:16.700 +00:00 & [INF] & Query-Time for Package "Laravel" completed in 1.6 ms \\
+                    2024-03-31 15:51:16.701 +00:00 & [INF] & Query-Time for Package "laravel" completed in 0.5 ms \\
+                    2024-03-31 15:51:16.702 +00:00 & [INF] & Query-Time for Package "LARAVEL" completed in 0.5 ms \\
+                    2024-03-31 15:51:16.703 +00:00 & [INF] & Query-Time for Package "beta" completed in 0.7 ms \\
+                    2024-03-31 15:51:16.704 +00:00 & [INF] & Query-Time for Package "meta" completed in 0.9 ms \\
+                    2024-03-31 15:51:16.705 +00:00 & [INF] & Query-Time for Package "META" completed in 0.6 ms \\
+                    2024-03-31 15:51:16.706 +00:00 & [INF] & Query-Time for Package "express-ejs-layouts" completed in 0.7 ms \\
+                    2024-03-31 15:51:16.707 +00:00 & [INF] & Query-Time for Package "accepts" completed in 0.7 ms \\
+                    2024-03-31 15:51:16.707 +00:00 & [INF] & Query-Time for Package "mime-db" completed in 0.7 ms \\
+                    2024-03-31 15:51:16.708 +00:00 & [INF] & Query-Time for Package "mime-DB" completed in 0.5 ms \\
+                    2024-03-31 15:51:16.709 +00:00 & [INF] & Query-Time for Package "iconv-lite" completed in 0.6 ms \\
+                    2024-03-31 15:51:16.709 +00:00 & [INF] & Query-Time for Package "safer-buffer" completed in 0.6 ms \\
+                    2024-03-31 15:51:16.710 +00:00 & [INF] & Query-Time for Package "raw-body" completed in 0.6 ms \\
+                    2024-03-31 15:51:16.711 +00:00 & [INF] & Query-Time for Package "depd" completed in 0.6 ms \\
+                    2024-03-31 15:51:16.711 +00:00 & [INF] & Query-Time for Package "finalhandler" completed in 0.6 ms \\
+                    2024-03-31 15:51:16.712 +00:00 & [INF] & Query-Time for Package "on-finished" completed in 0.6 ms \\
+                    2024-03-31 15:51:16.713 +00:00 & [INF] & Query-Time for Package "ipaddr.js" completed in 0.6 ms \\
+                    2024-03-31 15:51:16.714 +00:00 & [INF] & Query-Time for Package "encodeurl" completed in 0.7 ms \\
+                    2024-03-31 15:51:16.714 +00:00 & [INF] & Complete Time for Query-Search after List of Packages completed in 181.8 ms \\
+                    \hline
+                \end{tabularx}
+            }
+        }
+
+    \subsubsection{Messung 2 von 10} \label{subsubsec:MySQLMitIndex2von10}
+        {\shorthandoff{"}
+            {\small
+                \begin{tabularx}{\textwidth}{|l|l|X|}
+                    \hline
+                    \textbf{Zeitstempel} & \textbf{Typ} & \textbf{Nachricht} \\
+                    \hline
+                    \endhead
+                    2024-03-31 15:52:47.286 +00:00 & [INF] & Query-Time for Package "LiteDB" completed in 0.9 ms \\
+                    2024-03-31 15:52:47.287 +00:00 & [INF] & Query-Time for Package "Newtonsoft" completed in 0.5 ms \\
+                    2024-03-31 15:52:47.287 +00:00 & [INF] & Query-Time for Package "NewtonSoft" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.288 +00:00 & [INF] & Query-Time for Package "Crowd" completed in 0.6 ms \\
+                    2024-03-31 15:52:47.290 +00:00 & [INF] & Query-Time for Package "Atlassian" completed in 0.5 ms \\
+                    2024-03-31 15:52:47.290 +00:00 & [INF] & Query-Time for Package "Debian" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.291 +00:00 & [INF] & Query-Time for Package "Ubuntu" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.291 +00:00 & [INF] & Query-Time for Package "Arc42" completed in 0.5 ms \\
+                    2024-03-31 15:52:47.292 +00:00 & [INF] & Query-Time for Package "arc42" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.292 +00:00 & [INF] & Query-Time for Package "cookie" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.293 +00:00 & [INF] & Query-Time for Package "mongoDb" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.293 +00:00 & [INF] & Query-Time for Package "mongoDB" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.294 +00:00 & [INF] & Query-Time for Package "mongodb" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.294 +00:00 & [INF] & Query-Time for Package "parser" completed in 0.5 ms \\
+                    2024-03-31 15:52:47.295 +00:00 & [INF] & Query-Time for Package "LiteDb" completed in 0.6 ms \\
+                    2024-03-31 15:52:47.296 +00:00 & [INF] & Query-Time for Package "php" completed in 1.0 ms \\
+                    2024-03-31 15:52:47.303 +00:00 & [INF] & Query-Time for Package "PHP" completed in 1.0 ms \\
+                    2024-03-31 15:52:47.309 +00:00 & [INF] & Query-Time for Package "Laravel" completed in 0.5 ms \\
+                    2024-03-31 15:52:47.310 +00:00 & [INF] & Query-Time for Package "laravel" completed in 0.5 ms \\
+                    2024-03-31 15:52:47.311 +00:00 & [INF] & Query-Time for Package "LARAVEL" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.311 +00:00 & [INF] & Query-Time for Package "beta" completed in 0.5 ms \\
+                    2024-03-31 15:52:47.312 +00:00 & [INF] & Query-Time for Package "meta" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.312 +00:00 & [INF] & Query-Time for Package "META" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.313 +00:00 & [INF] & Query-Time for Package "express-ejs-layouts" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.313 +00:00 & [INF] & Query-Time for Package "accepts" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.314 +00:00 & [INF] & Query-Time for Package "mime-db" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.314 +00:00 & [INF] & Query-Time for Package "mime-DB" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.315 +00:00 & [INF] & Query-Time for Package "iconv-lite" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.315 +00:00 & [INF] & Query-Time for Package "safer-buffer" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.316 +00:00 & [INF] & Query-Time for Package "raw-body" completed in 0.5 ms \\
+                    2024-03-31 15:52:47.316 +00:00 & [INF] & Query-Time for Package "depd" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.317 +00:00 & [INF] & Query-Time for Package "finalhandler" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.317 +00:00 & [INF] & Query-Time for Package "on-finished" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.318 +00:00 & [INF] & Query-Time for Package "ipaddr.js" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.318 +00:00 & [INF] & Query-Time for Package "encodeurl" completed in 0.4 ms \\
+                    2024-03-31 15:52:47.318 +00:00 & [INF] & Complete Time for Query-Search after List of Packages completed in 33.5 ms \\
+                    \hline
+                \end{tabularx}
+            }
+        }
+
+    \subsubsection{Messung 3 von 10} \label{subsubsec:MySQLMitIndex3von10}
+        {\shorthandoff{"}
+            {\small
+                \begin{tabularx}{\textwidth}{|l|l|X|}
+                    \hline
+                    \textbf{Zeitstempel} & \textbf{Typ} & \textbf{Nachricht} \\
+                    \hline
+                    \endhead
+                    2024-03-31 15:56:58.682 +00:00 & [INF] & Query-Time for Package "LiteDB" completed in 0.8 ms \\
+                    2024-03-31 15:56:58.683 +00:00 & [INF] & Query-Time for Package "Newtonsoft" completed in 0.5 ms \\
+                    2024-03-31 15:56:58.684 +00:00 & [INF] & Query-Time for Package "NewtonSoft" completed in 0.5 ms \\
+                    2024-03-31 15:56:58.684 +00:00 & [INF] & Query-Time for Package "Crowd" completed in 0.6 ms \\
+                    2024-03-31 15:56:58.686 +00:00 & [INF] & Query-Time for Package "Atlassian" completed in 0.9 ms \\
+                    2024-03-31 15:56:58.687 +00:00 & [INF] & Query-Time for Package "Debian" completed in 0.5 ms \\
+                    2024-03-31 15:56:58.688 +00:00 & [INF] & Query-Time for Package "Ubuntu" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.688 +00:00 & [INF] & Query-Time for Package "Arc42" completed in 0.5 ms \\
+                    2024-03-31 15:56:58.689 +00:00 & [INF] & Query-Time for Package "arc42" completed in 0.5 ms \\
+                    2024-03-31 15:56:58.690 +00:00 & [INF] & Query-Time for Package "cookie" completed in 0.9 ms \\
+                    2024-03-31 15:56:58.691 +00:00 & [INF] & Query-Time for Package "mongoDb" completed in 0.7 ms \\
+                    2024-03-31 15:56:58.692 +00:00 & [INF] & Query-Time for Package "mongoDB" completed in 0.8 ms \\
+                    2024-03-31 15:56:58.693 +00:00 & [INF] & Query-Time for Package "mongodb" completed in 1.0 ms \\
+                    2024-03-31 15:56:58.694 +00:00 & [INF] & Query-Time for Package "parser" completed in 1.0 ms \\
+                    2024-03-31 15:56:58.695 +00:00 & [INF] & Query-Time for Package "LiteDb" completed in 1.0 ms \\
+                    2024-03-31 15:56:58.697 +00:00 & [INF] & Query-Time for Package "php" completed in 1.2 ms \\
+                    2024-03-31 15:56:58.705 +00:00 & [INF] & Query-Time for Package "PHP" completed in 1.5 ms \\
+                    2024-03-31 15:56:58.714 +00:00 & [INF] & Query-Time for Package "Laravel" completed in 0.8 ms \\
+                    2024-03-31 15:56:58.715 +00:00 & [INF] & Query-Time for Package "laravel" completed in 0.5 ms \\
+                    2024-03-31 15:56:58.716 +00:00 & [INF] & Query-Time for Package "LARAVEL" completed in 0.5 ms \\
+                    2024-03-31 15:56:58.717 +00:00 & [INF] & Query-Time for Package "beta" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.717 +00:00 & [INF] & Query-Time for Package "meta" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.718 +00:00 & [INF] & Query-Time for Package "META" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.718 +00:00 & [INF] & Query-Time for Package "express-ejs-layouts" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.719 +00:00 & [INF] & Query-Time for Package "accepts" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.719 +00:00 & [INF] & Query-Time for Package "mime-db" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.720 +00:00 & [INF] & Query-Time for Package "mime-DB" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.721 +00:00 & [INF] & Query-Time for Package "iconv-lite" completed in 0.5 ms \\
+                    2024-03-31 15:56:58.721 +00:00 & [INF] & Query-Time for Package "safer-buffer" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.722 +00:00 & [INF] & Query-Time for Package "raw-body" completed in 0.5 ms \\
+                    2024-03-31 15:56:58.722 +00:00 & [INF] & Query-Time for Package "depd" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.723 +00:00 & [INF] & Query-Time for Package "finalhandler" completed in 0.5 ms \\
+                    2024-03-31 15:56:58.723 +00:00 & [INF] & Query-Time for Package "on-finished" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.724 +00:00 & [INF] & Query-Time for Package "ipaddr.js" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.724 +00:00 & [INF] & Query-Time for Package "encodeurl" completed in 0.4 ms \\
+                    2024-03-31 15:56:58.724 +00:00 & [INF] & Complete Time for Query-Search after List of Packages completed in 43.1 ms \\
+                    \hline
+                \end{tabularx}
+            }
+        }
+
+    \subsubsection{Messung 4 von 10} \label{subsubsec:MySQLMitIndex4von10}
+        {\shorthandoff{"}
+            {\small
+                \begin{tabularx}{\textwidth}{|l|l|X|}
+                    \hline
+                    \textbf{Zeitstempel} & \textbf{Typ} & \textbf{Nachricht} \\
+                    \hline
+                    \endhead
+                    2024-03-31 15:58:31.441 +00:00 & [INF] & Query-Time for Package "LiteDB" completed in 1.0 ms \\
+                    2024-03-31 15:58:31.442 +00:00 & [INF] & Query-Time for Package "Newtonsoft" completed in 0.4 ms \\
+                    2024-03-31 15:58:31.442 +00:00 & [INF] & Query-Time for Package "NewtonSoft" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.443 +00:00 & [INF] & Query-Time for Package "Crowd" completed in 0.6 ms \\
+                    2024-03-31 15:58:31.443 +00:00 & [INF] & Query-Time for Package "Atlassian" completed in 0.5 ms \\
+                    2024-03-31 15:58:31.444 +00:00 & [INF] & Query-Time for Package "Debian" completed in 0.4 ms \\
+                    2024-03-31 15:58:31.444 +00:00 & [INF] & Query-Time for Package "Ubuntu" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.445 +00:00 & [INF] & Query-Time for Package "Arc42" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.445 +00:00 & [INF] & Query-Time for Package "arc42" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.445 +00:00 & [INF] & Query-Time for Package "cookie" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.446 +00:00 & [INF] & Query-Time for Package "mongoDb" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.446 +00:00 & [INF] & Query-Time for Package "mongoDB" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.446 +00:00 & [INF] & Query-Time for Package "mongodb" completed in 0.4 ms \\
+                    2024-03-31 15:58:31.447 +00:00 & [INF] & Query-Time for Package "parser" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.447 +00:00 & [INF] & Query-Time for Package "LiteDb" completed in 0.4 ms \\
+                    2024-03-31 15:58:31.448 +00:00 & [INF] & Query-Time for Package "php" completed in 0.9 ms \\
+                    2024-03-31 15:58:31.450 +00:00 & [INF] & Query-Time for Package "PHP" completed in 0.8 ms \\
+                    2024-03-31 15:58:31.452 +00:00 & [INF] & Query-Time for Package "Laravel" completed in 0.4 ms \\
+                    2024-03-31 15:58:31.452 +00:00 & [INF] & Query-Time for Package "laravel" completed in 0.4 ms \\
+                    2024-03-31 15:58:31.452 +00:00 & [INF] & Query-Time for Package "LARAVEL" completed in 0.4 ms \\
+                    2024-03-31 15:58:31.453 +00:00 & [INF] & Query-Time for Package "beta" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.453 +00:00 & [INF] & Query-Time for Package "meta" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.454 +00:00 & [INF] & Query-Time for Package "META" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.454 +00:00 & [INF] & Query-Time for Package "express-ejs-layouts" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.454 +00:00 & [INF] & Query-Time for Package "accepts" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.455 +00:00 & [INF] & Query-Time for Package "mime-db" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.455 +00:00 & [INF] & Query-Time for Package "mime-DB" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.455 +00:00 & [INF] & Query-Time for Package "iconv-lite" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.456 +00:00 & [INF] & Query-Time for Package "safer-buffer" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.456 +00:00 & [INF] & Query-Time for Package "raw-body" completed in 0.2 ms \\
+                    2024-03-31 15:58:31.456 +00:00 & [INF] & Query-Time for Package "depd" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.457 +00:00 & [INF] & Query-Time for Package "finalhandler" completed in 0.2 ms \\
+                    2024-03-31 15:58:31.457 +00:00 & [INF] & Query-Time for Package "on-finished" completed in 0.2 ms \\
+                    2024-03-31 15:58:31.457 +00:00 & [INF] & Query-Time for Package "ipaddr.js" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.458 +00:00 & [INF] & Query-Time for Package "encodeurl" completed in 0.3 ms \\
+                    2024-03-31 15:58:31.458 +00:00 & [INF] & Complete Time for Query-Search after List of Packages completed in 17.7 ms \\
+                    \hline
+                \end{tabularx}
+            }
+        }
+
+        \subsubsection{Messung 5 von 10} \label{subsubsec:MySQLMitIndex5von10}
+        {\shorthandoff{"}
+            {\small
+                \begin{tabularx}{\textwidth}{|l|l|X|}
+                    \hline
+                    \textbf{Zeitstempel} & \textbf{Typ} & \textbf{Nachricht} \\
+                    \hline
+                    \endhead
+                    2024-03-31 15:59:31.247 +00:00 & [INF] & Query-Time for Package "LiteDB" completed in 0.7 ms \\
+                    2024-03-31 15:59:31.247 +00:00 & [INF] & Query-Time for Package "Newtonsoft" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.248 +00:00 & [INF] & Query-Time for Package "NewtonSoft" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.248 +00:00 & [INF] & Query-Time for Package "Crowd" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.249 +00:00 & [INF] & Query-Time for Package "Atlassian" completed in 0.6 ms \\
+                    2024-03-31 15:59:31.250 +00:00 & [INF] & Query-Time for Package "Debian" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.250 +00:00 & [INF] & Query-Time for Package "Ubuntu" completed in 0.6 ms \\
+                    2024-03-31 15:59:31.251 +00:00 & [INF] & Query-Time for Package "Arc42" completed in 0.5 ms \\
+                    2024-03-31 15:59:31.251 +00:00 & [INF] & Query-Time for Package "arc42" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.252 +00:00 & [INF] & Query-Time for Package "cookie" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.252 +00:00 & [INF] & Query-Time for Package "mongoDb" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.253 +00:00 & [INF] & Query-Time for Package "mongoDB" completed in 0.5 ms \\
+                    2024-03-31 15:59:31.253 +00:00 & [INF] & Query-Time for Package "mongodb" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.254 +00:00 & [INF] & Query-Time for Package "parser" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.254 +00:00 & [INF] & Query-Time for Package "LiteDb" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.255 +00:00 & [INF] & Query-Time for Package "php" completed in 0.7 ms \\
+                    2024-03-31 15:59:31.257 +00:00 & [INF] & Query-Time for Package "PHP" completed in 0.8 ms \\
+                    2024-03-31 15:59:31.258 +00:00 & [INF] & Query-Time for Package "Laravel" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.259 +00:00 & [INF] & Query-Time for Package "laravel" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.259 +00:00 & [INF] & Query-Time for Package "LARAVEL" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.259 +00:00 & [INF] & Query-Time for Package "beta" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.260 +00:00 & [INF] & Query-Time for Package "meta" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.260 +00:00 & [INF] & Query-Time for Package "META" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.261 +00:00 & [INF] & Query-Time for Package "express-ejs-layouts" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.261 +00:00 & [INF] & Query-Time for Package "accepts" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.261 +00:00 & [INF] & Query-Time for Package "mime-db" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.262 +00:00 & [INF] & Query-Time for Package "mime-DB" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.262 +00:00 & [INF] & Query-Time for Package "iconv-lite" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.263 +00:00 & [INF] & Query-Time for Package "safer-buffer" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.263 +00:00 & [INF] & Query-Time for Package "raw-body" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.263 +00:00 & [INF] & Query-Time for Package "depd" completed in 0.4 ms \\
+                    2024-03-31 15:59:31.264 +00:00 & [INF] & Query-Time for Package "finalhandler" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.264 +00:00 & [INF] & Query-Time for Package "on-finished" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.264 +00:00 & [INF] & Query-Time for Package "ipaddr.js" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.265 +00:00 & [INF] & Query-Time for Package "encodeurl" completed in 0.3 ms \\
+                    2024-03-31 15:59:31.265 +00:00 & [INF] & Complete Time for Query-Search after List of Packages completed in 18.8 ms \\
+                    \hline
+                \end{tabularx}
+            }
+        }
+
+    \subsubsection{Messung 6 von 10} \label{subsubsec:MySQLMitIndex6von10}
+        {\shorthandoff{"}
+            {\small
+                \begin{tabularx}{\textwidth}{|l|l|X|}
+                    \hline
+                    \textbf{Zeitstempel} & \textbf{Typ} & \textbf{Nachricht} \\
+                    \hline
+                    \endhead
+                    2024-03-31 16:01:13.650 +00:00 & [INF] & Query-Time for Package "LiteDB" completed in 0.7 ms \\
+                    2024-03-31 16:01:13.651 +00:00 & [INF] & Query-Time for Package "Newtonsoft" completed in 0.4 ms \\
+                    2024-03-31 16:01:13.652 +00:00 & [INF] & Query-Time for Package "NewtonSoft" completed in 0.5 ms \\
+                    2024-03-31 16:01:13.652 +00:00 & [INF] & Query-Time for Package "Crowd" completed in 0.5 ms \\
+                    2024-03-31 16:01:13.653 +00:00 & [INF] & Query-Time for Package "Atlassian" completed in 0.4 ms \\
+                    2024-03-31 16:01:13.653 +00:00 & [INF] & Query-Time for Package "Debian" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.653 +00:00 & [INF] & Query-Time for Package "Ubuntu" completed in 0.4 ms \\
+                    2024-03-31 16:01:13.654 +00:00 & [INF] & Query-Time for Package "Arc42" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.655 +00:00 & [INF] & Query-Time for Package "arc42" completed in 0.6 ms \\
+                    2024-03-31 16:01:13.655 +00:00 & [INF] & Query-Time for Package "cookie" completed in 0.6 ms \\
+                    2024-03-31 16:01:13.656 +00:00 & [INF] & Query-Time for Package "mongoDb" completed in 0.4 ms \\
+                    2024-03-31 16:01:13.656 +00:00 & [INF] & Query-Time for Package "mongoDB" completed in 0.4 ms \\
+                    2024-03-31 16:01:13.657 +00:00 & [INF] & Query-Time for Package "mongodb" completed in 0.4 ms \\
+                    2024-03-31 16:01:13.657 +00:00 & [INF] & Query-Time for Package "parser" completed in 0.5 ms \\
+                    2024-03-31 16:01:13.658 +00:00 & [INF] & Query-Time for Package "LiteDb" completed in 0.4 ms \\
+                    2024-03-31 16:01:13.658 +00:00 & [INF] & Query-Time for Package "php" completed in 0.8 ms \\
+                    2024-03-31 16:01:13.660 +00:00 & [INF] & Query-Time for Package "PHP" completed in 0.8 ms \\
+                    2024-03-31 16:01:13.662 +00:00 & [INF] & Query-Time for Package "Laravel" completed in 0.4 ms \\
+                    2024-03-31 16:01:13.662 +00:00 & [INF] & Query-Time for Package "laravel" completed in 0.4 ms \\
+                    2024-03-31 16:01:13.662 +00:00 & [INF] & Query-Time for Package "LARAVEL" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.663 +00:00 & [INF] & Query-Time for Package "beta" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.663 +00:00 & [INF] & Query-Time for Package "meta" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.663 +00:00 & [INF] & Query-Time for Package "META" completed in 0.2 ms \\
+                    2024-03-31 16:01:13.664 +00:00 & [INF] & Query-Time for Package "express-ejs-layouts" completed in 0.2 ms \\
+                    2024-03-31 16:01:13.664 +00:00 & [INF] & Query-Time for Package "accepts" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.665 +00:00 & [INF] & Query-Time for Package "mime-db" completed in 0.4 ms \\
+                    2024-03-31 16:01:13.665 +00:00 & [INF] & Query-Time for Package "mime-DB" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.665 +00:00 & [INF] & Query-Time for Package "iconv-lite" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.666 +00:00 & [INF] & Query-Time for Package "safer-buffer" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.666 +00:00 & [INF] & Query-Time for Package "raw-body" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.666 +00:00 & [INF] & Query-Time for Package "depd" completed in 0.2 ms \\
+                    2024-03-31 16:01:13.666 +00:00 & [INF] & Query-Time for Package "finalhandler" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.667 +00:00 & [INF] & Query-Time for Package "on-finished" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.667 +00:00 & [INF] & Query-Time for Package "ipaddr.js" completed in 0.2 ms \\
+                    2024-03-31 16:01:13.668 +00:00 & [INF] & Query-Time for Package "encodeurl" completed in 0.3 ms \\
+                    2024-03-31 16:01:13.668 +00:00 & [INF] & Complete Time for Query-Search after List of Packages completed in 17.9 ms \\
+                    \hline
+                \end{tabularx}
+            }
+        }
+
+    \subsubsection{Messung 7 von 10} \label{subsubsec:MySQLMitIndex7von10}
+        {\shorthandoff{"}
+            {\small
+                \begin{tabularx}{\textwidth}{|l|l|X|}
+                    \hline
+                    \textbf{Zeitstempel} & \textbf{Typ} & \textbf{Nachricht} \\
+                    \hline
+                    \endhead
+                    2024-03-31 16:03:51.640 +00:00 & [INF] & Query-Time for Package "LiteDB" completed in 0.6 ms \\
+                    2024-03-31 16:03:51.641 +00:00 & [INF] & Query-Time for Package "Newtonsoft" completed in 0.4 ms \\
+                    2024-03-31 16:03:51.641 +00:00 & [INF] & Query-Time for Package "NewtonSoft" completed in 0.5 ms \\
+                    2024-03-31 16:03:51.642 +00:00 & [INF] & Query-Time for Package "Crowd" completed in 0.7 ms \\
+                    2024-03-31 16:03:51.643 +00:00 & [INF] & Query-Time for Package "Atlassian" completed in 0.7 ms \\
+                    2024-03-31 16:03:51.645 +00:00 & [INF] & Query-Time for Package "Debian" completed in 1.0 ms \\
+                    2024-03-31 16:03:51.645 +00:00 & [INF] & Query-Time for Package "Ubuntu" completed in 0.6 ms \\
+                    2024-03-31 16:03:51.646 +00:00 & [INF] & Query-Time for Package "Arc42" completed in 0.4 ms \\
+                    2024-03-31 16:03:51.646 +00:00 & [INF] & Query-Time for Package "arc42" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.647 +00:00 & [INF] & Query-Time for Package "cookie" completed in 0.4 ms \\
+                    2024-03-31 16:03:51.647 +00:00 & [INF] & Query-Time for Package "mongoDb" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.648 +00:00 & [INF] & Query-Time for Package "mongoDB" completed in 0.5 ms \\
+                    2024-03-31 16:03:51.648 +00:00 & [INF] & Query-Time for Package "mongodb" completed in 0.5 ms \\
+                    2024-03-31 16:03:51.649 +00:00 & [INF] & Query-Time for Package "parser" completed in 0.5 ms \\
+                    2024-03-31 16:03:51.649 +00:00 & [INF] & Query-Time for Package "LiteDb" completed in 0.4 ms \\
+                    2024-03-31 16:03:51.650 +00:00 & [INF] & Query-Time for Package "php" completed in 0.7 ms \\
+                    2024-03-31 16:03:51.652 +00:00 & [INF] & Query-Time for Package "PHP" completed in 0.7 ms \\
+                    2024-03-31 16:03:51.653 +00:00 & [INF] & Query-Time for Package "Laravel" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.654 +00:00 & [INF] & Query-Time for Package "laravel" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.654 +00:00 & [INF] & Query-Time for Package "LARAVEL" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.654 +00:00 & [INF] & Query-Time for Package "beta" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.655 +00:00 & [INF] & Query-Time for Package "meta" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.655 +00:00 & [INF] & Query-Time for Package "META" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.655 +00:00 & [INF] & Query-Time for Package "express-ejs-layouts" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.656 +00:00 & [INF] & Query-Time for Package "accepts" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.656 +00:00 & [INF] & Query-Time for Package "mime-db" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.656 +00:00 & [INF] & Query-Time for Package "mime-DB" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.657 +00:00 & [INF] & Query-Time for Package "iconv-lite" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.657 +00:00 & [INF] & Query-Time for Package "safer-buffer" completed in 0.7 ms \\
+                    2024-03-31 16:03:51.658 +00:00 & [INF] & Query-Time for Package "raw-body" completed in 0.4 ms \\
+                    2024-03-31 16:03:51.658 +00:00 & [INF] & Query-Time for Package "depd" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.659 +00:00 & [INF] & Query-Time for Package "finalhandler" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.659 +00:00 & [INF] & Query-Time for Package "on-finished" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.659 +00:00 & [INF] & Query-Time for Package "ipaddr.js" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.660 +00:00 & [INF] & Query-Time for Package "encodeurl" completed in 0.3 ms \\
+                    2024-03-31 16:03:51.660 +00:00 & [INF] & Complete Time for Query-Search after List of Packages completed in 20.1 ms \\
+                    \hline
+                \end{tabularx}
+            }
+        }
+
+    \subsubsection{Messung 8 von 10} \label{subsubsec:MySQLMitIndex8von10}
+        {\shorthandoff{"}
+            {\small
+                \begin{tabularx}{\textwidth}{|l|l|X|}
+                    \hline
+                    \textbf{Zeitstempel} & \textbf{Typ} & \textbf{Nachricht} \\
+                    \hline
+                    \endhead
+                    2024-03-31 16:04:25.573 +00:00 & [INF] & Query-Time for Package "LiteDB" completed in 0.5 ms \\
+                    2024-03-31 16:04:25.573 +00:00 & [INF] & Query-Time for Package "Newtonsoft" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.573 +00:00 & [INF] & Query-Time for Package "NewtonSoft" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.574 +00:00 & [INF] & Query-Time for Package "Crowd" completed in 0.4 ms \\
+                    2024-03-31 16:04:25.574 +00:00 & [INF] & Query-Time for Package "Atlassian" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.575 +00:00 & [INF] & Query-Time for Package "Debian" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.575 +00:00 & [INF] & Query-Time for Package "Ubuntu" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.575 +00:00 & [INF] & Query-Time for Package "Arc42" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.576 +00:00 & [INF] & Query-Time for Package "arc42" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.576 +00:00 & [INF] & Query-Time for Package "cookie" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.576 +00:00 & [INF] & Query-Time for Package "mongoDb" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.576 +00:00 & [INF] & Query-Time for Package "mongoDB" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.577 +00:00 & [INF] & Query-Time for Package "mongodb" completed in 0.4 ms \\
+                    2024-03-31 16:04:25.577 +00:00 & [INF] & Query-Time for Package "parser" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.578 +00:00 & [INF] & Query-Time for Package "LiteDb" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.578 +00:00 & [INF] & Query-Time for Package "php" completed in 0.7 ms \\
+                    2024-03-31 16:04:25.580 +00:00 & [INF] & Query-Time for Package "PHP" completed in 0.7 ms \\
+                    2024-03-31 16:04:25.581 +00:00 & [INF] & Query-Time for Package "Laravel" completed in 0.4 ms \\
+                    2024-03-31 16:04:25.582 +00:00 & [INF] & Query-Time for Package "laravel" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.582 +00:00 & [INF] & Query-Time for Package "LARAVEL" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.583 +00:00 & [INF] & Query-Time for Package "beta" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.583 +00:00 & [INF] & Query-Time for Package "meta" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.583 +00:00 & [INF] & Query-Time for Package "META" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.583 +00:00 & [INF] & Query-Time for Package "express-ejs-layouts" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.584 +00:00 & [INF] & Query-Time for Package "accepts" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.584 +00:00 & [INF] & Query-Time for Package "mime-db" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.584 +00:00 & [INF] & Query-Time for Package "mime-DB" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.585 +00:00 & [INF] & Query-Time for Package "iconv-lite" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.585 +00:00 & [INF] & Query-Time for Package "safer-buffer" completed in 0.4 ms \\
+                    2024-03-31 16:04:25.585 +00:00 & [INF] & Query-Time for Package "raw-body" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.586 +00:00 & [INF] & Query-Time for Package "depd" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.586 +00:00 & [INF] & Query-Time for Package "finalhandler" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.586 +00:00 & [INF] & Query-Time for Package "on-finished" completed in 0.3 ms \\
+                    2024-03-31 16:04:25.587 +00:00 & [INF] & Query-Time for Package "ipaddr.js" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.587 +00:00 & [INF] & Query-Time for Package "encodeurl" completed in 0.2 ms \\
+                    2024-03-31 16:04:25.587 +00:00 & [INF] & Complete Time for Query-Search after List of Packages completed in 15.1 ms \\
+                    \hline
+                \end{tabularx}
+            }
+        }
+
+    \subsubsection{Messung 9 von 10} \label{subsubsec:MySQLMitIndex9von10}
+        {\shorthandoff{"}
+            {\small
+                \begin{tabularx}{\textwidth}{|l|l|X|}
+                    \hline
+                    \textbf{Zeitstempel} & \textbf{Typ} & \textbf{Nachricht} \\
+                    \hline
+                    \endhead
+                    2024-03-31 16:05:19.085 +00:00 & [INF] & Query-Time for Package "LiteDB" completed in 0.8 ms \\
+                    2024-03-31 16:05:19.085 +00:00 & [INF] & Query-Time for Package "Newtonsoft" completed in 0.5 ms \\
+                    2024-03-31 16:05:19.086 +00:00 & [INF] & Query-Time for Package "NewtonSoft" completed in 0.3 ms \\
+                    2024-03-31 16:05:19.086 +00:00 & [INF] & Query-Time for Package "Crowd" completed in 0.4 ms \\
+                    2024-03-31 16:05:19.087 +00:00 & [INF] & Query-Time for Package "Atlassian" completed in 0.4 ms \\
+                    2024-03-31 16:05:19.087 +00:00 & [INF] & Query-Time for Package "Debian" completed in 0.5 ms \\
+                    2024-03-31 16:05:19.088 +00:00 & [INF] & Query-Time for Package "Ubuntu" completed in 0.6 ms \\
+                    2024-03-31 16:05:19.089 +00:00 & [INF] & Query-Time for Package "Arc42" completed in 0.7 ms \\
+                    2024-03-31 16:05:19.090 +00:00 & [INF] & Query-Time for Package "arc42" completed in 0.7 ms \\
+                    2024-03-31 16:05:19.090 +00:00 & [INF] & Query-Time for Package "cookie" completed in 0.7 ms \\
+                    2024-03-31 16:05:19.091 +00:00 & [INF] & Query-Time for Package "mongoDb" completed in 0.5 ms \\
+                    2024-03-31 16:05:19.092 +00:00 & [INF] & Query-Time for Package "mongoDB" completed in 0.6 ms \\
+                    2024-03-31 16:05:19.092 +00:00 & [INF] & Query-Time for Package "mongodb" completed in 0.5 ms \\
+                    2024-03-31 16:05:19.093 +00:00 & [INF] & Query-Time for Package "parser" completed in 0.4 ms \\
+                    2024-03-31 16:05:19.093 +00:00 & [INF] & Query-Time for Package "LiteDb" completed in 0.6 ms \\
+                    2024-03-31 16:05:19.094 +00:00 & [INF] & Query-Time for Package "php" completed in 0.9 ms \\
+                    2024-03-31 16:05:19.096 +00:00 & [INF] & Query-Time for Package "PHP" completed in 0.9 ms \\
+                    2024-03-31 16:05:19.098 +00:00 & [INF] & Query-Time for Package "Laravel" completed in 0.5 ms \\
+                    2024-03-31 16:05:19.098 +00:00 & [INF] & Query-Time for Package "laravel" completed in 0.4 ms \\
+                    2024-03-31 16:05:19.099 +00:00 & [INF] & Query-Time for Package "LARAVEL" completed in 0.3 ms \\
+                    2024-03-31 16:05:19.099 +00:00 & [INF] & Query-Time for Package "beta" completed in 0.3 ms \\
+                    2024-03-31 16:05:19.100 +00:00 & [INF] & Query-Time for Package "meta" completed in 0.3 ms \\
+                    2024-03-31 16:05:19.100 +00:00 & [INF] & Query-Time for Package "META" completed in 0.3 ms \\
+                    2024-03-31 16:05:19.100 +00:00 & [INF] & Query-Time for Package "express-ejs-layouts" completed in 0.3 ms \\
+                    2024-03-31 16:05:19.101 +00:00 & [INF] & Query-Time for Package "accepts" completed in 0.3 ms \\
+                    2024-03-31 16:05:19.101 +00:00 & [INF] & Query-Time for Package "mime-db" completed in 0.3 ms \\
+                    2024-03-31 16:05:19.101 +00:00 & [INF] & Query-Time for Package "mime-DB" completed in 0.3 ms \\
+                    2024-03-31 16:05:19.101 +00:00 & [INF] & Query-Time for Package "iconv-lite" completed in 0.2 ms \\
+                    2024-03-31 16:05:19.102 +00:00 & [INF] & Query-Time for Package "safer-buffer" completed in 0.2 ms \\
+                    2024-03-31 16:05:19.102 +00:00 & [INF] & Query-Time for Package "raw-body" completed in 0.2 ms \\
+                    2024-03-31 16:05:19.102 +00:00 & [INF] & Query-Time for Package "depd" completed in 0.2 ms \\
+                    2024-03-31 16:05:19.103 +00:00 & [INF] & Query-Time for Package "finalhandler" completed in 0.2 ms \\
+                    2024-03-31 16:05:19.103 +00:00 & [INF] & Query-Time for Package "on-finished" completed in 0.2 ms \\
+                    2024-03-31 16:05:19.103 +00:00 & [INF] & Query-Time for Package "ipaddr.js" completed in 0.2 ms \\
+                    2024-03-31 16:05:19.103 +00:00 & [INF] & Query-Time for Package "encodeurl" completed in 0.2 ms \\
+                    2024-03-31 16:05:19.103 +00:00 & [INF] & Complete Time for Query-Search after List of Packages completed in 19.7 ms \\
+                    \hline
+                \end{tabularx}
+            }
+        }
+
+    \subsubsection{Messung 10 von 10} \label{subsubsec:MySQLMitIndex10von10}
+        {\shorthandoff{"}
+            {\small
+                \begin{tabularx}{\textwidth}{|l|l|X|}
+                    \hline
+                    \textbf{Zeitstempel} & \textbf{Typ} & \textbf{Nachricht} \\
+                    \hline
+                    \endhead
+                    2024-03-31 16:05:57.410 +00:00 & [INF] & Query-Time for Package "LiteDB" completed in 0.6 ms \\
+                    2024-03-31 16:05:57.410 +00:00 & [INF] & Query-Time for Package "Newtonsoft" completed in 0.4 ms \\
+                    2024-03-31 16:05:57.411 +00:00 & [INF] & Query-Time for Package "NewtonSoft" completed in 0.4 ms \\
+                    2024-03-31 16:05:57.411 +00:00 & [INF] & Query-Time for Package "Crowd" completed in 0.5 ms \\
+                    2024-03-31 16:05:57.412 +00:00 & [INF] & Query-Time for Package "Atlassian" completed in 0.4 ms \\
+                    2024-03-31 16:05:57.412 +00:00 & [INF] & Query-Time for Package "Debian" completed in 0.4 ms \\
+                    2024-03-31 16:05:57.413 +00:00 & [INF] & Query-Time for Package "Ubuntu" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.413 +00:00 & [INF] & Query-Time for Package "Arc42" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.413 +00:00 & [INF] & Query-Time for Package "arc42" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.414 +00:00 & [INF] & Query-Time for Package "cookie" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.414 +00:00 & [INF] & Query-Time for Package "mongoDb" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.414 +00:00 & [INF] & Query-Time for Package "mongoDB" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.415 +00:00 & [INF] & Query-Time for Package "mongodb" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.415 +00:00 & [INF] & Query-Time for Package "parser" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.415 +00:00 & [INF] & Query-Time for Package "LiteDb" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.416 +00:00 & [INF] & Query-Time for Package "php" completed in 0.6 ms \\
+                    2024-03-31 16:05:57.417 +00:00 & [INF] & Query-Time for Package "PHP" completed in 0.7 ms \\
+                    2024-03-31 16:05:57.419 +00:00 & [INF] & Query-Time for Package "Laravel" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.419 +00:00 & [INF] & Query-Time for Package "laravel" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.419 +00:00 & [INF] & Query-Time for Package "LARAVEL" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.420 +00:00 & [INF] & Query-Time for Package "beta" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.420 +00:00 & [INF] & Query-Time for Package "meta" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.420 +00:00 & [INF] & Query-Time for Package "META" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.421 +00:00 & [INF] & Query-Time for Package "express-ejs-layouts" completed in 0.2 ms \\
+                    2024-03-31 16:05:57.421 +00:00 & [INF] & Query-Time for Package "accepts" completed in 0.2 ms \\
+                    2024-03-31 16:05:57.421 +00:00 & [INF] & Query-Time for Package "mime-db" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.422 +00:00 & [INF] & Query-Time for Package "mime-DB" completed in 0.2 ms \\
+                    2024-03-31 16:05:57.422 +00:00 & [INF] & Query-Time for Package "iconv-lite" completed in 0.2 ms \\
+                    2024-03-31 16:05:57.422 +00:00 & [INF] & Query-Time for Package "safer-buffer" completed in 0.2 ms \\
+                    2024-03-31 16:05:57.422 +00:00 & [INF] & Query-Time for Package "raw-body" completed in 0.2 ms \\
+                    2024-03-31 16:05:57.423 +00:00 & [INF] & Query-Time for Package "depd" completed in 0.2 ms \\
+                    2024-03-31 16:05:57.423 +00:00 & [INF] & Query-Time for Package "finalhandler" completed in 0.2 ms \\
+                    2024-03-31 16:05:57.423 +00:00 & [INF] & Query-Time for Package "on-finished" completed in 0.3 ms \\
+                    2024-03-31 16:05:57.424 +00:00 & [INF] & Query-Time for Package "ipaddr.js" completed in 0.2 ms \\
+                    2024-03-31 16:05:57.424 +00:00 & [INF] & Query-Time for Package "encodeurl" completed in 0.2 ms \\
+                    2024-03-31 16:05:57.424 +00:00 & [INF] & Complete Time for Query-Search after List of Packages completed in 15.0 ms \\
+                    \hline
+                \end{tabularx}
+            }
+        }
