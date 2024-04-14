@@ -100,6 +100,10 @@
     citecolor = blue
 }
 
+% Anhang
+\usepackage[toc,page]{appendix}
+% Abkürzungen
+\usepackage{acronym}
 \begin{document}
     \nocite{*}
 
@@ -171,6 +175,17 @@
     % \input{sections/umsetzung.tex}
     % \input{sections/analyse.tex}
     % \input{sections/conclusion.tex}
+
+    \newpage
+    \begin{appendices}
+        \section{Abkürzungen} \label{sec:Abkürzungen}
+        \begin{acronym}[LangesWortFuerDieEinstellung]
+            \acro{API}[API]{\textbf{A}pplication \textbf{P}rogramming \textbf{I}nterface}
+            \acro{NIST}[NIST]{\textbf{N}ational \textbf{I}nstitute for \textbf{S}tandards and \textbf{T}echnology}
+            \acro{CVE}[CVE]{\textbf{C}ommon \textbf{V}ulnerabilities and \textbf{E}xposures}
+        \end{acronym}
+        \section{Messungen} \label{sec:Messungen}
+    \end{appendices}
 
     \newpage
     \phantomsection
