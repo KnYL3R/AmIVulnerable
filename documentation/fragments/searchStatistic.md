@@ -254,10 +254,10 @@ Noch zu messen!
 2024-02-21 15:06:52.440 +01:00 [INF] Time by mono encodeurl completed in 2705.9 ms
 2024-02-21 15:07:14.672 +01:00 [INF] Time by pipe completed in 22231.9 ms
 ```
-Durchschnitt Mono: <br>
-Laufzeit der Pipe: <br>
-Gesamt Mono: <br>
-Faktor:
+Durchschnitt Mono: 2845,774286ms <br>
+Laufzeit der Pipe: 22231,9ms <br>
+Gesamt Mono: 99602,1ms <br>
+Faktor: 4,480143397
 
 ### Durchgang 2 von 10
 ```log
@@ -298,10 +298,10 @@ Faktor:
 2024-02-21 15:09:18.712 +01:00 [INF] Time by mono encodeurl completed in 2637.7 ms
 2024-02-21 15:09:40.604 +01:00 [INF] Time by pipe completed in 21891.4 ms
 ```
-Durchschnitt Mono: <br>
-Laufzeit der Pipe: <br>
-Gesamt Mono: <br>
-Faktor:
+Durchschnitt Mono: 2671,517143ms <br>
+Laufzeit der Pipe: 21891,4ms <br>
+Gesamt Mono: 93503,1ms <br>
+Faktor: 4,271225229
 
 ### Durchgang 3 von 10
 ```log
@@ -342,10 +342,10 @@ Faktor:
 2024-02-21 15:21:11.796 +01:00 [INF] Time by mono encodeurl completed in 2649.0 ms
 2024-02-21 15:21:34.070 +01:00 [INF] Time by pipe completed in 22273.4 ms
 ```
-Durchschnitt Mono: <br>
-Laufzeit der Pipe: <br>
-Gesamt Mono: <br>
-Faktor:
+Durchschnitt Mono: 2686,54ms <br>
+Laufzeit der Pipe: 22273,4ms <br>
+Gesamt Mono: 94028,9ms <br>
+Faktor: 4,2215782053
 
 ### Durchgang 4 von 10
 ```log
@@ -386,10 +386,10 @@ Faktor:
 2024-02-21 15:23:51.494 +01:00 [INF] Time by mono encodeurl completed in 2657.5 ms
 2024-02-21 15:24:13.535 +01:00 [INF] Time by pipe completed in 22041.2 ms
 ```
-Durchschnitt Mono: <br>
-Laufzeit der Pipe: <br>
-Gesamt Mono: <br>
-Faktor:
+Durchschnitt Mono: 2695,071429ms <br>
+Laufzeit der Pipe: 22041,2ms <br>
+Gesamt Mono: 94327,5ms <br>
+Faktor: 4,2795991143
 
 ### Durchgang 5 von 10
 ```log
@@ -430,10 +430,10 @@ Faktor:
 2024-02-21 15:27:13.679 +01:00 [INF] Time by mono encodeurl completed in 2686.5 ms
 2024-02-21 15:27:35.944 +01:00 [INF] Time by pipe completed in 22265.6 ms
 ```
-Durchschnitt Mono: <br>
-Laufzeit der Pipe: <br>
-Gesamt Mono: <br>
-Faktor:
+Durchschnitt Mono: 2712,788571ms <br>
+Laufzeit der Pipe: 22265,6ms <br>
+Gesamt Mono: 94947,6ms <br>
+Faktor: 4,264318051
 
 ### Durchgang 6 von 10
 ```log
@@ -474,10 +474,10 @@ Faktor:
 2024-02-21 15:30:19.148 +01:00 [INF] Time by mono encodeurl completed in 2667.3 ms
 2024-02-21 15:30:41.173 +01:00 [INF] Time by pipe completed in 22025.6 ms
 ```
-Durchschnitt Mono: <br>
-Laufzeit der Pipe: <br>
-Gesamt Mono: <br>
-Faktor:
+Durchschnitt Mono: 2701,765714ms <br>
+Laufzeit der Pipe: 22025,6ms <br>
+Gesamt Mono: 94561,8ms <br>
+Faktor: 4,2932678338
 
 ### Durchgang 7 von 10
 ```log
@@ -518,10 +518,10 @@ Faktor:
 2024-02-21 15:37:28.872 +01:00 [INF] Time by mono encodeurl completed in 2673.9 ms
 2024-02-21 15:37:50.909 +01:00 [INF] Time by pipe completed in 22037.0 ms
 ```
-Durchschnitt Mono: <br>
-Laufzeit der Pipe: <br>
-Gesamt Mono: <br>
-Faktor:
+Durchschnitt Mono: 2705,697143ms <br>
+Laufzeit der Pipe: 22037,0ms <br>
+Gesamt Mono: 94699,4ms <br>
+Faktor: 4,2972909198
 
 ### Durchgang 8 von 10
 ```log
@@ -562,10 +562,10 @@ Faktor:
 2024-02-21 15:40:31.801 +01:00 [INF] Time by mono encodeurl completed in 2693.3 ms
 2024-02-21 15:40:54.221 +01:00 [INF] Time by pipe completed in 22419.6 ms
 ```
-Durchschnitt Mono: <br>
-Laufzeit der Pipe: <br>
-Gesamt Mono: <br>
-Faktor:
+Durchschnitt Mono: 2746,8ms <br>
+Laufzeit der Pipe: 22419,6ms <br>
+Gesamt Mono: 96138ms <br>
+Faktor: 4,28812289
 
 ### Durchgang 9 von 10
 ```log
@@ -606,10 +606,10 @@ Faktor:
 2024-02-21 15:44:07.869 +01:00 [INF] Time by mono encodeurl completed in 2692.1 ms
 2024-02-21 15:44:29.962 +01:00 [INF] Time by pipe completed in 22092.4 ms
 ```
-Durchschnitt Mono: <br>
-Laufzeit der Pipe: <br>
-Gesamt Mono: <br>
-Faktor:
+Durchschnitt Mono: 2712,608571ms <br>
+Laufzeit der Pipe: 22092,4ms <br>
+Gesamt Mono: 94941,3ms <br>
+Faktor: 4,2974642864
 
 ### Durchgang 10 von 10
 ```log
@@ -650,14 +650,14 @@ Faktor:
 2024-02-21 15:46:46.817 +01:00 [INF] Time by mono encodeurl completed in 2641.9 ms
 2024-02-21 15:47:08.654 +01:00 [INF] Time by pipe completed in 21836.9 ms
 ```
-Durchschnitt Mono: <br>
-Laufzeit der Pipe: <br>
-Gesamt Mono: <br>
-Faktor:
+Durchschnitt Mono: 2667,505714ms <br>
+Laufzeit der Pipe: 21836,9ms <br>
+Gesamt Mono: 93362,7ms <br>
+Faktor: 4,2754557652
 
 ### Erkenntnisse
 Die durchschnittliche Laufzeit der Mono bzw. Single-Paket Analyse dauerte: <br>
 Die Gesamtlaufzeit von Mono beträgt: <br>
 Die Gesamtlaufzeit von Pipe beträgt: <br>
 
-Der Durchschnittliche Faktor (schnellere Pipe als Mono) beträgt: 
+Der Durchschnittliche Faktor (schnellere Pipe als Mono) beträgt: 4,296846569
