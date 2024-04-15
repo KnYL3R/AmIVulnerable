@@ -64,7 +64,7 @@
 % \renewcommand{\contentsname}{\hfill\bfseries\Large Inhaltsverzeichnis \hfill}
 % \renewcommand{\cftaftertoctitle}{\hfill}
 
-\usepackage{tocloft}
+\usepackage{titletoc} % for mutli toc's
 \usepackage[explicit]{titlesec}
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
@@ -196,10 +196,12 @@
         \end{acronym}
         \newpage
         \section{Messungen} \label{sec:Messungen}
-            % TODO: Andere Logs ebenfalls eintragen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            \startcontents[Messungen]
+            \printcontents[Messungen]{}{2}{} % \printcontents[⟨name⟩]{⟨prefix⟩}{⟨start-level⟩}[⟨toc-depth⟩]{⟨toc-code⟩}
             \input{Appendix/litedbMonoPipe.tex}
             \input{Appendix/mySqlWithIndex.tex}
             \input{Appendix/mySqlWithoutIndex.tex}
+            \stopcontents[Messungen]
     \end{appendices}
 
     \newpage
