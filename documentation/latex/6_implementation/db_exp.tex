@@ -1,12 +1,14 @@
 \subsubsection{Datenbank} \label{sec:ExperimenteDB}
 Die Wahl der Datenbank hat einen großen Einfluss auf die Laufzeit von Anfragen auf diese.
-Aus der Gegebenen Einbindung einer NoSQL Datenbanklösung in ASP.NET, LiteDB, wurde diese auch zuerst als Datenspeicher gewählt.
-\\
---> reicht diese Begründung für die Entscheidung? \\
+Aus der Gegebenen Einbindung einer dateibasierten Datenbanklösung in ASP.NET -- LiteDB -- wurde diese auch zuerst als persistenter Datenspeicher gewählt.
+Aufgrund der Suchzeiten von LiteDB bei einzelnen Paketen, die zwischen 2.5 und 4.4 Sekunden liegen, erschien die Suche nach einer Alternative für bessere Ergebnisse angeraten.
 
-Wieso Entscheidung auf Änderung? \\
+LiteDB ist eine NoSQL-Datenbank und eröffnete so die Möglichkeit der Lösung des Performance-Problems in einer relationalen Datenbank.
+Dazu wurde MySQL als \textit{open-source} und \textit{free-use} Version gewählt.
+Diese unterscheidet sich grundsätzlich durch Indexierung der jeweiligen Einträge sowie dem höheren Maß an nutzbaren Ressourcen durch das laufen auf einem separaten Server.
+
+\\
 
 Vergleich Messwerte (Am besten Messreihen) in Tabelle auf welchen Datenmengen? \\
 
---> Entscheidung auf welche DB am Ende, weil? \\
 --> Einsparung von was am Ende? \\
