@@ -20,44 +20,60 @@
         \label{png:OverviewPipelineStatus}
     \end{figure}
 
+    \newpage
     Das Befüllen der Pipeline geschieht nach folgendem Muster:
     \begin{figure}[H]
         \centering
-        \includegraphics[width=\textwidth]{../pap/Case_A.png}
+        \includegraphics[width=0.75\textwidth]{../pap/Case_A.png}
         \caption{\ac{PAP} Befüllen der Pipeline}
         \label{png:case_a}
     \end{figure}
+    Zu Erkennen ist, dass solange ein neuer Task erstellt wird, wie die Anzahl erstens nicht die Anzahl der Datenbanken erreicht hat und zweitens die aktuelle Anzahl an Tasks nicht über dem Wert der Datenbankenmenge ist.
+    Dies definiert das Befüllen der Pipe.
 
+    \newpage
     Nach vollständiger Befüllung die Erhaltung der Pipeline:
     \begin{figure}[H]
         \centering
-        \includegraphics[width=\textwidth]{../pap/Case_B.png}
+        \includegraphics[width=0.75\textwidth]{../pap/Case_B.png}
         \caption{\ac{PAP} Aufrechterhalten der Pipeline}
         \label{png:case_b}
     \end{figure}
+    Hier wird jetzt nachdem das älteste, am zeitigsten in der Pipe eingeführte und noch zu analysierende Paket aus der Liste entfernt und am Anfang der Datenbankenliste der nächste Eintrag wieder angeführt, um ebenfalls alle Datenbanken zu durchlaufen.
+    \\
+    Dieser Prozess wird nur dadurch unterbunden, wenn der Zähler registriert, dass keine größere Zahl an noch zu analysierenden Paketen als Datenbankdateien wartend ist und somit das entleeren der Pipe eingeläutet werden muss.
 
+    \newpage
     Beim Leeren der Pipeline:
     \begin{figure}[H]
         \centering
-        \includegraphics[width=\textwidth]{../pap/Case_C.png}
+        \includegraphics[width=0.75\textwidth]{../pap/Case_C.png}
         \caption{\ac{PAP} Leeren der Pipeline}
         \label{png:case_c}
     \end{figure}
+    Hier wird beim vollständigen Durchlaufen eines Paketes dieses entfernt aus der Liste und alle weiteren rücken eine Eintrag nach vorne, wodurch die letzten Pakete ebenfalls noch durch die restlichen Datenbankdateien vollständig abgeglichen werden.
 
-    Aus der Implementation der Pipeline ergeben sich folgende Laufzeiten bei weniger Paketen als Datenbankdateien:
-    \begin{tabular}{|c|c|c|}
+    \newpage
+    Aus der Implementation der Pipeline ergeben sich folgende Laufzeiten bei weniger Paketen als Datenbankdateien:\\
+    \begin{tabularx}{0.8\textwidth}{|c|c|c|}
         \hline
-            Such-Typ & Zeit & Faktor \\
-            Mono-Suche & 262676.7ms & 1 \\
-            Pipeline & 96868.4ms & 2.7213448 \\
+        Such-Typ & Zeit & Faktor \\ \hline
+        Mono-Suche & 262676.7ms & 1 \\
+        Pipeline & 96868.4ms & 2.7213448 \\
         \hline
-    \end{tabular}
+        \caption{Laufzeiten Durchschnitt 10 Messungen -- Weniger Pakete als Datenbankdateien \textsuperscript{siehe Appendix \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallWenigerPaketeAlsDatenbanken}}}
+        \label{tabularx:LessPackagesThenDbFiles}
+    \end{tabularx}
 
-    Aus der Implementation der Pipeline ergeben sich folgende Laufzeiten bei weniger Paketen als Datenbankdateien:
-    \begin{tabular}{|c|c|c|}
+    Aus der Implementation der Pipeline ergeben sich folgende Laufzeiten bei mehr Paketen als Datenbankdateien:\\
+    \begin{tabularx}{0.8\textwidth}{|c|c|c|}
         \hline
-            Such-Typ & Zeit & Faktor \\
-            Mono-Suche & 95011.24ms & 1 \\
-            Pipeline & 22111.5ms & 4.296846569 \\
+        Such-Typ & Zeit & Faktor \\ \hline
+        Mono-Suche & 95011.24ms & 1 \\
+        Pipeline & 22111.5ms & 4.296846569 \\
         \hline
-    \end{tabular}
+        \caption{Laufzeiten Durchschnitt 10 Messungen -- Weniger Pakete als Datenbankdateien \textsuperscript{siehe Appendix \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallMehrPaketeAlsDatenbanken}}}
+        \label{tabularx:MorePackagesThenDbFiles}
+    \end{tabularx}
+    Deutlich ablesbar ist in den Tabellen \ref{tabularx:LessPackagesThenDbFiles} und \ref{tabularx:MorePackagesThenDbFiles}, dass jeweils ein Zeitgewinn erzielt wurde.
+    Somit ist die Pipeline eine deutliche Verbesserung für die Antwortzeiten des Webservices.
