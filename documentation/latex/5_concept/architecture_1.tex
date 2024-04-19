@@ -1,5 +1,5 @@
-\subsubsection{Architektur V1} \label{sec:Architektur}
-    Für die Beantwortung der Forschungsfragen \ref{q:one}, \ref{q:two}, \ref{q:five} und vor allem \ref{q:four} verschiedene Komponenten nötig:
+\subsubsection{Architektur V1} \label{sec:ArchitekturV1}
+    Für die Umsetzung der Anforderungen sind verschiedene Komponenten in der Umsetzung der \ac{API} nötig:
     \begin{enumerate}
         \item \textbf{Framework} \label{arch_1}\\
             Um eine \ac{API} zu entwickeln, muss ein passendes Framework genutzt werden.
@@ -11,25 +11,25 @@
             Durch die große und aktive Community von ASP.NET ist dieses Framework sehr gut dokumentiert und es existieren viele Open-Source-Bibliotheken.
         \item \textbf{Datenbank} \label{arch_2}\\
             In der Datenbank sind alle \ac{CVE}-Daten zu persistieren, welche zu durchsuchen sind.
-            Diese Daten dienen als Grundlage der Identifizierung von Schachstellen in Paketen innerhalb von Projekten.
+            Diese Daten dienen als Grundlage der Identifizierung von Schwachstellen in Paketen innerhalb von Projekten.
             Wichtig sind hier schnelle Lesezugriffe, da diese beim Abfragen der Datenbank die größte Laufzeiteinsparung bringen.
-            \\ \\
+
             Durch die Wahl des Frameworks auf ASP.NET ist es möglich einen \textit{embedded NoSQL-Document-Store} -- LiteDB zu nutzen. % TODO: https://www.litedb.org/
             Diese ist leicht intern nutzbar und muss als \textit{file-based DB} nicht separat explizit gestartet und verwaltet werden, womit diese auch im Container der \ac{API} mit enthalten ist.
         \item \textbf{Controller} \label{arch_3}\\
             Controller einer \ac{API} nehmen HTTP-Anfragen entgegen und reagieren darauf.
             Hier wird die Hauptaufgabe der \ac{API} geschehen, da alle Funktionalitäten, sei es Datenbankabfragen, Klonen eines zu untersuchenden Repositories oder die Untersuchung dieses, in einem solchen implementiert oder aufgerufen werden müssen.
-            \\ \\
+
             Notwendig sind hier vier Controller.
-            (1) Für die Forschungsfrage \ref{q:two} bzw. \ref{q:four} muss ein Git-Controller zum nutzen von \ac{CVE}-Daten sowie zum Erhalt von zu analysierenden Repositories entstehen.
+            (\hyperref[api_controller:one]{1}) Es muss ein Git-Controller zum nutzen von \ac{CVE}-Daten sowie zum Erhalt von zu analysierenden Repositories entstehen.
             In diesem sind Endpunkte zum clonen des \ac{CVE}-Daten-Repositories sowie zum clonen des Analyse-Repositories zu implementieren. % TODO: clone CVE-DATEN-REPO-LINK
             \\
-            Weiterhin ist (2) ein Controller für Abhängigkeiten nötig, in dem man aus dem zu analysierenden Repositoriy den Abhängigkeitsbaum extrahiert sowie diesen mit Schwachstellendaten anreichert.
+            Weiterhin ist (\hyperref[api_controller:two]{1}) ein Controller für Abhängigkeiten nötig, in dem man aus dem zu analysierenden Repositoriy den Abhängigkeitsbaum extrahiert sowie diesen mit Schwachstellendaten anreichert.
             \\
-            Für die Untersuchung einzelner Pakete und Listen dieser ist ein weiterer (3) Endpunkt zu implementieren.
+            Für die Untersuchung einzelner Pakete und Listen dieser ist ein weiterer (\hyperref[api_controller:three]{3}) Endpunkt zu implementieren.
             In diesem ist auch die Update-Funktion der Datenbasis hinzuzufügen.
             \\
-            Für Forschungsfrage \ref{q:three} muss in jedem Endpunkt (4) bei korrekter Antwort ein Context mitgeliefert werden, damit der gelieferte Inhalt so durch JSON-LD zu interpretieren ist.
+            Weiterhin muss in jedem Endpunkt (\hyperref[api_controller:four]{4}) bei korrekter Antwort ein Context mitgeliefert werden, damit der gelieferte Inhalt so durch JSON-LD zu interpretieren ist.
             Ebenfalls sind durch einen Controller die Rückgabedaten zu dokumentieren.
             Dazu ist zwischen Softwarepaketen und \ac{CVE}-Einträgen zu unterscheiden.
         \item \textbf{Datenmodelle} \label{arch_4}\\
@@ -42,7 +42,7 @@
             Damit die Daten besser weiterverwendbar sind muss zusätzlich ein Kontext \glqq @context\grqq~hinzugefügt werden.
         \item \textbf{Container} \\
             Um die \ac{API} unabhängig von der Umgebung und möglichst speicheraufwandsschmal zu nutzen muss die Anwendung \glqq Containerisiert\grqq~werden.
-            \\ \\
+
             Für den Bau der Containers wird Docker-Compose genutzt.
     \end{enumerate}
     Weiterhin muss das JSON-LD-Format für die Rückgabedaten definiert werden (Forschungsfrage \ref{three}).

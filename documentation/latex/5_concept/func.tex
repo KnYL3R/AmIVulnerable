@@ -1,12 +1,12 @@
 \subsection{Funktionale Anforderungen} \label{sec:Funktionale_Anforderungen}
-    Bei der Umsetzung dieser Schwachstellenanalyse-\ac{API} sind verschidene funktionale Anforderungen zu implementieren.
-    \begin{enumerate}
-        \item Einladen und Konvertieren der Schwachstellendaten und persistente Speicherung dieser in einer internen Datenbank \label{f:one}
-        \item Überprüfung von Paketen auf Sicherheitslücken mittels Abgleich zur internen Schwachstellendatenbank \label{f:two}
-        \item Clonen eines Repositories von Github. \label{f:three}
-        \item Überprüfung von allen Abhängigkeiten eines Repositories mittels Abgleich zur internen Schwachstellendatenbank \label{f:four}
-        \item Extraktion und Rückgabe eines Abhängigkeitsbaums für alle Abhängigkeiten mit Sicherheits\-lücken \label{f:five}
-        \item Aktualisierung der Schwachstellendatenbasis \label{f:six}
-        \item Bereitstellung der \ac{API} in einem Container \label{f:seven}
+    Bei der Umsetzung dieser Schwachstellenanalyse-\ac{API} ergeben sich nun verschidene funktionale Anforderungen aus den Forschungsfragen:
+    \begin{enumerate}[label=\textbf{FRQ-\Roman*}, leftmargin=1cm]
+        \item (\ref{q:one}, \ref{q:two}) Einladen und Konvertieren der Schwachstellendaten und persistente Speicherung dieser in einer internen Datenbank \label{f:one}
+        \item (\ref{q:one}) Überprüfung von Paketen auf Sicherheitslücken mittels Abgleich zur internen Schwachstellendatenbank \label{f:two}
+        \item (\ref{q:two}) Clonen eines Repositories von Github. \label{f:three}
+        \item (\ref{q:two}) Überprüfung von allen Abhängigkeiten eines Repositories mittels Abgleich zur internen Schwachstellendatenbank \label{f:four}
+        \item (\ref{q:two}) Extraktion und Rückgabe eines Abhängigkeitsbaums für alle Abhängigkeiten mit Sicherheits\-lücken \label{f:five}
+        \item (\ref{q:five}) Aktualisierung der Schwachstellendatenbasis \label{f:six}
+        \item (\ref{q:four}) Bereitstellung der \ac{API} in einem Container \label{f:seven}
     \end{enumerate}
     Diese Funktionalitäten setzten teils mehrere interne Abläufe voraus und beinhalten mehrere Endpunkte der \ac{API}.

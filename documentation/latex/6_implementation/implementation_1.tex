@@ -33,7 +33,7 @@
 
     Es wurden außerdem folgende Controller zur Umsetzung der funktionalen Anforderungen implementiert:
     \begin{itemize}
-        \item DbController \\
+        \item DbController \label{api_controller:three}\\
             Dieser Controller dient der Befüllung der Datenbank mit \ac{CVE}-Daten sowie der Nutzung dieser für kleinere Analysen. Dies sind z.B. einzelne Pakete oder Listen von Paketen.
             \begin{itemize}
                 \item CheckRawDir-Endpunkt \\
@@ -63,7 +63,7 @@
                     \textbf{No Content} bei nicht Vorhandensein ohne weitere Rückgabe
             \end{itemize}
 
-        \item DependeciesController \\
+        \item DependeciesController \label{api_controller:two} \\
             Dieser Controller dient der Extraktion des Abhängigkeitsbaumes von Repositories und der Analyse dieser.
             Dabei bedeutet Analyse eine Untersuchung auf \ac{CVE}-Daten für jegliche im Repository enthaltene Pakete.
             \begin{itemize}
@@ -84,7 +84,7 @@
                     \textbf{Bad Request} bei nicht Vorhandensein des angegebenen Projekttyps
             \end{itemize}
 
-        \item GitController \\
+        \item GitController \label{api_controller:one} \\
             Da die \ac{CVE}-Daten sowie die zu untersuchenden Repositories ihre Datenbasis in GitHub\cite{GITHUB} haben, werden diese durch diesen Controller gecloned.
             \begin{itemize}
                 \item Clone-Endpunkt \\
@@ -99,7 +99,7 @@
         % \item MySqlConnectionController \\ %! V2
         %     Dieser Controller hat die Aufgabe die Erreichbarkeit der Datenbank zu überprüfen. %! V2
 
-        \item ViewController \\
+        \item ViewController \label{api_controller:four}\\
             In diesem Controller werden als HTML alle \ac{JSON-LD} Beschreibungen -- siehe $@context$ -- zurückgegeben.
             \begin{itemize}
                 \item json-ld-Endpunkt \\
