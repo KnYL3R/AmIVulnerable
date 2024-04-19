@@ -10,6 +10,7 @@
   - [8 von 10](#8-von-10)
   - [9 von 10](#9-von-10)
   - [10 von 10](#10-von-10)
+- [Durchschnitte "Mit Index"](#durchschnitte-mit-index)
 - [Ohne Index](#ohne-index)
   - [1 von 10](#1-von-10-1)
   - [2 von 10](#2-von-10-1)
@@ -21,6 +22,7 @@
   - [8 von 10](#8-von-10-1)
   - [9 von 10](#9-von-10-1)
   - [10 von 10](#10-von-10-1)
+- [Durchschnitte "Ohne Index"](#durchschnitte-ohne-index)
 
 
 ## Mit Index
@@ -63,6 +65,8 @@
 2024-03-31 15:51:16.714 +00:00 [INF] Query-Time for Package "encodeurl" completed in 0.7 ms
 2024-03-31 15:51:16.714 +00:00 [INF] Complete Time for Query-Search after List of Packages completed in 181.8 ms
 ```
+Akkumulierte Laufzeit: 82,3ms
+Reiner Suchdurchschnitt: 2,743333333ms
 
 ### 2 von 10
 ```log
@@ -103,6 +107,8 @@
 2024-03-31 15:52:47.318 +00:00 [INF] Query-Time for Package "encodeurl" completed in 0.4 ms
 2024-03-31 15:52:47.318 +00:00 [INF] Complete Time for Query-Search after List of Packages completed in 33.5 ms
 ```
+Akkumulierte Laufzeit: 16,9ms
+Reiner Suchdurchschnitt: ms
 
 ### 3 von 10
 ```log
@@ -143,6 +149,8 @@
 2024-03-31 15:56:58.724 +00:00 [INF] Query-Time for Package "encodeurl" completed in 0.4 ms
 2024-03-31 15:56:58.724 +00:00 [INF] Complete Time for Query-Search after List of Packages completed in 43.1 ms
 ```
+Akkumulierte Laufzeit: 21,4ms
+Reiner Suchdurchschnitt: ms
 
 ### 4 von 10
 ```log
@@ -183,6 +191,8 @@
 2024-03-31 15:58:31.458 +00:00 [INF] Query-Time for Package "encodeurl" completed in 0.3 ms
 2024-03-31 15:58:31.458 +00:00 [INF] Complete Time for Query-Search after List of Packages completed in 17.7 ms
 ```
+Akkumulierte Laufzeit: 13,2ms
+Reiner Suchdurchschnitt: ms
 
 ### 5 von 10
 ```log
@@ -223,6 +233,8 @@
 2024-03-31 15:59:31.265 +00:00 [INF] Query-Time for Package "encodeurl" completed in 0.3 ms
 2024-03-31 15:59:31.265 +00:00 [INF] Complete Time for Query-Search after List of Packages completed in 18.8 ms
 ```
+Akkumulierte Laufzeit: 14,2ms
+Reiner Suchdurchschnitt: ms
 
 ### 6 von 10
 ```log
@@ -263,6 +275,8 @@
 2024-03-31 16:01:13.668 +00:00 [INF] Query-Time for Package "encodeurl" completed in 0.3 ms
 2024-03-31 16:01:13.668 +00:00 [INF] Complete Time for Query-Search after List of Packages completed in 17.9 ms
 ```
+Akkumulierte Laufzeit: 13,7ms
+Reiner Suchdurchschnitt: ms
 
 ### 7 von 10
 ```log
@@ -303,6 +317,8 @@
 2024-03-31 16:03:51.660 +00:00 [INF] Query-Time for Package "encodeurl" completed in 0.3 ms
 2024-03-31 16:03:51.660 +00:00 [INF] Complete Time for Query-Search after List of Packages completed in 20.1 ms
 ```
+Akkumulierte Laufzeit: 15,1ms
+Reiner Suchdurchschnitt: ms
 
 ### 8 von 10
 ```log
@@ -343,6 +359,8 @@
 2024-03-31 16:04:25.587 +00:00 [INF] Query-Time for Package "encodeurl" completed in 0.2 ms
 2024-03-31 16:04:25.587 +00:00 [INF] Complete Time for Query-Search after List of Packages completed in 15.1 ms
 ```
+Akkumulierte Laufzeit: 10,4ms
+Reiner Suchdurchschnitt: ms
 
 ### 9 von 10
 ```log
@@ -383,6 +401,8 @@
 2024-03-31 16:05:19.103 +00:00 [INF] Query-Time for Package "encodeurl" completed in 0.2 ms
 2024-03-31 16:05:19.103 +00:00 [INF] Complete Time for Query-Search after List of Packages completed in 19.7 ms
 ```
+Akkumulierte Laufzeit: 14,9ms
+Reiner Suchdurchschnitt: 0,496666667ms
 
 ### 10 von 10
 ```log
@@ -423,6 +443,12 @@
 2024-03-31 16:05:57.424 +00:00 [INF] Query-Time for Package "encodeurl" completed in 0.2 ms
 2024-03-31 16:05:57.424 +00:00 [INF] Complete Time for Query-Search after List of Packages completed in 15.0 ms
 ```
+Akkumulierte Laufzeit: 11,1ms
+Reiner Suchdurchschnitt: 0,37ms
+
+## Durchschnitte "Mit Index"
+Durchschnitt der Einzelpaketsuche: 0,710666667ms
+Durchschnitt der Listensuche: 21,32ms
 
 ## Ohne Index
 ### 1 von 10
@@ -824,3 +850,7 @@
 2024-03-31 16:24:56.093 +00:00 [INF] Query-Time for Package "encodeurl" completed in 207.7 ms
 2024-03-31 16:24:56.093 +00:00 [INF] Complete Time for Query-Search after List of Packages completed in 7231.9 ms
 ```
+
+## Durchschnitte "Ohne Index"
+Durchschnitt der Einzelpaketsuche: 207,86ms
+Durchschnitt der Listensuche: ms
