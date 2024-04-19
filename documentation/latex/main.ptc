@@ -1,0 +1,48 @@
+\babel@toc {ngerman}{}\relax 
+\contentsline {section}{Inhaltsverzeichnis}{1}{section*.1}%
+\contentsline {section}{\numberline {1}Abstract}{3}{section.2}%
+\contentsline {section}{\numberline {2}Motivation}{4}{section.4}%
+\contentsline {section}{\numberline {3}Definitionen}{5}{section.10}%
+\contentsline {section}{\numberline {4}Andere Arbeiten}{7}{section.14}%
+\contentsline {subsection}{\numberline {4.1}Softwaretools}{7}{subsection.15}%
+\contentsline {subsubsection}{\numberline {4.1.1}NIST-API}{7}{subsubsection.16}%
+\contentsline {subsubsection}{\numberline {4.1.2}Github Dependa Bot}{7}{subsubsection.18}%
+\contentsline {subsubsection}{\numberline {4.1.3}Snyk}{8}{subsubsection.19}%
+\contentsline {subsubsection}{\numberline {4.1.4}OWASP Dependency-Check}{8}{subsubsection.20}%
+\contentsline {subsection}{\numberline {4.2}Wissenschaftliche Arbeiten}{8}{subsection.21}%
+\contentsline {subsubsection}{\numberline {4.2.1}ReposVul}{8}{subsubsection.22}%
+\contentsline {subsubsection}{\numberline {4.2.2}Transitivity and Granularity on Vulnerability Propagation}{9}{subsubsection.23}%
+\contentsline {subsubsection}{\numberline {4.2.3}Demystifying Vulnerability Propagation}{9}{subsubsection.24}%
+\contentsline {section}{\numberline {5}Konzept}{10}{section.25}%
+\contentsline {subsection}{\numberline {5.1}Funktionale Anforderungen}{10}{subsection.26}%
+\contentsline {subsection}{\numberline {5.2}Nichtfunktionale Anforderungen}{10}{subsection.34}%
+\contentsline {subsection}{\numberline {5.3}Forschungsfragen}{11}{subsection.40}%
+\contentsline {subsection}{\numberline {5.4}Besondere Merkmale}{11}{subsection.41}%
+\contentsline {subsection}{\numberline {5.5}Zielsetzung}{12}{subsection.42}%
+\contentsline {subsection}{\numberline {5.6}Architektur}{12}{subsection.47}%
+\contentsline {subsubsection}{\numberline {5.6.1}Architektur V1}{12}{subsubsection.48}%
+\contentsline {subsubsection}{\numberline {5.6.2}Architektur V2}{14}{subsubsection.55}%
+\contentsline {section}{\numberline {6}Implementation}{15}{section.59}%
+\contentsline {subsection}{\numberline {6.1}Implementation V1}{15}{subsection.60}%
+\contentsline {subsection}{\numberline {6.2}Verifikation V1}{17}{subsection.61}%
+\contentsline {subsection}{\numberline {6.3}Experimente}{17}{subsection.62}%
+\contentsline {subsubsection}{\numberline {6.3.1}LiteDB Pipeline}{17}{subsubsection.63}%
+\contentsline {subsubsection}{\numberline {6.3.2}Datenbank}{24}{subsubsection.71}%
+\contentsline {subsubsection}{\numberline {6.3.3}MySQL Indexierung}{24}{subsubsection.72}%
+\contentsline {subsection}{\numberline {6.4}Implementation V2}{24}{subsection.74}%
+\contentsline {subsection}{\numberline {6.5}Verifikation V2}{24}{subsection.75}%
+\contentsline {section}{\numberline {7}Diskussion}{25}{section.76}%
+\contentsline {section}{\numberline {8}Zusammenfassung}{26}{section.77}%
+\contentsline {section}{Appendix}{27}{section*.78}%
+\contentsline {section}{\numberline {A}Abkürzungen}{27}{appendix.79}%
+\contentsline {section}{\numberline {B}Messungen}{28}{appendix.80}%
+\ttl@starttoc {Messungen@1}
+\contentsline {subsection}{\numberline {B.1}Zeitunterschied Abfrage auf den Datenbanken Mono-Pipe -- Fall: weniger Pakete als Datenbanken}{28}{subsection.81}%
+\contentsline {subsection}{\numberline {B.2}Zeitunterschied Abfrage auf den Datenbanken Mono-Pipe -- Fall: mehr Pakete als Datenbanken}{31}{subsection.92}%
+\contentsline {subsection}{\numberline {B.3}MySQL mit Index}{40}{subsection.103}%
+\contentsline {subsection}{\numberline {B.4}MySQL ohne Index}{49}{subsection.114}%
+\ttl@stoptoc {Messungen@1}
+\contentsline {section}{Quellen}{59}{section*.125}%
+\contentsline {section}{Abbildungen}{60}{section*.126}%
+\contentsline {section}{Tabellen}{61}{section*.127}%
+\contentsfinish 

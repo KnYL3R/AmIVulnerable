@@ -20,8 +20,8 @@
 \refsection{0}
   \datalist[entry]{none/global//global/global}
     \entry{link:RedHatCveDef}{online}{}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labeltitlesource}{title}
       \field{title}{Was bedeutet CVE?}
       \field{urlday}{14}
@@ -37,8 +37,8 @@
       \endverb
     \endentry
     \entry{link:CveOrgCnaS}{online}{}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labeltitlesource}{title}
       \field{title}{CVE Numbering Authorities (CNAs)}
       \field{urlday}{14}
@@ -54,8 +54,8 @@
       \endverb
     \endentry
     \entry{link:GoogleDependencies}{online}{}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
       \field{labeltitlesource}{title}
       \field{title}{Abhängigkeitsverwaltung}
       \field{urlday}{14}
@@ -71,8 +71,8 @@
       \endverb
     \endentry
     \entry{link:DevInsiderDependecyDef}{online}{}
-      \field{sortinit}{6}
-      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
       \field{labeltitlesource}{title}
       \field{title}{Was ist eine Dependency}
       \field{urlday}{14}
@@ -88,8 +88,8 @@
       \endverb
     \endentry
     \entry{link:ApiDef}{online}{}
-      \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
       \field{labeltitlesource}{title}
       \field{title}{What is an API (Application Programming Interface)?}
       \field{urlday}{14}
@@ -102,6 +102,22 @@
       \endverb
       \verb{url}
       \verb https://web.archive.org/web/20240409204350/https://aws.amazon.com/what-is/api/
+      \endverb
+    \endentry
+    \entry{link:MySqlIndex}{online}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{title}{10.3.1 How MySQL Uses Indexes}
+      \field{urlday}{18}
+      \field{urlmonth}{4}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://web.archive.org/web/20240130044603/https://dev.mysql.com/doc/refman/8.0/en/mysql-indexes.html
+      \endverb
+      \verb{url}
+      \verb https://web.archive.org/web/20240130044603/https://dev.mysql.com/doc/refman/8.0/en/mysql-indexes.html
       \endverb
     \endentry
   \enddatalist
