@@ -29,7 +29,7 @@ namespace AmIVulnerable.Controllers {
         /// <param name="projectType">Type of project to extract dependencies from</param>
         /// <returns>OK if known project type. BadRequest if unknown project type.</returns>
         [HttpGet]
-        [Route("ExtractTree")]
+        [Route("extractTree")]
         public IActionResult ExtractDependencies([FromHeader] ProjectType projectType,
                                                     [FromHeader] Guid projectGuid) {
             if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString())) {
@@ -61,7 +61,7 @@ namespace AmIVulnerable.Controllers {
         /// <param name="projectType">Type of project to extract dependencies from</param>
         /// <returns>OK if vulnerability found. 299 if no vulnerability found. BadRequest if unknown project type is searched.</returns>
         [HttpGet]
-        [Route("ExtractAndAnalyzeTree")]
+        [Route("extractAndAnalyzeTree")]
         public async Task<IActionResult> ExtractAndAnalyzeTreeAsync([FromHeader] ProjectType projectType,
                                                                         [FromHeader] Guid projectGuid) {
             using (Operation.Time($"ExtractAndAnalyzeTreeAsync called with procjectType {projectType}")) {

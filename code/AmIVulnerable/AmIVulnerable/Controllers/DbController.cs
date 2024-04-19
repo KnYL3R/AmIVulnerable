@@ -25,25 +25,11 @@ namespace AmIVulnerable.Controllers {
         #endregion
 
         #region Controller
-        /// <summary>Get-route checking if raw cve data is in directory.</summary>
-        /// <returns>OK, if exists. No Content, if doesnt exist</returns>
-        [HttpGet]
-        [Route("CheckRawDir")]
-        public IActionResult IsRawDataThere() {
-            string path = "raw";
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
-            if (directoryInfo.GetDirectories().Length != 0) {
-                return Ok();
-            }
-            else {
-                return NoContent();
-            }
-        }
 
         /// <summary>Update the Database, if it exists already.</summary>
         /// <returns></returns>
         [HttpPost]
-        [Route("Update")]
+        [Route("update")]
         public IActionResult UpdateCveDatabase() {
             using (Operation.Time("UpdateCveDatabase")) {
                 try {
@@ -290,7 +276,7 @@ namespace AmIVulnerable.Controllers {
         }
 
         [HttpGet]
-        [Route("CheckGuid")]
+        [Route("checkGuid")]
         public IActionResult CheckDownloadedProjectWithGuid([FromHeader] Guid projectGuid) {
             // MySql Connection
             MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
