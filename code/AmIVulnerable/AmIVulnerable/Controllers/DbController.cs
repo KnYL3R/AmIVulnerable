@@ -154,10 +154,10 @@ namespace AmIVulnerable.Controllers {
         /// <returns></returns>
         [HttpGet]
         [Route("getFullTextFromCveNumber")]
-        public IActionResult GetFullTextCve([FromHeader] string? cve_number) {
+        public IActionResult GetFullTextCve([FromQuery] string? cve_number) {
             using (Operation.Time("GetFullTextCve")) {
                 if (cve_number is null) {
-                    return BadRequest("Empty Header");
+                    return BadRequest("Empty cve_number");
                 }
                 try {
                     // MySql Connection
@@ -277,7 +277,7 @@ namespace AmIVulnerable.Controllers {
 
         [HttpGet]
         [Route("checkGuid")]
-        public IActionResult CheckDownloadedProjectWithGuid([FromHeader] Guid projectGuid) {
+        public IActionResult CheckDownloadedProjectWithGuid([FromQuery] Guid projectGuid) {
             // MySql Connection
             MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
 
