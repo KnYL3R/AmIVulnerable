@@ -1,0 +1,55 @@
+\subsection{Validierung V1} \label{sec:Vali1}
+    Unter \ref{sec:Funktionale_Anforderungen} \nameref{sec:Funktionale_Anforderungen} sind 7 funktionale Vorgaben aufgeführt.
+    \begin{description}
+        \item[(1) Persistente Speicherung nach Konvertierung der \ac{CVE}-Daten] siehe \hyperref[f:one]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Die beiden dazugehörigen Endpunkte, wo als erstes das Clonen in eine Ordner namens \textit{raw} erfolgt und beim Aufruf des zweiten Endpunktes die Konvertierung in die LiteDB-Datenbank stattfindet, waren unter den Dateien GitController.cs und DbController.cs zu finden.
+            \\
+            Der zeitliche Aufwand ist im Appendix unter \ref{subsec:ZeitaufwandDerKonvertierungVonRaw-CVEZuLiteDb} einsehbar.
+        \item[(2) Abgleich von Paketen] siehe \hyperref[f:two]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Unter dem Abschnitt \ref{sec:ExperimentePIPE} \nameref{sec:ExperimentePIPE} kann man die dazu erfolgten Messungen einsehen.
+        \item[(3) Clonen eines Repositories von Github] siehe \hyperref[f:three]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Der Endpunkt für das Clonen eines beliebigen Github-Repo's war in der Datei GitController.cs einsehbar.
+            Über das Setzen einer boolschen Variable war es dort möglich, ein zu analysierendes Repo anzugeben.
+            Der entsprechend andere Fall bestand in der Downloadmöglichkeit der \ac{CVE}-Roh-Daten -- siehe hierzu den ersten Punkt der Validierung V1.
+        \item[(4) Aufstellen aller Abhängigkeiten des heruntergeladenen Repo's] siehe \hyperref[f:four]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Aufgrund der vorerst selbstauferlegten Beschränkung auf NodeJS-Projekte geschah die Umsetzung jener Anforderung über den npm native Befehl \texttt{npm list --all}.
+        \item[(5) Extrahieren und Rückgabe eines Abhängigkeitsbaums mit sicher\-heits\-lücken\-betroffenen Paketen] siehe \hyperref[f:five]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Über den Endpunkt ExtractTree des DependeciesControllers ist es möglich, diesen Abhängigkeitsbaums des Projektes zu erhalten.
+            Weiterführend ist über die ExtractAndAnalyzeTree-Route des selbigen Controllers die Analyse der Pakete und Rückgabe in einem um die Angabe der Betroffenheit erweiterten Baum möglich.
+            \textcolor{red}{Bild einfügen???}
+        \item[(6) Aktualisierung der Datenbank] siehe \hyperref[f:six]{\underline{hier}} \hfill \\
+            Nur teils erfolgreich umgesetzt.
+            \\
+            Die Möglichkeit des Updates der LiteDB-Datenbasis bestand darin erneut den Endpunkt des Konvertierens aufzurufen.
+            Somit erfolgte eine erneute Erstellung der Datenbankdateien, was somit keinem Update sondern eher einer Erneuerung entsprach.
+        \item[(7) Containerisierung der \ac{API}] siehe \hyperref[f:seven]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Mittels der docker-compose.yml und einem Dockerfile in dem Ordner der API ist die Containerisierung erfolgt.
+            Da die Anwendung an sich lediglich in dem Container laufen musste und die Datenbankdateien dort dann erstellt wurden, ist es bei einem einzelnen Container zu diesem Zeitpunkt geblieben.
+    \end{description}
+
+    \subsubsection{Diskussion Laufzeit} \label{subsubsec:DiskussionLaufzeit}
+        Laufzeitrelevante Aspekte stellen die funktionalen Aufgaben (1), (2) und (5) da.
+        Die Messung und somit Begutachtung der Laufzeit der \ac{API} in der V1 kann in den Abschnitten unter Experimente (\ref{sec:Experimente}) der V1 eingesehen werden.
+        \\
+        Zusammenfassend kann festgehalten werden, dass die gesamte Anwendung zu jenem Zeitpunkt einsatzfähig war, jedoch die Laufzeiten mit Wartezeiten einer Analyseabfrage mit über 2,5 Sekunden pro Paket als unbefriedigend eingestuft werden muss. \textcolor{yellow}{QUELLE}
+        Somit erfolgte die in Abschnitt \ref{sec:ExperimenteDB} \nameref{sec:ExperimenteDB} besprochene Neubetrachtung des Datenbankbereiches der Architektur.
+
+    % Validierung V1, sind die Ausgaben den Vorgaben entsprechend (funktional)
+    % \begin{itemize}
+    %     \item api/Db/checkSinglePackage
+    %     \item api/Db/checkPackageList
+    %     \item api/Dependecies/ExtractTree
+    %     \item api/Dependecies/ExtractAndAnalyzeTree
+    % \end{itemize}
