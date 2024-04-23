@@ -5,17 +5,19 @@
         \item[(1) Persistente Speicherung nach Konvertierung der \ac{CVE}-Daten] siehe \hyperref[f:one]{\underline{hier}} \hfill \\
             Wurde erfolgreich umgesetzt.
             \\
-            Die beiden dazugehörigen Endpunkte, wo als erstes das Clonen in eine Ordner namens \textit{raw} erfolgt und beim Aufruf des zweiten Endpunktes die Konvertierung in die LiteDB-Datenbank stattfindet, waren unter den Dateien GitController.cs und DbController.cs zu finden.
+            Die beiden dazugehörigen Endpunkte, wo als erstes das Clonen in einen Ordner namens \textit{raw} erfolgt und beim Aufruf des zweiten Endpunktes die Konvertierung in die LiteDB-Datenbank stattfindet, waren unter den Dateien GitController.cs und DbController.cs zu finden.
             \\
             Der zeitliche Aufwand ist im Appendix unter \ref{subsec:ZeitaufwandDerKonvertierungVonRaw-CVEZuLiteDb} einsehbar.
         \item[(2) Abgleich von Paketen] siehe \hyperref[f:two]{\underline{hier}} \hfill \\
             Wurde erfolgreich umgesetzt.
             \\
             Unter dem Abschnitt \ref{sec:ExperimentePIPE} \nameref{sec:ExperimentePIPE} kann man die dazu erfolgten Messungen einsehen.
+            \\
+            \textcolor{red}{Messungen NIST -- Argumentation \glqq spam\grqq für Abwahl dieser Lösung}
         \item[(3) Clonen eines Repositories von Github] siehe \hyperref[f:three]{\underline{hier}} \hfill \\
             Wurde erfolgreich umgesetzt.
             \\
-            Der Endpunkt für das Clonen eines beliebigen Github-Repo's war in der Datei GitController.cs einsehbar.
+            Der Endpunkt für das Clonen eines beliebigen Github-Repo's ist in der Datei GitController.cs einsehbar.
             Über das Setzen einer boolschen Variable war es dort möglich, ein zu analysierendes Repo anzugeben.
             Der entsprechend andere Fall bestand in der Downloadmöglichkeit der \ac{CVE}-Roh-Daten -- siehe hierzu den ersten Punkt der Validierung V1.
         \item[(4) Aufstellen aller Abhängigkeiten des heruntergeladenen Repo's] siehe \hyperref[f:four]{\underline{hier}} \hfill \\
@@ -29,10 +31,10 @@
             Weiterführend ist über die ExtractAndAnalyzeTree-Route des selbigen Controllers die Analyse der Pakete und Rückgabe in einem um die Angabe der Betroffenheit erweiterten Baum möglich.
             \textcolor{red}{Bild einfügen???}
         \item[(6) Aktualisierung der Datenbank] siehe \hyperref[f:six]{\underline{hier}} \hfill \\
-            Nur teils erfolgreich umgesetzt.
+            Nicht erfolgreich umgesetzt.
             \\
             Die Möglichkeit des Updates der LiteDB-Datenbasis bestand darin erneut den Endpunkt des Konvertierens aufzurufen.
-            Somit erfolgte eine erneute Erstellung der Datenbankdateien, was somit keinem Update sondern eher einer Erneuerung entsprach.
+            Somit erfolgte eine erneute Erstellung der Datenbankdateien, was somit keinem Update sondern eher einer kompletten Erneuerung entsprach.
         \item[(7) Containerisierung der \ac{API}] siehe \hyperref[f:seven]{\underline{hier}} \hfill \\
             Wurde erfolgreich umgesetzt.
             \\
@@ -49,7 +51,11 @@
             Wie im Appendix unter \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallWenigerPaketeAlsDatenbanken} einsehbar, beträgt die Dauer einer einzelnen Paketabfrage nicht unter 2 Sekunden.
             Somit ist dieses Ziel um mind. Größenordnung 40 verfehlt.
         \item[(2) Skalierbarkeit der Anwendung] siehe \hyperref[nf:two]{\underline{hier}} \hfill \\
-            \textcolor{red}{Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias aut, repellat ipsum facere voluptate dicta obcaecati deserunt nobis suscipit eaque?}
+            Nicht erreicht.
+            \\
+            Aufgrund der Dateibasierten Datenbank LiteDb ist ein multipler Zugriff auf eine einzelne Datenbankdatei nicht möglich. Es ist also eine rein sequenzielle Abarbeitung der gestellten Anfragen möglich.
+            \\
+            Für Abhilfe in diesem Punkt wäre die duplizierte Vorhaltung der selben Daten möglich oder die Umsetzung in einem anderen Datenbank-System.
         \item[(3) Dokumentation der Endpunkte] siehe \hyperref[nf:three]{\underline{hier}} \hfill \\
             Wurde erfolgreich umgesetzt.
             \\
