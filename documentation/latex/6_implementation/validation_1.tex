@@ -1,5 +1,6 @@
 \subsection{Validierung V1} \label{sec:Vali1}
-    Unter \ref{sec:Funktionale_Anforderungen} \nameref{sec:Funktionale_Anforderungen} sind 7 funktionale Vorgaben aufgeführt.
+    Unter \ref{sec:Funktionale_Anforderungen} \nameref{sec:Funktionale_Anforderungen} sind 7 \texttt{funktionale} Vorgaben aufgeführt.
+    
     \begin{description}
         \item[(1) Persistente Speicherung nach Konvertierung der \ac{CVE}-Daten] siehe \hyperref[f:one]{\underline{hier}} \hfill \\
             Wurde erfolgreich umgesetzt.
@@ -39,12 +40,30 @@
             Da die Anwendung an sich lediglich in dem Container laufen musste und die Datenbankdateien dort dann erstellt wurden, ist es bei einem einzelnen Container zu diesem Zeitpunkt geblieben.
     \end{description}
 
-    \subsubsection{Diskussion Laufzeit} \label{subsubsec:DiskussionLaufzeit}
-        Laufzeitrelevante Aspekte stellen die funktionalen Aufgaben (1), (2) und (5) da.
-        Die Messung und somit Begutachtung der Laufzeit der \ac{API} in der V1 kann in den Abschnitten unter Experimente (\ref{sec:Experimente}) der V1 eingesehen werden.
-        \\
-        Zusammenfassend kann festgehalten werden, dass die gesamte Anwendung zu jenem Zeitpunkt einsatzfähig war, jedoch die Laufzeiten mit Wartezeiten einer Analyseabfrage mit über 2,5 Sekunden pro Paket als unbefriedigend eingestuft werden muss. \textcolor{yellow}{QUELLE}
-        Somit erfolgte die in Abschnitt \ref{sec:ExperimenteDB} \nameref{sec:ExperimenteDB} besprochene Neubetrachtung des Datenbankbereiches der Architektur.
+    \noindent Unter \ref{sec:N_Anforderungen} \nameref{sec:N_Anforderungen} sind dagegen 5 \texttt{nicht-funktionale} Anforderungen aufgeführt.
+
+    \begin{description}
+        \item[(1) Dauer der Paketsuche (einzelne Abfrage) unter 50ms] siehe \hyperref[nf:one]{\underline{hier}} \hfill \\
+            Nicht erreicht.
+            \\
+            Wie im Appendix unter \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallWenigerPaketeAlsDatenbanken} einsehbar, beträgt die Dauer einer einzelnen Paketabfrage nicht unter 2 Sekunden.
+            Somit ist dieses Ziel um mind. Größenordnung 40 verfehlt.
+        \item[(2) Skalierbarkeit der Anwendung] siehe \hyperref[nf:two]{\underline{hier}} \hfill \\
+            \textcolor{red}{Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias aut, repellat ipsum facere voluptate dicta obcaecati deserunt nobis suscipit eaque?}
+        \item[(3) Dokumentation der Endpunkte] siehe \hyperref[nf:three]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Mittels der vom ASP.NET in der Projektkonfiguration mitgelieferten automatischen Erstellung einer OpenAPI-Unterstützung, wird eine Swagger-Dokumentation beim \textit{build} erstellt und kann unter dem Routensuffix \textit{[...]/swagger/index.html} eingesehen werden.
+        \item[(4) Rückgabe im \acs{JSON-LD}-Format] siehe \hyperref[nf:four]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+        \item[(5) Nutzung etablierter Technologien] siehe \hyperref[nf:five]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Sowohl die \ac{API} mit ASP.NET, die Containierisierung mit Docker, als auch die Datenbank mit LiteDB sind mit etablierten Technologien umgesetzt worden.
+    \end{description}
+
+    \noindent Zusammenfassend kann festgehalten werden, dass die gesamte Anwendung zu jenem Zeitpunkt einsatzfähig war, jedoch die Laufzeiten mit Wartezeiten einer Analyseabfrage mit über 2,5 Sekunden pro Paket als unbefriedigend eingestuft werden muss. \textcolor{yellow}{QUELLE}
+    Somit erfolgte die in Abschnitt \ref{sec:ExperimenteDB} \nameref{sec:ExperimenteDB} besprochene Neubetrachtung des Datenbankbereiches der Architektur.
 
     % Validierung V1, sind die Ausgaben den Vorgaben entsprechend (funktional)
     % \begin{itemize}
