@@ -2,6 +2,31 @@
     Weiterhin ergeben sich der Umsetzung dieser \ac{API} aus den Forschungsfragen verschidene nichtunktionale Anforderungen:
     \begin{enumerate}[label=\textbf{NFRQ-\Roman*}, leftmargin=2.5cm]
         \item Die Suche eines einzelnen Pakets dauert nicht länger als 50ms (betrifft \ref{q:five}) \label{nf:one}
+        \\
+        \textcolor{red}{https://blog.sentry.io/whats-the-difference-between-api-latency-and-api-response-time/\#:$~$:text=Just\%20to\%20have\%20a\%20number,to\%20abandon\%20the\%20application\%2Fwebsite.} nicht länger als 5 Sekunden API-Response.
+        % https://gitmostwanted.com/?term=&lang=JavaScript
+        % TODO: Pakete zusammenrechen -> Durchschnitt der obersten 10
+        % https://github.com/facebook/react/network/dependencies
+        % 16085
+        % https://github.com/Leaflet/Leaflet/network/dependencies
+        % 678
+        % https://github.com/twbs/bootstrap/network/dependencies
+        % 974
+        % https://github.com/expressjs/express/network/dependencies
+        % 54
+        % https://github.com/nolimits4web/swiper/network/dependencies
+        % 788
+        % https://github.com/plotly/plotly.js/network/dependencies
+        % 1815
+        % https://github.com/nodejs/node/network/dependencies
+        % 488
+        % https://github.com/michalsnik/aos/network/dependencies
+        % 688
+        % https://github.com/Unitech/pm2/network/dependencies
+        % 241
+        % https://github.com/axios/axios/network/dependencies
+        % 1768
+        % Durchschnitt : 24299/10 = 2429,9 Pakete pro Projekt
         \item Skalierbarkeit der Anwendung (betrifft \ref{q:five}) \label{nf:two}
         \item Dokumentation der Endpunkte (betrifft \ref{q:five}) \label{nf:three}
         \item Rückgabe der Daten im \acs{JSON-LD}-Format (betrifft \ref{q:three}) \label{nf:four}
