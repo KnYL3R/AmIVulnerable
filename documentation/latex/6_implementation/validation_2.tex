@@ -1,6 +1,27 @@
 \subsection{Validierung V2} \label{sec:Vali2}
-    Validierung V2
-    \begin{itemize}
-        \item Endpunkte Ausgaben V1 vs. V2 vergleichen -- Überraschung folgt
-        \item Laufzeitvergleich LiteDB vs. MySQL $\rightarrow$ fragments/mysql-measure.md
-    \end{itemize}
+    Die unter \ref{sec:Vali1} \nameref{sec:Vali1} noch nicht als erfolgreich gekennzeichneten \texttt{funktionale} Anforderungen werden in der V2 nachfolgend neu betrachten.
+
+    \begin{description}
+        \item[(6) Aktualisierung der Datenbank] siehe \hyperref[f:six]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Über den hinzugefügten Endpunkt kann die MySQL-Datenbank aktualisiert werden.
+    \end{description}
+
+    \noindent Unter \ref{sec:Vali1} \nameref{sec:Vali1} sind folgende \texttt{nicht-funktionale} Anforderungen noch weiter zu validieren.
+
+    \begin{description}
+        \item[(1) Dauer der Paketsuche (einzelne Abfrage) unter 5ms] siehe \hyperref[nf:one]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Unter dem Abschnitt \ref{sec:MySQL_Indexierung} ist die Auswertung der Messung mit einer indizierten Datenbanktabelle einzusehen.
+            Daraus ist erkenntlich, daß die Vorgabe der 5ms mit den durchschnittlich erreichten $0.7$ms erreicht wurde.
+        \item[(2) Skalierbarkeit der Anwendung] siehe \hyperref[nf:two]{\underline{hier}} \hfill \\
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias aut, repellat ipsum facere voluptate dicta obcaecati deserunt nobis suscipit eaque?
+    \end{description}
+
+    % Validierung V2
+    % \begin{itemize}
+    %     \item Endpunkte Ausgaben V1 vs. V2 vergleichen -- Überraschung folgt
+    %     \item Laufzeitvergleich LiteDB vs. MySQL $\rightarrow$ fragments/mysql-measure.md
+    % \end{itemize}
