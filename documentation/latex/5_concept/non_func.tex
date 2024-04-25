@@ -1,32 +1,14 @@
 \subsection{Nichtfunktionale Anforderungen} \label{sec:N_Anforderungen}
     Weiterhin ergeben sich der Umsetzung dieser \ac{API} aus den Forschungsfragen verschidene nichtunktionale Anforderungen:
     \begin{enumerate}[label=\textbf{NFRQ-\Roman*}, leftmargin=2.5cm]
-        \item Die Suche eines einzelnen Pakets dauert nicht länger als 50ms (betrifft \ref{q:five}) \label{nf:one}
+        \item Die Suche eines einzelnen Pakets dauert nicht länger als 5ms (betrifft \ref{q:five}) \label{nf:one}
         \\
-        \textcolor{red}{https://blog.sentry.io/whats-the-difference-between-api-latency-and-api-response-time/\#:$~$:text=Just\%20to\%20have\%20a\%20number,to\%20abandon\%20the\%20application\%2Fwebsite.} nicht länger als 5 Sekunden API-Response.
-        % https://gitmostwanted.com/?term=&lang=JavaScript
-        % TODO: Pakete zusammenrechen -> Durchschnitt der obersten 10
-        % https://github.com/facebook/react/network/dependencies
-        % 16085
-        % https://github.com/Leaflet/Leaflet/network/dependencies
-        % 678
-        % https://github.com/twbs/bootstrap/network/dependencies
-        % 974
-        % https://github.com/expressjs/express/network/dependencies
-        % 54
-        % https://github.com/nolimits4web/swiper/network/dependencies
-        % 788
-        % https://github.com/plotly/plotly.js/network/dependencies
-        % 1815
-        % https://github.com/nodejs/node/network/dependencies
-        % 488
-        % https://github.com/michalsnik/aos/network/dependencies
-        % 688
-        % https://github.com/Unitech/pm2/network/dependencies
-        % 241
-        % https://github.com/axios/axios/network/dependencies
-        % 1768
-        % Durchschnitt : 24299/10 = 2429,9 Pakete pro Projekt
+        Erläuterung:
+        Die Dauer einer Antwort der API sollte 5 Sekunden nicht überschreiten.\textsuperscript{\cite{link:ApiResponseTime}}
+        \\
+        Appendix \ref{sec:PackageMeanPopGitJsRepos} weist nach, daß in den beliebtesten JavaScript-Repositories durchschnittlich $2`429.9$ Abhängigkeiten bestehen und somit maximal $\frac{5\text{ Sekunden}}{2`429.9}$ betragen sollte, was $0.002$ Sekunden, also 2 Millisekunden entspricht.
+        \\
+        Das ein Projekt jedoch solch hohe Anzahlen beinhaltet ist ebenfalls aus den Rohdaten der 10 Repositories nicht immer der Fall und somit wird für die Analyse mit $1'000$ Paketen gerechnet -- der Median der Reihe beträgt $788$ -- und es ermittelt sich daraus der Grenzwert $\frac{5\text{ Sekunden}}{1`000} = 5$ Millisekunden für die Suche eines einzelnen Paketes.
         \item Skalierbarkeit der Anwendung (betrifft \ref{q:five}) \label{nf:two}
         \item Dokumentation der Endpunkte (betrifft \ref{q:five}) \label{nf:three}
         \item Rückgabe der Daten im \acs{JSON-LD}-Format (betrifft \ref{q:three}) \label{nf:four}
