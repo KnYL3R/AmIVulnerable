@@ -131,7 +131,7 @@
       \verb{url}
       \verb https://blog.sentry.io/whats-the-difference-between-api-latency-and-api-response-time/%5C#:$~$:text=Just%5C%20to%5C%20have%5C%20a%5C%20number,to%5C%20abandon%5C%20the%5C%20application%5C%2Fwebsite.
       \endverb
-      \warn{\item online entry 'link:ApiResponseTime' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item Entry 'link:ApiResponseTime' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoMostWanted}{online}{}
       \field{sortinit}{2}
@@ -142,7 +142,7 @@
       \verb{url}
       \verb https://gitmostwanted.com/?term=&lang=JavaScript
       \endverb
-      \warn{\item online entry 'link:GitPopJsRepoMostWanted' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item Entry 'link:GitPopJsRepoMostWanted' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoReact}{online}{}
       \field{sortinit}{2}
@@ -153,7 +153,7 @@
       \verb{url}
       \verb https://github.com/facebook/react/network/dependencies
       \endverb
-      \warn{\item online entry 'link:GitPopJsRepoReact' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item Entry 'link:GitPopJsRepoReact' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoLeaflet}{online}{}
       \field{sortinit}{2}
@@ -164,7 +164,7 @@
       \verb{url}
       \verb https://github.com/Leaflet/Leaflet/network/dependencies
       \endverb
-      \warn{\item online entry 'link:GitPopJsRepoLeaflet' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item Entry 'link:GitPopJsRepoLeaflet' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoBootstrap}{online}{}
       \field{sortinit}{2}
@@ -175,7 +175,7 @@
       \verb{url}
       \verb https://github.com/twbs/bootstrap/network/dependencies
       \endverb
-      \warn{\item online entry 'link:GitPopJsRepoBootstrap' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item Entry 'link:GitPopJsRepoBootstrap' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoExpress}{online}{}
       \field{sortinit}{2}
@@ -186,7 +186,7 @@
       \verb{url}
       \verb https://github.com/expressjs/express/network/dependencies
       \endverb
-      \warn{\item online entry 'link:GitPopJsRepoExpress' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item Entry 'link:GitPopJsRepoExpress' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoSwiper}{online}{}
       \field{sortinit}{2}
@@ -197,7 +197,7 @@
       \verb{url}
       \verb https://github.com/nolimits4web/swiper/network/dependencies
       \endverb
-      \warn{\item online entry 'link:GitPopJsRepoSwiper' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item Entry 'link:GitPopJsRepoSwiper' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoPlotly}{online}{}
       \field{sortinit}{2}
@@ -208,7 +208,7 @@
       \verb{url}
       \verb https://github.com/plotly/plotly.js/network/dependencies
       \endverb
-      \warn{\item online entry 'link:GitPopJsRepoPlotly' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item Entry 'link:GitPopJsRepoPlotly' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoNode}{online}{}
       \field{sortinit}{3}
@@ -219,7 +219,7 @@
       \verb{url}
       \verb https://github.com/nodejs/node/network/dependencies
       \endverb
-      \warn{\item online entry 'link:GitPopJsRepoNode' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item Entry 'link:GitPopJsRepoNode' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoAos}{online}{}
       \field{sortinit}{3}
@@ -230,7 +230,7 @@
       \verb{url}
       \verb https://github.com/michalsnik/aos/network/dependencies
       \endverb
-      \warn{\item online entry 'link:GitPopJsRepoAos' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item Entry 'link:GitPopJsRepoAos' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoPm2}{online}{}
       \field{sortinit}{3}
@@ -241,7 +241,7 @@
       \verb{url}
       \verb https://github.com/Unitech/pm2/network/dependencies
       \endverb
-      \warn{\item online entry 'link:GitPopJsRepoPm2' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item Entry 'link:GitPopJsRepoPm2' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoAxios}{online}{}
       \field{sortinit}{3}
@@ -252,7 +252,7 @@
       \verb{url}
       \verb https://github.com/axios/axios/network/dependencies
       \endverb
-      \warn{\item online entry 'link:GitPopJsRepoAxios' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item Entry 'link:GitPopJsRepoAxios' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
   \enddatalist
 \endrefsection
