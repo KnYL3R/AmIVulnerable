@@ -28,10 +28,13 @@ namespace AmIVulnerable.Controllers {
         /// </summary>
         /// <param name="projectType">Type of project to extract dependencies from</param>
         /// <returns>OK if known project type. BadRequest if unknown project type.</returns>
-        [HttpGet]
+        [HttpPost]
         [Route("extractTree")]
-        public IActionResult ExtractDependencies([FromHeader] ProjectType projectType,
-                                                    [FromHeader] Guid projectGuid) {
+        public IActionResult ExtractDependencies([FromQuery] ProjectType projectType,
+                                                    [FromQuery] Guid projectGuid) {
+            if (!(this.Request.Headers.Accept.Equals("application/json") || this.Request.Headers.Accept.Equals("*/*"))) {
+                return StatusCode(406);
+            }
             if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString())) {
                 return BadRequest("ProjectGuid does not exist.");
             }
@@ -60,10 +63,13 @@ namespace AmIVulnerable.Controllers {
         /// </summary>
         /// <param name="projectType">Type of project to extract dependencies from</param>
         /// <returns>OK if vulnerability found. 299 if no vulnerability found. BadRequest if unknown project type is searched.</returns>
-        [HttpGet]
+        [HttpPost]
         [Route("extractAndAnalyzeTree")]
-        public async Task<IActionResult> ExtractAndAnalyzeTreeAsync([FromHeader] ProjectType projectType,
-                                                                        [FromHeader] Guid projectGuid) {
+        public async Task<IActionResult> ExtractAndAnalyzeTreeAsync([FromQuery] ProjectType projectType,
+                                                                        [FromQuery] Guid projectGuid) {
+            if (!(this.Request.Headers.Accept.Equals("application/json") || this.Request.Headers.Accept.Equals("*/*"))) {
+                return StatusCode(406);
+            }
             using (Operation.Time($"ExtractAndAnalyzeTreeAsync called with procjectType {projectType}")) {
                 if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString())) {
                     return BadRequest("ProjectGuid does not exist.");
