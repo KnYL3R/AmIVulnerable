@@ -1,1 +1,17 @@
 \section{Zusammenfassung} \label{sec:Zusammenfassung}
+    Aus der \nameref{subsec:Motivation} kann der hauptsächliche Auftrag mit der Forschungsfragen \ref{q:four} umformuliert werden mit der Frage, wie transitive Schwachstellen ermittelt und ausgegeben werden können.
+    \\
+    Die Bearbeitung kann unter dem Abschnitt \ref{sec:Implementation} \nameref{sec:Implementation} nachvollzogen werden.
+    Nach anfänglicher Umsetzung, die die grundlegenden Funktionen vorweisen konnte, musste jedoch festgestellt werden, dass die nicht-funktionalen Anforderungen mit der Wahl einer dateibasierten Datenbank zügig implementierbar, aber nicht erreichbar sind.
+    Somit erfolgte eine Version 2, die mit der Änderung der Datenbank zu einer MySQL-Datenbank, wodurch die Ziele -- insbesondere die der zeitlichen Vorgaben -- zufriedenstellend erreicht werden konnte.
+    \\
+    Während die \ac{API} anfänglich ein hauptaugenmerk auf die Funktion der Analyse einzelner Pakete fokussierte um diese Funktionalität zu gewährleisten, ist als zweite Iteration die Aufgabe der transitiven Analyse angegangen worden.
+    Da über beispielsweise die NIST-API (\ref{sec:NIST-API}) eine einzelne Paketanalyse ebenfalls machbar ist, lag hier der Schwerpunkt des Auftrages.
+    \\
+    Nach der erfolgreichen Umsetzung der Baumstrukturaufstellung in einem npm-Projekt musste anschließend lediglich die Verbindung der Paketanalyse und der Aufbereitung der Ergebnisse als \textit{Dep\-en\-dencies-Tree} erfolgen.
+    Die Ausgabe jenes Ergebnisses geschieht dann im \ac{JSON-LD} Format, damit jeder Identifikator eindeutig und weiterverarbeitbar ist.
+    \\
+    Insgesamt wurden die Anforderungen aus der \nameref{subsec:Motivation} also erfüllt, können jedoch noch weiter ausgearbeitet werden durch zum Beispiel die Erweiterung um weitere Frameworks als das aktuell einzige npm.
+    % TODO: was noch? 
+    % TODO: hab ich was ausgelassen?
+    % TODO: war das zu strukturiert und eigentlich gar nicht vorher beschrieben mit der Historie?
