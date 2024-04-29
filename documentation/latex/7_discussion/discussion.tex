@@ -1,11 +1,15 @@
 \section{Diskussion} \label{sec:Diskussion}
     \textcolor{red}{
         \begin{itemize}
-            \item \ac{CVE} Datenmodell 2014 umgeändert?
-            \item Manche Pakete haben keine Designation? $\rightarrow$ Bereinigen? Wie kann man damit umgehen?
+            \item \ac{CVE} Datenmodell 2014 umgeändert? \\
+                auf CVE internen Standard V5 gehoben
+                %? https://github.com/CVEProject/cvelistV5
+            \item Manche Pakete haben keine Designation? $\rightarrow$ Bereinigen? Wie kann man damit umgehen? \\
+                Wir: keine designation --> N/A
+                Wir haben keine Möglichkeit gefunden die designation nachträglich herauszubekommen 
             \item Risiken ausführlich betrachten, Kritik, dort kann man weitermachen/müsste man, was hat man nicht in dieser Arbeit adressiert? (alle Programmiersprachen)
-            \item Diskussion aus verifizierten Sachen raus
             \item !!! FUTURE WORK
+            \item Andere Wiss. Arbeiten die im Themenfeld \glqq state of the art\grqq~sind
             \item Paper: On the Effect of Transitivity and Granularity on Vulnerability Propagation in the Maven Ecosystem
         \end{itemize}
     }
@@ -13,5 +17,24 @@
     \begin{itemize}
         \item Bei bestehender Schwachstelle ist kein Eintrag in der genutzten Datenbasis vorhanden
         \item Abhängigkeit vom \ac{CVE}-Daten Provider
-        \item Sicherheitslücken in der \ac{API} selbst
+        \item Sicherheitslücken in der \ac{API} selbst.
+    \end{itemize}
+
+    Weiter machen:
+    \begin{itemize}
+        \item Betrachten auf Versionsbasis
+        \item Betrachten auf Commit-basis
+        \item Zeitlicher Verlauf von Schachstellenzahlen in Repositories
+        \item Mehr Datenquellen als nur CVE Daten
+        \item Andere Untersuchungs-Projekttypen unterstützen, untersuchen ob es da unterschiede gibt
+        \item Dopplungen in Abhängigkeitsbäumen analysieren
+    \end{itemize}
+
+    Was wurde nicht adressiert?
+    \begin{itemize}
+        \item Welche Sicherheitslücken können tatsächlich ausgenutzt werden bei \glqq Vererbung\grqq dieser (PAPER)
+        \item Selbst aufstellen eines Abhängigkeitsbaums
+        \item \glqq Most Wanted\grqq~- Meistgenutzte Pakete die kritische Sicherheitslücken nutzen
+        \item Hat das jeweilige Paket noch Hoffnung auf einen Fix/ist es deprecated?
+        \item Was anstatt einzelner Abhängigkeiten mit Sicherheitslücken als alternativen vorhanden sind 
     \end{itemize}
