@@ -88,34 +88,23 @@
             Da die \ac{CVE}-Daten sowie die zu untersuchenden Repositories ihre Datenbasis in GitHub\cite{GITHUB} haben, werden diese durch diesen Controller gecloned.
             \begin{itemize}
                 \item Clone-Endpunkt \\
-                    Bei deisem Post-Endpunkt wird das CVE-Daten-Repository bzw. das zu analysierende Repository aus GitHub heruntergeladen.
-                    Übergeben wird hier ein Tupel aus Strings, welches die URL und ein Tag beinhaltet sowie einen Boolwert, der angibt, ob es sich um CVE-Daten oder ein Analyserepository handelt.
+                    Bei diesem Post-Endpunkt wird das CVE-Daten-Repository bzw. das zu analysierende Repository aus GitHub heruntergeladen.
+                    Übergeben wird hier ein Tupel aus Strings, welches die URL und ein Tag beinhaltet sowie einen Bool-Wert, der angibt, ob es sich um CVE-Daten oder ein Analyse-Repository handelt.
                     \\
                     \textbf{OK} bei erfolgreichem Herunterladen
                     \\
                     \textbf{Bad Request} bei nicht erfolgreichem Herunterladen
             \end{itemize}
 
-        % \item MySqlConnectionController \\ %! V2
-        %     Dieser Controller hat die Aufgabe die Erreichbarkeit der Datenbank zu überprüfen. %! V2
-
         \item ViewController \label{api_controller:four}\\
             In diesem Controller werden als HTML alle \ac{JSON-LD} Beschreibungen -- siehe $@context$ -- zurückgegeben.
             \begin{itemize}
                 \item json-ld-Endpunkt \\
-                    In diesem Get-Endpunkt wird die JSON-LD-Definition als ansehbare HTML-Daten dargestellt.
+                    In diesem Get-Endpunkt wird die JSON-LD-Definition als sichtbare HTML-Daten dargestellt.
                     \\
-                    \textbf{OK} mit den HTML-Daten als Inhalt des Response-Bodys 
+                    \textbf{OK} mit den HTML-Daten als Inhalt des Response-Bodys
             \end{itemize}
     \end{itemize}
-
-    % Konvertierung von und in \ac{JSON} zu Controller (oben die Punkte)
-    % \begin{itemize}
-    %     \item removed Controller-Endpoints:
-    %     \item Db/CheckRawDir (check if the downloaded \ac{CVE}-dir is ready to convert)
-    %     \item Db/ConvertRawDirToDb (Convert the downloaded \ac{CVE} to LiteDB)
-    %     \item Git/cloneStatus (if the current clone is finished)
-    % \end{itemize}
 
     Um diese Applikation jetzt unabhängig vom Betriebssystem des Endgerätes zu machen, wurde eine docker-compose-Datei für die Containerisierung erstellt.
     Dieses referenzierte ein einzelnes Dockerfile mit dem Container der API.

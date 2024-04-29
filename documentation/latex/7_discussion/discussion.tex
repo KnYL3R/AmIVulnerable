@@ -1,40 +1,61 @@
 \section{Diskussion} \label{sec:Diskussion}
-    \textcolor{red}{
-        \begin{itemize}
-            \item \ac{CVE} Datenmodell 2014 umgeändert? \\
-                auf CVE internen Standard V5 gehoben
-                %? https://github.com/CVEProject/cvelistV5
-            \item Manche Pakete haben keine Designation? $\rightarrow$ Bereinigen? Wie kann man damit umgehen? \\
-                Wir: keine designation --> N/A
-                Wir haben keine Möglichkeit gefunden die designation nachträglich herauszubekommen 
-            \item Risiken ausführlich betrachten, Kritik, dort kann man weitermachen/müsste man, was hat man nicht in dieser Arbeit adressiert? (alle Programmiersprachen)
-            \item !!! FUTURE WORK
-            \item Andere Wiss. Arbeiten die im Themenfeld \glqq state of the art\grqq~sind
-            \item Paper: On the Effect of Transitivity and Granularity on Vulnerability Propagation in the Maven Ecosystem
-        \end{itemize}
-    }
-    Risiken:
-    \begin{itemize}
-        \item Bei bestehender Schwachstelle ist kein Eintrag in der genutzten Datenbasis vorhanden
-        \item Abhängigkeit vom \ac{CVE}-Daten Provider
-        \item Sicherheitslücken in der \ac{API} selbst.
-    \end{itemize}
+    Aus der vorangegangenen Betrachtung geht hervor, dass alle Forschungsfragen erfolgreich abschließbar waren.
 
-    Weiter machen:
-    \begin{itemize}
-        \item Betrachten auf Versionsbasis
-        \item Betrachten auf Commit-basis
-        \item Zeitlicher Verlauf von Schachstellenzahlen in Repositories
-        \item Mehr Datenquellen als nur CVE Daten
-        \item Andere Untersuchungs-Projekttypen unterstützen, untersuchen ob es da unterschiede gibt
-        \item Dopplungen in Abhängigkeitsbäumen analysieren
-    \end{itemize}
+    Aus Forschungsfrage \ref{q:one} ist durch die Konzeption \ref{!!!!!} klargeworden, dass für eine Sicherheitslückenanalyse von Paketen mehrere Funktionalitäten notwendig sind.
+    Diese sind in den funktionalen Anforderungen \ref{f:one} und \ref{f:two} aufgefasst.
+    Es handelt sich um das Einladen einer Schwachstellendatenbasis, für welche die \ac{CVE}-Daten gewählt wurden, sowie die Überprüfung eines Paketes mittels Abgleich dessen Bezeichnung und dieser Schwachstellendatenbasis auf Übereinstimmungen.
 
-    Was wurde nicht adressiert?
-    \begin{itemize}
-        \item Welche Sicherheitslücken können tatsächlich ausgenutzt werden bei \glqq Vererbung\grqq dieser (PAPER)
-        \item Selbst aufstellen eines Abhängigkeitsbaums
-        \item \glqq Most Wanted\grqq~- Meistgenutzte Pakete die kritische Sicherheitslücken nutzen
-        \item Hat das jeweilige Paket noch Hoffnung auf einen Fix/ist es deprecated?
-        \item Was anstatt einzelner Abhängigkeiten mit Sicherheitslücken als alternativen vorhanden sind 
-    \end{itemize}
+    Die Forschungsfrage \ref{q:two} ist aufbauend auf Forschungsfrage \ref{q:one} eine Schwachstellenanalyse auf einem ganzen Repository und somit auch in der Konzeption aufgezeigt.
+    Deshalb werden hier auch mehr funktionale Anforderungen angebracht.
+    \\
+    Diese sind die funktionalen Anforderungen \ref{f:one}, \ref{f:three}, \ref{f:four} und \ref{f:five}.
+    Somit ist diese Forschungsfrage auch in der ersten Implementierung gelöst worden.
+    Für eine Analyse eines ganzen Repositories muss nach Clonen und Extraktion des Abhängigkeitsbaums des Repositories für seine Abhängigkeiten auf einer Schwachstellendatenbank der Abhängigkeitsbaum mit Schwachstellendaten angereichert werden.
+
+    Forschungsfrage \ref{q:three} handelt vom Rückgabedatentyp und der weiteren Nutzbarkeit von Resultatdaten.
+    Hier wurde durch die Lösung der nichtfunktionalen Anforderung \ref{nf:four} die Rückgabe im JSON-LD-Format genutzt.
+
+    Forschungsfrage \ref{q:four} ist durch die Konzeption und Implementierung des Projektes beantwortet worden.
+    Hier ist die funktionale Anforderung \ref{f:seven} und die nichtfuntkionale Anforderung \ref{nf:five} zugehörig.
+    Letztendlich wurde also eine mit Docker-Compose containerisierte Applikation entwickelt, welche aus Applikations- sowie Datenbankcontainer besteht.
+    Diese hat mit ASP.NET und zuerst LiteDB und dann MySQL jeweils eine aktuelle und weit verbreitete Technologien als Grundgerüst genutzt.
+
+    Forschungsfrage \ref{q:five} war der Grund für eine zweite Iteration der Implementierung.
+    Hier wurde mit den nichtfunktionalen Anforderungen \ref{nf:one}, \ref{nf:two} und \ref{nf:three} eine obere Grenze von 5 ms für Einzelpaketsuchen, die Skalierbarkeit der Anwendung und eine Dokumentation der Anwendung gefordert.
+    Hierbei ist die obere Grenze der Paketsuche die Ursache der zweiten Implementierung.
+    \\
+    Die funktionale Anforderung einer Aktualisierungsfunktion (\ref{f:six}) ist auch hier zugehörig für eine bessere Nutzbarkeit der Applikation.
+    Es wurde letztendlich mit einer indexierten MySQL-Datenbank eine Suche von unter 5 ms für eine Einzelpaketsuche erreicht.
+    Die Skalierbarkeit wiederrum wurde durch den Einsatz der MySQL-Datenbank und der Implementierung des Webservice mit ASP.NET umgesetzt.
+    \\
+    Eine Dokumentation ist durch die Implementierung der Anwendung als \ac{API} mit einer Swagger-Endpunktbeschreibung geschehen.
+
+    Es gab unter anderem verschiedene Auffälligkeiten die sich während der Entwicklung dieser Arbeit aufgetan haben.
+    Darunter, dass in 2014 das Datenmodell der CVE-Daten von der vierten auf die fünfte Version \href{https://github.com/CVEProject/cvelistV5}{github.com/CVEProject/cvelistV5} verändert hat.
+    Außerdem haben manche, sehr alte Einträge, keine Paketbezeichnung und sind somit für eine Analyse auf der Basis dieser nicht verwendbar.
+    Hierfür mussten diese leeren Bezeichnungen gefüllt werden, wobei die Wahl auf ein \glqq n/a\grqq~für \textit{not available} fiel, da es keine Möglichkeit gibt diese nachträglich automatisiert herauszufinden.
+
+    Diese Arbeit beschränkt sich in ihrer Implementierung auf die Analyse von npm-Projekten, da bei der Extraktion des Abhängigkeitsbaumes dieser Projekte auf die nativen Funktionen von npm zurückgegriffen werden konnte.
+    Weiterhin wurden ausschließlich \ac{CVE}-Einträge als einzige Schwachstellendatenquelle genutzt.
+    Dies führt dazu, dass Schwachstellen eventuell bestehen, aber nicht -- in der für die Analyse genutzten -- Datenbasis vorhanden sind, womit diese unentdeckt bleiben.
+    Somit sollten also zukünftig verschiedene Datenquellen für Schwachstellen genutzt werden können.
+    Weiterhin ist hier klar eine Abhängigkeit vom \ac{CVE}-Repository für dessen Daten vorhanden damit eventuell eine Suche nach Alternativen zur Absicherung der Datenbasis vonnöten ist.
+    Es sind außerdem keine Sicherheitslücken in der \ac{API} selbst auszuschließen.
+
+    Fortführend von dieser Arbeit können nun verschiedene weitere Betrachtungen vorgenommen werden.
+    Darunter die Verteilung von Schwachstellen auf Versions- oder Commit-Basis oder der zeitliche Verlauf von Schwachstellendaten in Repositories.
+    Weiterhin können Unterschiede zwischen Projekttypen, Frameworks oder Programmiersprachen bei Abhängigkeiten betrachtet werden.
+    Zusätzlich ist es möglich, Dopplungen von Abhängigkeiten gleicher und verschiedener Versionen in einem einzelnen Projekt zu untersuchen.
+
+    In dieser Arbeit wurden auch verschiedene Themen nicht adressiert, welche durchaus einen Schwerpunkt in der Schwachstellenanalyse von Repositories bilden.
+    Darunter auch welche Sicherheitslücken wirklich letztendlich ausgenutzt werden können, also welcher Sicherheitskritischer Code wirklich ausgeführt wird.
+    Das wurde z.B. von Amir M. Mir et al im Paper \glqq On the Effect of Transitivity and Granularity on Vulnerability Propagation in the Maven Ecosystem\grqq\~für das Maven-Ökosystem betrachtet.
+    Hier wurde herausgefunden, dass zwar ein Drittel der Pakete bei Betrachtung aller Abhängigkeiten Schwachstellen aufweisen, allerdings nur 1\% aller Pakete tatsächlich erreichbaren schwachstellenbehafteten Code enthalten.
+    Daraus resultierend wurde vorgeschlagen nur eine bestimmte Tiefe des Abhängigkeitsbaumes zu analysieren, um Rechenzeiten zu verringern.
+    \\
+    In der Arbeit selbst wurde außerdem kein Abhängigkeitsbaum selbst aufgestellt, welcher die Vorgabe von Abhängigkeitsbäumen durch das genutzte Framework notwendig macht.
+    Alternativen spielen auch eine große Rolle bei Entscheidung auf Ersetzen eines Paketes.
+    Diese aufzuzeigen bringt dem Nutzer letztendlich nach der Entscheidungsfindung den größten Nutzen.
+    Viele Pakete bekommen allerdings während ihrer Lebenszeit Aktualisierungen welche manche Sicherheitslücken schließt.
+    Hier einen Hinweis anzubringen, ob ein Paket Hoffnung auf einen solchen Patch hat oder veraltet ist wird kann mit Betrachtung der Alternativen dieses mit abgehandelt werden.
+    Im größeren Stil kann auch eine Analyse auf die meist verwendeten Sicherheitskritischen Softwarepakete in bestimmten Ökosystemen angebracht werden. 

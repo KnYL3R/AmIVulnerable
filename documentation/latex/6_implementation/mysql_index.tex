@@ -7,7 +7,6 @@
     Damit sollte die Leistung merklich verbessert werden.
     \\
     Nachfolgend die arithmetische Mittel aus jeweils 10 Messungen auf der selben Tabelle mit und ohne Index:
-    \\
     \begin{tabularx}{0.8\textwidth}{|c|c|c|}
         \hline
         Such-Typ & Zeit & Faktor \\ \hline
@@ -17,3 +16,26 @@
         \caption{Laufzeiten Durchschnitt 10 Messungen \textsuperscript{siehe Appendix \ref{subsec:MySQLMitIndex} \& \ref{subsec:MySQLOhneIndex}}}
         \label{tabularx:MySqlIndexWithAndWithout}
     \end{tabularx}
+    Graphisch dargestellt sieht dies wie folgt aus:
+    \begin{figure}[h]
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                ybar,
+                bar width=4,
+                ylabel={Laufzeit},
+                ytick={0,50,100,150,200,250},
+                xtick={1, 2},
+                legend style={at={(0.5,-0.15)}, anchor=north,legend columns=-1},
+                nodes near coords
+            ]
+            
+            \addplot coordinates {(1, 207.86)};
+            \addplot coordinates {(1, 0.71)};
+            
+            \legend{$ohne Index$, $mit Index$}
+            
+            \end{axis}
+        \end{tikzpicture}
+        \caption{balkendiagramm:A}
+    \end{figure}
