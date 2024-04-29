@@ -155,6 +155,9 @@ namespace AmIVulnerable.Controllers {
         [HttpGet]
         [Route("getFullTextFromCveNumber")]
         public IActionResult GetFullTextCve([FromQuery] string? cve_number) {
+            if (!(this.Request.Headers.Accept.Equals("application/json") || this.Request.Headers.Accept.Equals("*/*"))) {
+                return StatusCode(406);
+            }
             using (Operation.Time("GetFullTextCve")) {
                 if (cve_number is null) {
                     return BadRequest("Empty cve_number");
@@ -193,9 +196,12 @@ namespace AmIVulnerable.Controllers {
         /// <param name="isDbSearch">true: search db, false: search raw-json</param>
         /// <param name="packageVersion">Version of package to search</param>
         /// <returns>Ok with result. NoContent if empty.</returns>
-        [HttpPost]
+        [HttpGet]
         [Route("checkSinglePackage")]
         public IActionResult CheckSinglePackage([FromBody] PackageForApi packageName) {
+            if (!(this.Request.Headers.Accept.Equals("application/json") || this.Request.Headers.Accept.Equals("*/*"))) {
+                return StatusCode(406);
+            }
             using (Operation.Time($"Complete Time for Query-SingleSearch after Package \"{packageName}\"")) {
                 List<CveResult> results = [];
                 DataTable dtResult = SearchInMySql(packageName.PackageName);
@@ -238,9 +244,12 @@ namespace AmIVulnerable.Controllers {
         /// </summary>
         /// <param name="packages">List of tuple: package, version</param>
         /// <returns>OK, if exists. OK, if no package list searched. NoContent if not found.</returns>
-        [HttpPost]
+        [HttpGet]
         [Route("checkPackageList")]
         public async Task<IActionResult> CheckPackageListAsync([FromBody] List<PackageForApi> packages) {
+            if (!(this.Request.Headers.Accept.Equals("application/json") || this.Request.Headers.Accept.Equals("*/*"))) {
+                return StatusCode(406);
+            }
             List<CveResult> results = [];
             using (Operation.Time($"Complete Time for Query-Search after List of Packages")) {
                 foreach (PackageForApi x in packages) {
