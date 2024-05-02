@@ -3,7 +3,7 @@
 
     Aus Forschungsfrage \ref{q:one} ist durch die Konzeption \ref{!!!!!} klargeworden, dass für eine Sicherheitslückenanalyse von Paketen mehrere Funktionalitäten notwendig sind.
     Diese sind in den funktionalen Anforderungen \ref{f:one} und \ref{f:two} aufgefasst.
-    Es handelt sich um das Einladen einer Schwachstellendatenbasis, für welche die \ac{CVE}-Daten gewählt wurden, sowie die Überprüfung eines Paketes mittels Abgleich dessen Bezeichnung und dieser Schwachstellendatenbasis auf Übereinstimmungen.
+    Es handelt sich um das Einladen einer Schwachstellendatenbasis, für welche die \ac{CVE}-Daten gewählt wurden, sowie die Über\-prüfung eines Paketes mittels Abgleich dessen Bezeichnung und dieser Schwachstellendatenbasis auf Über\-ein\-stimmungen.
 
     Die Forschungsfrage \ref{q:two} ist aufbauend auf Forschungsfrage \ref{q:one} eine Schwachstellenanalyse auf einem ganzen Repository und somit auch in der Konzeption aufgezeigt.
     Deshalb werden hier auch mehr funktionale Anforderungen angebracht.
@@ -13,7 +13,7 @@
     Für eine Analyse eines ganzen Repositories muss nach Clonen und Extraktion des Abhängigkeitsbaums des Repositories für seine Abhängigkeiten auf einer Schwachstellendatenbank der Abhängigkeitsbaum mit Schwachstellendaten angereichert werden.
 
     Forschungsfrage \ref{q:three} handelt vom Rückgabedatentyp und der weiteren Nutzbarkeit von Resultatdaten.
-    Hier wurde durch die Lösung der nichtfunktionalen Anforderung \ref{nf:four} die Rückgabe im JSON-LD-Format genutzt.
+    Hier wurde durch die Lösung der nicht-funktionalen Anforderung \ref{nf:four} die Rückgabe im JSON-LD-Format genutzt.
 
     Forschungsfrage \ref{q:four} ist durch die Konzeption und Implementierung des Projektes beantwortet worden.
     Hier ist die funktionale Anforderung \ref{f:seven} und die nichtfuntkionale Anforderung \ref{nf:five} zugehörig.
@@ -49,8 +49,8 @@
 
     In dieser Arbeit wurden auch verschiedene Themen nicht adressiert, welche durchaus einen Schwerpunkt in der Schwachstellenanalyse von Repositories bilden.
     Darunter auch welche Sicherheitslücken wirklich letztendlich ausgenutzt werden können, also welcher Sicherheitskritischer Code wirklich ausgeführt wird.
-    Das wurde z.B. von Amir M. Mir et al im Paper \glqq On the Effect of Transitivity and Granularity on Vulnerability Propagation in the Maven Ecosystem\grqq\~für das Maven-Ökosystem betrachtet.
-    Hier wurde herausgefunden, dass zwar ein Drittel der Pakete bei Betrachtung aller Abhängigkeiten Schwachstellen aufweisen, allerdings nur 1\% aller Pakete tatsächlich erreichbaren schwachstellenbehafteten Code enthalten.
+    Das wurde z.B. von Amir M. Mir et al im Paper \glqq On the Effect of Transitivity and Granularity on Vulnerability Propagation in the Maven Ecosystem\grqq$~$für das Maven-Ökosystem betrachtet.
+    Hier wurde herausgefunden, dass zwar ein Drittel der Pakete bei Betrachtung aller Abhängigkeiten Schwachstellen aufweisen, allerdings nur $1\%$ aller Pakete tatsächlich erreichbaren schwachstellenbehafteten Code enthalten.
     Daraus resultierend wurde vorgeschlagen nur eine bestimmte Tiefe des Abhängigkeitsbaumes zu analysieren, um Rechenzeiten zu verringern.
     \\
     In der Arbeit selbst wurde außerdem kein Abhängigkeitsbaum selbst aufgestellt, welcher die Vorgabe von Abhängigkeitsbäumen durch das genutzte Framework notwendig macht.

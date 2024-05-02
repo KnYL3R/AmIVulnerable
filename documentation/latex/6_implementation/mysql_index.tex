@@ -10,8 +10,8 @@
     \begin{tabularx}{0.8\textwidth}{|c|c|c|}
         \hline
         Such-Typ & Zeit & Faktor \\ \hline
-        ohne Index & 207,86ms & 1 \\
-        mit Index & 0,710666667ms & 292,48593 \\
+        ohne Index & $207,86$ ms & $1$ \\
+        mit Index & $0,710666667$ ms & $292,48593$ \\
         \hline
         \caption{Laufzeiten Durchschnitt 10 Messungen \textsuperscript{siehe Appendix \ref{subsec:MySQLMitIndex} \& \ref{subsec:MySQLOhneIndex}}}
         \label{tabularx:MySqlIndexWithAndWithout}
@@ -22,10 +22,10 @@
         \begin{tikzpicture}
             \begin{axis}[
                 ybar,
-                bar width=4,
-                ylabel={Laufzeit},
+                bar width=25,
+                ylabel={Laufzeit in ms},
                 ytick={0,50,100,150,200,250},
-                xtick={1, 2},
+                xtick=data,
                 legend style={at={(0.5,-0.15)}, anchor=north,legend columns=-1},
                 nodes near coords
             ]
@@ -37,5 +37,25 @@
             
             \end{axis}
         \end{tikzpicture}
-        \caption{balkendiagramm:A}
+        \caption{Balkendiagramm der Laufzeiten mit und ohne Index}
     \end{figure}
+    \\
+    Aus den Daten im Appendix \ref{subsec:MySQLMitIndex} \& \ref{subsec:MySQLOhneIndex} lassen sich folgende Aussagen treffen:
+    \begin{tabularx}{0.8\textwidth}{|c|c|c|}
+        \hline
+        Ohne Index & Minimum & $203,3$ ms \\
+        & Maximum & $264,8$ ms \\
+        & Durchschnitt & $207,86$ ms \\
+        & Median & $207,7$ ms \\
+        & Standardabweichung & $3,6727$ ms \\
+        & Varianz & $13,5279$ ms \\ \hline
+        Mit Index & Minimum & $0,2$ ms \\
+        & Maximum & $64$ ms \\
+        & Durchschnitt & $0,64514$ ms \\
+        & Median & $0,4$ ms \\
+        & Standardabweichung & $3,4113$ ms \\
+        & Varianz & $11,6703$ ms \\
+        \hline
+        \caption{Resultate aus den Rohdaten des Appendix \ref{subsec:MySQLMitIndex} \& \ref{subsec:MySQLOhneIndex}}
+        \label{tabularx:ResultatDatenMySqlIndexAppendix}
+    \end{tabularx}

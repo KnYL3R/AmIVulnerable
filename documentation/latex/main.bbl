@@ -19,13 +19,29 @@
 
 \refsection{0}
   \datalist[entry]{none/global//global/global}
-    \entry{link:RedHatCveDef}{online}{}
+    \entry{link:MitreCve}{online}{}
       \field{sortinit}{1}
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labeltitlesource}{title}
+      \field{title}{CVE}
+      \field{urlday}{1}
+      \field{urlmonth}{5}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://web.archive.org/web/20240501170211/https://cve.mitre.org/
+      \endverb
+      \verb{url}
+      \verb https://web.archive.org/web/20240501170211/https://cve.mitre.org/
+      \endverb
+    \endentry
+    \entry{link:RedHatCveDef}{online}{}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labeltitlesource}{title}
       \field{title}{Was bedeutet CVE?}
-      \field{urlday}{14}
-      \field{urlmonth}{4}
+      \field{urlday}{19}
+      \field{urlmonth}{3}
       \field{urlyear}{2024}
       \field{urldateera}{ce}
       \true{nocite}
@@ -37,15 +53,14 @@
       \endverb
     \endentry
     \entry{link:CveOrgCnaS}{online}{}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labeltitlesource}{title}
       \field{title}{CVE Numbering Authorities (CNAs)}
-      \field{urlday}{14}
+      \field{urlday}{2}
       \field{urlmonth}{4}
       \field{urlyear}{2024}
       \field{urldateera}{ce}
-      \true{nocite}
       \verb{urlraw}
       \verb https://web.archive.org/web/20240402032014/https://www.cve.org/ProgramOrganization/CNAs
       \endverb
@@ -54,8 +69,8 @@
       \endverb
     \endentry
     \entry{link:GoogleDependencies}{online}{}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labeltitlesource}{title}
       \field{title}{Abhängigkeitsverwaltung}
       \field{urlday}{14}
@@ -71,13 +86,13 @@
       \endverb
     \endentry
     \entry{link:DevInsiderDependecyDef}{online}{}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labeltitlesource}{title}
       \field{title}{Was ist eine Dependency}
-      \field{urlday}{14}
-      \field{urlmonth}{4}
-      \field{urlyear}{2024}
+      \field{urlday}{3}
+      \field{urlmonth}{10}
+      \field{urlyear}{2023}
       \field{urldateera}{ce}
       \true{nocite}
       \verb{urlraw}
@@ -92,7 +107,7 @@
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labeltitlesource}{title}
       \field{title}{What is an API (Application Programming Interface)?}
-      \field{urlday}{14}
+      \field{urlday}{9}
       \field{urlmonth}{4}
       \field{urlyear}{2024}
       \field{urldateera}{ce}
@@ -109,8 +124,8 @@
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labeltitlesource}{title}
       \field{title}{10.3.1 How MySQL Uses Indexes}
-      \field{urlday}{18}
-      \field{urlmonth}{4}
+      \field{urlday}{30}
+      \field{urlmonth}{1}
       \field{urlyear}{2024}
       \field{urldateera}{ce}
       \verb{urlraw}
@@ -125,134 +140,159 @@
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labeltitlesource}{title}
       \field{title}{What’s the difference between API Latency and API Response Time?}
+      \field{urlday}{18}
+      \field{urlmonth}{12}
+      \field{urlyear}{2023}
+      \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://blog.sentry.io/whats-the-difference-between-api-latency-and-api-response-time/\#:$~$:text=Just\%20to\%20have\%20a\%20number,to\%20abandon\%20the\%20application\%2Fwebsite.
+      \verb https://web.archive.org/web/20231218165046/https://blog.sentry.io/whats-the-difference-between-api-latency-and-api-response-time/#:$~$:text=Just\%20to\%20have\%20a\%20number,to\%20abandon\%20the\%20application\%2Fwebsite.
       \endverb
       \verb{url}
-      \verb https://blog.sentry.io/whats-the-difference-between-api-latency-and-api-response-time/%5C#:$~$:text=Just%5C%20to%5C%20have%5C%20a%5C%20number,to%5C%20abandon%5C%20the%5C%20application%5C%2Fwebsite.
+      \verb https://web.archive.org/web/20231218165046/https://blog.sentry.io/whats-the-difference-between-api-latency-and-api-response-time/#:$~$:text=Just%5C%20to%5C%20have%5C%20a%5C%20number,to%5C%20abandon%5C%20the%5C%20application%5C%2Fwebsite.
       \endverb
-      \warn{\item Entry 'link:ApiResponseTime' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoMostWanted}{online}{}
       \field{sortinit}{2}
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labeltitlesource}{title}
+      \field{title}{Github explore}
       \verb{urlraw}
       \verb https://gitmostwanted.com/?term=&lang=JavaScript
       \endverb
       \verb{url}
       \verb https://gitmostwanted.com/?term=&lang=JavaScript
       \endverb
-      \warn{\item Entry 'link:GitPopJsRepoMostWanted' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item online entry 'link:GitPopJsRepoMostWanted' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoReact}{online}{}
       \field{sortinit}{2}
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labeltitlesource}{title}
+      \field{title}{react}
       \verb{urlraw}
       \verb https://github.com/facebook/react/network/dependencies
       \endverb
       \verb{url}
       \verb https://github.com/facebook/react/network/dependencies
       \endverb
-      \warn{\item Entry 'link:GitPopJsRepoReact' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item online entry 'link:GitPopJsRepoReact' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoLeaflet}{online}{}
       \field{sortinit}{2}
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labeltitlesource}{title}
+      \field{title}{Leaflet}
       \verb{urlraw}
       \verb https://github.com/Leaflet/Leaflet/network/dependencies
       \endverb
       \verb{url}
       \verb https://github.com/Leaflet/Leaflet/network/dependencies
       \endverb
-      \warn{\item Entry 'link:GitPopJsRepoLeaflet' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item online entry 'link:GitPopJsRepoLeaflet' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoBootstrap}{online}{}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{title}{bootstrap}
       \verb{urlraw}
       \verb https://github.com/twbs/bootstrap/network/dependencies
       \endverb
       \verb{url}
       \verb https://github.com/twbs/bootstrap/network/dependencies
       \endverb
-      \warn{\item Entry 'link:GitPopJsRepoBootstrap' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item online entry 'link:GitPopJsRepoBootstrap' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoExpress}{online}{}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{title}{express}
       \verb{urlraw}
       \verb https://github.com/expressjs/express/network/dependencies
       \endverb
       \verb{url}
       \verb https://github.com/expressjs/express/network/dependencies
       \endverb
-      \warn{\item Entry 'link:GitPopJsRepoExpress' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item online entry 'link:GitPopJsRepoExpress' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoSwiper}{online}{}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{title}{swiper}
       \verb{urlraw}
       \verb https://github.com/nolimits4web/swiper/network/dependencies
       \endverb
       \verb{url}
       \verb https://github.com/nolimits4web/swiper/network/dependencies
       \endverb
-      \warn{\item Entry 'link:GitPopJsRepoSwiper' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item online entry 'link:GitPopJsRepoSwiper' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoPlotly}{online}{}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{title}{plotly}
       \verb{urlraw}
       \verb https://github.com/plotly/plotly.js/network/dependencies
       \endverb
       \verb{url}
       \verb https://github.com/plotly/plotly.js/network/dependencies
       \endverb
-      \warn{\item Entry 'link:GitPopJsRepoPlotly' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item online entry 'link:GitPopJsRepoPlotly' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoNode}{online}{}
       \field{sortinit}{3}
       \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{title}{node}
       \verb{urlraw}
       \verb https://github.com/nodejs/node/network/dependencies
       \endverb
       \verb{url}
       \verb https://github.com/nodejs/node/network/dependencies
       \endverb
-      \warn{\item Entry 'link:GitPopJsRepoNode' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item online entry 'link:GitPopJsRepoNode' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoAos}{online}{}
       \field{sortinit}{3}
       \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{title}{aos}
       \verb{urlraw}
       \verb https://github.com/michalsnik/aos/network/dependencies
       \endverb
       \verb{url}
       \verb https://github.com/michalsnik/aos/network/dependencies
       \endverb
-      \warn{\item Entry 'link:GitPopJsRepoAos' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item online entry 'link:GitPopJsRepoAos' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoPm2}{online}{}
       \field{sortinit}{3}
       \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{title}{pm2}
       \verb{urlraw}
       \verb https://github.com/Unitech/pm2/network/dependencies
       \endverb
       \verb{url}
       \verb https://github.com/Unitech/pm2/network/dependencies
       \endverb
-      \warn{\item Entry 'link:GitPopJsRepoPm2' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item online entry 'link:GitPopJsRepoPm2' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoAxios}{online}{}
       \field{sortinit}{3}
       \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{title}{axios}
       \verb{urlraw}
       \verb https://github.com/axios/axios/network/dependencies
       \endverb
       \verb{url}
       \verb https://github.com/axios/axios/network/dependencies
       \endverb
-      \warn{\item Entry 'link:GitPopJsRepoAxios' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
+      \warn{\item online entry 'link:GitPopJsRepoAxios' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
   \enddatalist
 \endrefsection
