@@ -9,10 +9,10 @@
     Weiterhin gab es eine anpassung am Containernetzwerk, die MySQL Datenbank hat nun ihren eigenen Container, da diese nicht in ASP.NET eingebettet ist.
     Außerdem sind folgende Anpassungen an den Controllern vorgenommen worden:
     \begin{itemize}
-        \item DbController \label{api_controller:three}\\
+        \item DbController \label{api_controller:three}
             \begin{itemize}
-                \item CheckRawDir-Endpunkt entfällt siehe GitControlller api/Git/PullCveAndConvert Endpunkt \\
-                \item ConvertRawDirToDb-Endpunkt entfällt \\
+                \item CheckRawDir-Endpunkt entfällt siehe GitControlller api/Git/PullCveAndConvert Endpunkt
+                \item ConvertRawDirToDb-Endpunkt entfällt
                 \item Update-Endpunkt hinzugefügt \\
                     Mit diesem Endpunkt werden die lokalen CVE-Daten aktualisiert ohne den gesamten Datensatz erneut zu laden.
                     \\
@@ -35,7 +35,7 @@
                     \textbf{Not Found} falls das Repository nicht lokal vorliegt.
             \end{itemize}
 
-        \item GitController \label{api_controller:one} \\
+        \item GitController \label{api_controller:one}
             \begin{itemize}
                 \item Clone --> CloneRepo hinzugefügt
                 \item PullCveAndConvert (die aus dem ersten Controller sind jetzt hier) hinzugefügt
@@ -44,7 +44,7 @@
             \begin{itemize}
                 \item CheckReachable-Endpunkt hinzugefügt
             \end{itemize}
-        \item ViewController \label{api_controller:four}\\
+        \item ViewController \label{api_controller:four}
             \begin{itemize}
                 \item Json-Ld-Endpunkt entfällt
                 \item CveResult-Endpunkt hinzugefügt

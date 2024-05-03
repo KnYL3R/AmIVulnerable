@@ -1,5 +1,4 @@
 \subsection{Implementation V1} \label{sec:Implementation1}
-    \textcolor{red}{PIPELINE BILDER (svg im pap Ordner)}
     Folgende Komponenten wurden für die erste Implementation der \ac{API} genutzt:
     \begin{itemize}
         \item Framework ASP.NET (C\#)
@@ -17,7 +16,7 @@
     \begin{itemize}
         \item CVEcomp, für CVE-Complete \\
             Dieses Modell ist eine komplette Representation eines \ac{CVE}-Eintrags.
-            Für dieses Modell sind viele weitere Klassen notwendig um mit dem JSONSerializer den kompletten Datensatz umwandeln und anschließend in die interne Datenbank einfügen zu können.
+            Für dieses Modell sind viele weitere Klassen notwendig um mit dem \textit{JSONSerializer} den kompletten Datensatz umwandeln und anschließend in die interne Datenbank einfügen zu können.
             Es befinden sich als Klassen alle weiteren Subelemente der \ac{JSON}-Datei für die korrekte Verarbeitung im Programm.
         \item CveResult \\
             Dieses Modell dient der Rückgabe von \ac{CVE}-Daten bei der Einzelpaket- oder Mehrpaketsuche auf der Datenbasis.
@@ -31,7 +30,7 @@
             Die Entscheidung dafür fiel, damit mögliche Schreibfehler vom Endnutzer ausgeschlossen werden können.
     \end{itemize}
 
-    Es wurden außerdem folgende Controller zur Umsetzung der funktionalen Anforderungen implementiert:
+    \noindent Es wurden außerdem folgende Controller zur Umsetzung der funktionalen Anforderungen implementiert:
     \begin{itemize}
         \item DbController \label{api_controller:three}\\
             Dieser Controller dient der Befüllung der Datenbank mit \ac{CVE}-Daten sowie der Nutzung dieser für kleinere Analysen. Dies sind zum Beispiel einzelne Pakete oder Listen von Paketen.

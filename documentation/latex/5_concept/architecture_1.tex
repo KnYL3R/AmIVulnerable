@@ -29,14 +29,14 @@
             Für die Untersuchung einzelner Pakete und Listen dieser ist ein weiterer (\hyperref[api_controller:three]{3}) Endpunkt zu implementieren.
             In diesem ist auch die Update-Funktion der Datenbasis hinzuzufügen.
             \\
-            Weiterhin muss in jedem Endpunkt (\hyperref[api_controller:four]{4}) bei korrekter Antwort ein Context mitgeliefert werden, damit der gelieferte Inhalt so durch JSON-LD zu interpretieren ist.
+            Weiterhin muss in jedem Endpunkt (\hyperref[api_controller:four]{4}) bei korrekter Antwort ein Context mitgeliefert werden, damit der gelieferte Inhalt so durch \ac{JSON-LD} zu interpretieren ist.
             Ebenfalls sind durch einen Controller die Rückgabedaten zu dokumentieren.
             Dazu ist zwischen Softwarepaketen und \ac{CVE}-Einträgen zu unterscheiden.
         \item \textbf{Datenmodelle} \label{arch_4}\\
-            Um Daten korrekt in die Datenbank einzufügen, um ein Resultat-JSON zu erzeugen oder die Paketliste intern zu verarbeiten -- dazu sind Datenmodelle nötig.
+            Um Daten korrekt in die Datenbank einzufügen, um ein Resultat-\ac{JSON} zu erzeugen oder die Paketliste intern zu verarbeiten -- dazu sind Datenmodelle nötig.
         \item \textbf{Konvertierung von und in JSON} \label{arch_5}\\
-            Beim Einlesen der \ac{CVE}-Daten in die Datenbank ist eine Konvertierung vom vorhandenen JSON-Format in Einträge der Datenbank vorzunehmen.
-            Die aus der Datenbank genutzten, durch den Controller verarbeiteten, Daten müssen nun schließlich im JSON-Format dem Benutzer übermittelt werden.
+            Beim Einlesen der \ac{CVE}-Daten in die Datenbank ist eine Konvertierung vom vorhandenen \ac{JSON}-Format in Einträge der Datenbank vorzunehmen.
+            Die aus der Datenbank genutzten, durch den Controller verarbeiteten, Daten müssen nun schließlich im \ac{JSON}-Format dem Benutzer übermittelt werden.
             \\
             Dies muss in den jeweiligen Controllern geschehen.
             Damit die Daten besser weiterverwendbar sind muss zusätzlich ein Kontext \glqq @context\grqq~hinzugefügt werden.
@@ -45,4 +45,4 @@
 
             Für den Bau der Containers wird Docker-Compose genutzt.
     \end{enumerate}
-    Weiterhin muss das JSON-LD-Format für die Rückgabedaten definiert werden (Forschungsfrage \ref{three}).
+    Weiterhin muss das \ac{JSON-LD}-Format für die Rückgabedaten definiert werden (Forschungsfrage \ref{three}).

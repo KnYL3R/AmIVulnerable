@@ -2,14 +2,14 @@
     Die in der \nameref{subsec:Motivation} aufgelisteten Forschungsfragen können wie folgt nach Bearbeitung des Auftrages beantwortet werden:
     \begin{description}
         \item[\ref{q:one}]\hfill \\
-            Um die Pakete zu untersuchen ist es notwendig, die CVE-Daten in eine interne Datenbank umzuwandeln, da das Suchen auf den Rohdaten -- den CVE-\ac{JSON}-Dateien -- zu zeitaufwendig ist.
+            Um die Pakete zu untersuchen ist es notwendig, die \ac{CVE}-Daten in eine interne Datenbank umzuwandeln, da das Suchen auf den Rohdaten -- den \ac{CVE}-\ac{JSON}-Dateien -- zu zeitaufwendig ist.
             Dazu wurde schlussendlich eine MySQL-Datenbank ausgewählt, die dank der Indizierung einer Spalte die gewünschten Leistungsmerkmale aufweist.
         \item[\ref{q:two}]\hfill \\
-            In der umgesetzten Version ist es dank der nativen Unterstützung von npm gelungen, die Abhängigkeiten der Pakte als json zu extrahieren und dann intern so weiterzuverarbeiten, dass eine logische Repräsentation erfolgen kann.
+            In der umgesetzten Version ist es dank der nativen Unterstützung von npm gelungen, die Abhängigkeiten der Pakte als \ac{JSON} zu extrahieren und dann intern so weiterzuverarbeiten, dass eine logische Repräsentation erfolgen kann.
         \item[\ref{q:three}]\hfill \\
             Die Lösung dieser Frage geschah über die einheitliche Verwendung von \ac{JSON} respektive \ac{JSON-LD} bei der Rückgabe des Webservices.
         \item[\ref{q:four}]\hfill \\
-            Da die Aufgabe darin bestand, Github-Repositories zu analysieren, konnte in den Docker-Container der API git mitinstalliert werden, wodurch ein voller Zugriff der API auf den Funktionsumfang von git besteht.
+            Da die Aufgabe darin bestand, Github-Repositories zu analysieren, konnte in den Docker-Container der \ac{API} git mitinstalliert werden, wodurch ein voller Zugriff der \ac{API} auf den Funktionsumfang von git besteht.
             Durch diesen erlangte die \ac{API} die Möglichkeit Repositories zu clonen und anschließend intern weiterzuverarbeiten, was den Funktionsumfang der selbst-implementierten Methoden aus den Punkten $I$ bis $III$ der Forschungsfragen bereits entsprang.
         \item[\ref{q:five}]\hfill \\
             Die Frage nach der Laufzeitverbesserung stellte sich nach der Umsetzung der V1 (näheres in \ref{sec:Implementation1}), da dort die Wartezeiten für die Abfrage von Paketen den zeitlichen Rahmen übertraf.
@@ -21,5 +21,6 @@
     Dies wurde erfolgreich umgesetzt.
     \\
     Die möglichen Erweiterungen -- besprochen in der \ref{sec:Diskussion} \nameref{sec:Diskussion} -- sind aufbauend und benötigen keine konkreten Änderungen in dem Grundgerüst, welches mit dem vorliegendem Projekt erreicht wurde.
-    \\
-    Der zu dem Zeitpunkt der Abgabe aktuelle commit im Github-Repository wie folgt getagt: \textcolor{red}{TAG}
+    \\ \\
+    Der zu dem Zeitpunkt der Abgabe aktuelle commit im Github-Repository wie folgt getagt: \\
+    \href{https://github.com/WSE-research/AmIVulnerable/releases/tag/v2.0}{github.com/WSE-research/AmIVulnerable/releases/tag/v2.0}

@@ -20,8 +20,8 @@
 \refsection{0}
   \datalist[entry]{none/global//global/global}
     \entry{link:MitreCve}{online}{}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labeltitlesource}{title}
       \field{title}{CVE}
       \field{urlday}{1}
@@ -119,9 +119,258 @@
       \verb https://web.archive.org/web/20240409204350/https://aws.amazon.com/what-is/api/
       \endverb
     \endentry
-    \entry{link:MySqlIndex}{online}{}
+    \entry{link:JSON}{online}{}
       \field{sortinit}{2}
       \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labeltitlesource}{title}
+      \field{title}{JSON}
+      \field{urlday}{3}
+      \field{urlmonth}{5}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://web.archive.org/web/20240503003039/https://www.json.org/json-en.html
+      \endverb
+      \verb{url}
+      \verb http://web.archive.org/web/20240503003039/https://www.json.org/json-en.html
+      \endverb
+    \endentry
+    \entry{link:JSON-LD}{online}{}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labeltitlesource}{title}
+      \field{title}{JSON-LD}
+      \field{urlday}{27}
+      \field{urlmonth}{4}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://web.archive.org/web/20240427135957/https://json-ld.org/
+      \endverb
+      \verb{url}
+      \verb http://web.archive.org/web/20240427135957/https://json-ld.org/
+      \endverb
+    \endentry
+    \entry{link:NISTAPI}{online}{}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{title}{NIST-API's}
+      \field{urlday}{28}
+      \field{urlmonth}{4}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://web.archive.org/web/20240428162400/https://nvd.nist.gov/developers/vulnerabilities
+      \endverb
+      \verb{url}
+      \verb http://web.archive.org/web/20240428162400/https://nvd.nist.gov/developers/vulnerabilities
+      \endverb
+    \endentry
+    \entry{link:DependaBot}{online}{}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{title}{Git Dependa Bot}
+      \field{urlday}{2}
+      \field{urlmonth}{5}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://web.archive.org/web/20240502031236/https://docs.github.com/en/code-security/getting-started/dependabot-quickstart-guide
+      \endverb
+      \verb{url}
+      \verb http://web.archive.org/web/20240502031236/https://docs.github.com/en/code-security/getting-started/dependabot-quickstart-guide
+      \endverb
+    \endentry
+    \entry{link:SYNK}{online}{}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{title}{SYNK}
+      \field{urlday}{22}
+      \field{urlmonth}{9}
+      \field{urlyear}{2023}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://web.archive.org/web/20230922213940/https://docs.snyk.io/getting-started
+      \endverb
+      \verb{url}
+      \verb http://web.archive.org/web/20230922213940/https://docs.snyk.io/getting-started
+      \endverb
+    \endentry
+    \entry{link:OWASPDependencyCheck}{online}{}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{title}{OWAST Dependency Check}
+      \field{urlday}{23}
+      \field{urlmonth}{4}
+      \field{urlyear}{2024}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://web.archive.org/web/20240423091043/https://owasp.org/www-project-dependency-check/
+      \endverb
+      \verb{url}
+      \verb http://web.archive.org/web/20240423091043/https://owasp.org/www-project-dependency-check/
+      \endverb
+    \endentry
+    \entry{article:wang2024reposvul}{article}{}
+      \name{author}{6}{}{%
+        {{hash=1bbdfe1ba462d08472b1fb725422d240}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Xinchen},
+           giveni={X\bibinitperiod}}}%
+        {{hash=8db94be5ebf919974925124f1ed63e2c}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Ruida},
+           giveni={R\bibinitperiod}}}%
+        {{hash=4eab333ecac39ccc4074abec0c9f919b}{%
+           family={Gao},
+           familyi={G\bibinitperiod},
+           given={Cuiyun},
+           giveni={C\bibinitperiod}}}%
+        {{hash=df94f8769c02669d2191cabefaaf2f2c}{%
+           family={Wen},
+           familyi={W\bibinitperiod},
+           given={Xin-Cheng},
+           giveni={X\bibinithyphendelim C\bibinitperiod}}}%
+        {{hash=8a75c8a407bc3965c01424ef4d1d0994}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Yujia},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=61c51cf743fc21d5e6d2958db72d21ef}{%
+           family={Liao},
+           familyi={L\bibinitperiod},
+           given={Qing},
+           giveni={Q\bibinitperiod}}}%
+      }
+      \strng{namehash}{c8a9c1d7afed77e83cb5c7af2d1df72c}
+      \strng{fullhash}{ec454725ffe828ba6d4868a2429ff3b0}
+      \strng{bibnamehash}{c8a9c1d7afed77e83cb5c7af2d1df72c}
+      \strng{authorbibnamehash}{c8a9c1d7afed77e83cb5c7af2d1df72c}
+      \strng{authornamehash}{c8a9c1d7afed77e83cb5c7af2d1df72c}
+      \strng{authorfullhash}{ec454725ffe828ba6d4868a2429ff3b0}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.CR}
+      \field{eprinttype}{arXiv}
+      \field{title}{ReposVul: A Repository-Level High-Quality Vulnerability Dataset}
+      \field{year}{2024}
+      \verb{doi}
+      \verb 10.48550/arXiv.2401.13169
+      \endverb
+      \verb{eprint}
+      \verb 2401.13169
+      \endverb
+    \endentry
+    \entry{article:Liu2022DemystifyingTV}{article}{}
+      \name{author}{6}{}{%
+        {{hash=30b278deffb74289c6aea3469e1ac95e}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Chengwei},
+           giveni={C\bibinitperiod}}}%
+        {{hash=e7c4223b9b52448dd934b9b3780637d5}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Sen},
+           giveni={S\bibinitperiod}}}%
+        {{hash=afba4b968abc753bd3fd42d497922684}{%
+           family={Fan},
+           familyi={F\bibinitperiod},
+           given={Lingling},
+           giveni={L\bibinitperiod}}}%
+        {{hash=149fbc847381b1670fea5db2bc1ac470}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Bihuan},
+           giveni={B\bibinitperiod}}}%
+        {{hash=621013bf54d3546375ad71f17f020b5b}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Yang},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=f62bda44bcb17e2fe2bc0ab2560e37a4}{%
+           family={Peng},
+           familyi={P\bibinitperiod},
+           given={Xin},
+           giveni={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{d9270b82de967a61a5c4a663b5d82ce2}
+      \strng{fullhash}{77e9bd89eb30eaa070813bcc4154a831}
+      \strng{bibnamehash}{d9270b82de967a61a5c4a663b5d82ce2}
+      \strng{authorbibnamehash}{d9270b82de967a61a5c4a663b5d82ce2}
+      \strng{authornamehash}{d9270b82de967a61a5c4a663b5d82ce2}
+      \strng{authorfullhash}{77e9bd89eb30eaa070813bcc4154a831}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{2022 IEEE/ACM 44th International Conference on Software Engineering (ICSE)}
+      \field{title}{Demystifying the Vulnerability Propagation and Its Evolution via Dependency Trees in the NPM Ecosystem}
+      \field{year}{2022}
+      \field{pages}{672\bibrangedash 684}
+      \range{pages}{13}
+      \verb{urlraw}
+      \verb https://api.semanticscholar.org/CorpusID:245853604
+      \endverb
+      \verb{url}
+      \verb https://api.semanticscholar.org/CorpusID:245853604
+      \endverb
+    \endentry
+    \entry{article:OnTheEffect10123571}{article}{}
+      \name{author}{3}{}{%
+        {{hash=fb80f3530d5850fe7b9b7587f4388403}{%
+           family={Mir},
+           familyi={M\bibinitperiod},
+           given={Amir\bibnamedelima M.},
+           giveni={A\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=93406606476904c7b35328ac18479e24}{%
+           family={Keshani},
+           familyi={K\bibinitperiod},
+           given={Mehdi},
+           giveni={M\bibinitperiod}}}%
+        {{hash=dcfc2de769b78ca2db66ceb37b51dd39}{%
+           family={Proksch},
+           familyi={P\bibinitperiod},
+           given={Sebastian},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{dc54a4ac50e7a6879329d6c6099889f1}
+      \strng{fullhash}{dc54a4ac50e7a6879329d6c6099889f1}
+      \strng{bibnamehash}{dc54a4ac50e7a6879329d6c6099889f1}
+      \strng{authorbibnamehash}{dc54a4ac50e7a6879329d6c6099889f1}
+      \strng{authornamehash}{dc54a4ac50e7a6879329d6c6099889f1}
+      \strng{authorfullhash}{dc54a4ac50e7a6879329d6c6099889f1}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2023 IEEE International Conference on Software Analysis, Evolution and Reengineering (SANER)}
+      \field{title}{On the Effect of Transitivity and Granularity on Vulnerability Propagation in the Maven Ecosystem}
+      \field{year}{2023}
+      \field{pages}{201\bibrangedash 211}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.1109/SANER56733.2023.00028
+      \endverb
+      \keyw{Java;Software libraries;Limiting;Codes;Ecosystems;Software;Reachability analysis;software vulnerabilities;Maven;fine-grained analysis;software ecosystem}
+    \endentry
+    \entry{link:MySqlIndex}{online}{}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labeltitlesource}{title}
       \field{title}{10.3.1 How MySQL Uses Indexes}
       \field{urlday}{30}
@@ -136,8 +385,8 @@
       \endverb
     \endentry
     \entry{link:ApiResponseTime}{online}{}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labeltitlesource}{title}
       \field{title}{What’s the difference between API Latency and API Response Time?}
       \field{urlday}{18}
@@ -152,8 +401,8 @@
       \endverb
     \endentry
     \entry{link:GitPopJsRepoMostWanted}{online}{}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labeltitlesource}{title}
       \field{title}{Github explore}
       \verb{urlraw}
@@ -165,8 +414,8 @@
       \warn{\item online entry 'link:GitPopJsRepoMostWanted' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoReact}{online}{}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labeltitlesource}{title}
       \field{title}{react}
       \verb{urlraw}
@@ -178,8 +427,8 @@
       \warn{\item online entry 'link:GitPopJsRepoReact' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoLeaflet}{online}{}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labeltitlesource}{title}
       \field{title}{Leaflet}
       \verb{urlraw}
@@ -191,8 +440,8 @@
       \warn{\item online entry 'link:GitPopJsRepoLeaflet' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoBootstrap}{online}{}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labeltitlesource}{title}
       \field{title}{bootstrap}
       \verb{urlraw}
@@ -204,8 +453,8 @@
       \warn{\item online entry 'link:GitPopJsRepoBootstrap' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoExpress}{online}{}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labeltitlesource}{title}
       \field{title}{express}
       \verb{urlraw}
@@ -217,8 +466,8 @@
       \warn{\item online entry 'link:GitPopJsRepoExpress' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoSwiper}{online}{}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labeltitlesource}{title}
       \field{title}{swiper}
       \verb{urlraw}
@@ -230,8 +479,8 @@
       \warn{\item online entry 'link:GitPopJsRepoSwiper' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoPlotly}{online}{}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labeltitlesource}{title}
       \field{title}{plotly}
       \verb{urlraw}
@@ -243,8 +492,8 @@
       \warn{\item online entry 'link:GitPopJsRepoPlotly' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoNode}{online}{}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labeltitlesource}{title}
       \field{title}{node}
       \verb{urlraw}
@@ -256,8 +505,8 @@
       \warn{\item online entry 'link:GitPopJsRepoNode' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoAos}{online}{}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labeltitlesource}{title}
       \field{title}{aos}
       \verb{urlraw}
@@ -269,8 +518,8 @@
       \warn{\item online entry 'link:GitPopJsRepoAos' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoPm2}{online}{}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labeltitlesource}{title}
       \field{title}{pm2}
       \verb{urlraw}
@@ -282,8 +531,8 @@
       \warn{\item online entry 'link:GitPopJsRepoPm2' (lib/bib.bib): Invalid format '2022-xx-xx' of date field 'urldate' - ignoring}
     \endentry
     \entry{link:GitPopJsRepoAxios}{online}{}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labeltitlesource}{title}
       \field{title}{axios}
       \verb{urlraw}
