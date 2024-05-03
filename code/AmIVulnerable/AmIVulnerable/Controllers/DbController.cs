@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Modells;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
-using NuGet.Protocol.Plugins;
 using SerilogTimings;
 using System.Data;
 using System.Diagnostics;
@@ -27,112 +25,11 @@ namespace AmIVulnerable.Controllers {
         #endregion
 
         #region Controller
-        /// <summary>Get-route checking if raw cve data is in directory.</summary>
-        /// <returns>OK, if exists. No Content, if doesnt exist</returns>
-        [HttpGet]
-        [Route("CheckRawDir")]
-        public IActionResult IsRawDataThere() {
-            string path = "raw";
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
-            if (directoryInfo.GetDirectories().Length != 0) {
-                return Ok();
-            }
-            else {
-                return NoContent();
-            }
-        }
-
-        /// <summary>By call the raw cve.json's will be inserted in the MySql-Database.</summary>
-        /// <returns>The status, if the database is finished created.</returns>
-        [HttpGet]
-        [Route("ConvertRawCveToDb")]
-        public IActionResult ConvertRawFilesToMySql() {
-            using (Operation.Time("ConvertRawCveToDb")) {
-                List<string> fileList = new List<string>();
-                List<int> indexToDelete = new List<int>();
-                string path = "raw";
-                ExploreFolder(path, fileList);
-
-                //filter for json files
-                foreach (int i in Enumerable.Range(0, fileList.Count)) {
-                    if (!Regex.IsMatch(fileList[i], @"CVE-[-\S]+.json")) {
-                        indexToDelete.Add(i);
-                    }
-                }
-                foreach (int i in Enumerable.Range(0, indexToDelete.Count)) {
-                    fileList.RemoveAt(indexToDelete[i] - i);
-                }
-
-                try {
-                    // MySql Connection
-                    MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
-
-                    // Create the Table cve.cve if it is not already there.
-                    MySqlCommand cmdTable = new MySqlCommand("" +
-                        "CREATE TABLE IF NOT EXISTS cve.cve(" +
-                        "cve_number VARCHAR(20) PRIMARY KEY NOT NULL," +
-                        "designation VARCHAR(500) NOT NULL," +
-                        "version_affected TEXT NOT NULL," +
-                        "full_text MEDIUMTEXT NOT NULL" +
-                        ")", connection);
-                    connection.Open();
-                    cmdTable.ExecuteNonQuery();
-                    connection.Close();
-
-                    int insertIndex = 0;
-                    foreach (string x in fileList) {
-                        string insertIntoString = "INSERT INTO cve(cve_number, designation, version_affected, full_text) VALUES(@cve, @des, @ver, @ful)";
-                        MySqlCommand cmdInsert = new MySqlCommand(insertIntoString, connection);
-
-                        string json = System.IO.File.ReadAllText(x);
-                        CVEcomp cve = JsonConvert.DeserializeObject<CVEcomp>(json)!;
-
-                        string affected = "";
-                        foreach (Affected y in cve.containers.cna.affected) {
-                            foreach (Modells.Version z in y.versions) {
-                                affected += z.version + $"({z.status}) |";
-                            }
-                        }
-                        if (affected.Length > 25_000) {
-                            affected = "to long -> view full_text";
-                        }
-                        string product = "n/a";
-                        try {
-                            product = cve.containers.cna.affected[0].product;
-                            if (product.Length > 500) {
-                                product = product[0..500];
-                            }
-                        }
-                        catch {
-                            product = "n/a";
-                        }
-                        cmdInsert.Parameters.AddWithValue("@cve", cve.cveMetadata.cveId);
-                        cmdInsert.Parameters.AddWithValue("@des", product);
-                        cmdInsert.Parameters.AddWithValue("@ver", affected);
-                        cmdInsert.Parameters.AddWithValue("@ful", JsonConvert.SerializeObject(cve, Formatting.None));
-
-                        connection.Open();
-                        insertIndex += cmdInsert.ExecuteNonQuery();
-                        connection.Close();
-                    }
-
-                    connection.Open();
-                    MySqlCommand cmdIndexCreated = new MySqlCommand("CREATE INDEX idx_designation ON cve (designation);", connection);
-                    cmdIndexCreated.ExecuteNonQuery();
-                    connection.Close();
-
-                    return Ok(insertIndex);
-                }
-                catch (Exception ex) {
-                    return BadRequest(ex.StackTrace + "\n\n" + ex.Message);
-                }
-            }
-        }
 
         /// <summary>Update the Database, if it exists already.</summary>
         /// <returns></returns>
         [HttpPost]
-        [Route("Update")]
+        [Route("update")]
         public IActionResult UpdateCveDatabase() {
             using (Operation.Time("UpdateCveDatabase")) {
                 try {
@@ -257,10 +154,13 @@ namespace AmIVulnerable.Controllers {
         /// <returns></returns>
         [HttpGet]
         [Route("getFullTextFromCveNumber")]
-        public IActionResult GetFullTextCve([FromHeader] string? cve_number) {
+        public IActionResult GetFullTextCve([FromQuery] string? cve_number) {
+            if (!(this.Request.Headers.Accept.Equals("application/json") || this.Request.Headers.Accept.Equals("*/*"))) {
+                return StatusCode(406);
+            }
             using (Operation.Time("GetFullTextCve")) {
                 if (cve_number is null) {
-                    return BadRequest("Empty Header");
+                    return BadRequest("Empty cve_number");
                 }
                 try {
                     // MySql Connection
@@ -296,69 +196,47 @@ namespace AmIVulnerable.Controllers {
         /// <param name="isDbSearch">true: search db, false: search raw-json</param>
         /// <param name="packageVersion">Version of package to search</param>
         /// <returns>Ok with result. NoContent if empty.</returns>
-        [HttpPost]
+        [HttpGet]
         [Route("checkSinglePackage")]
-        public IActionResult CheckSinglePackage([FromHeader] string packageName,
-                                                    [FromHeader] bool isDbSearch = true,
-                                                    [FromHeader] string? packageVersion = "") {
-            if (isDbSearch) {
-                using (Operation.Time($"Complete Time for Query-SingleSearch after Package \"{packageName}\"")) {
-                    List<CveResult> results = [];
-                    DataTable dtResult = SearchInMySql(packageName);
-                    // convert the result
-                    foreach (DataRow x in dtResult.Rows) {
-                        CveResult y = new CveResult() {
-                            CveNumber = x["cve_number"].ToString() ?? "",
-                            Designation = x["designation"].ToString() ?? "",
-                            Version = x["version_affected"].ToString() ?? ""
-                        };
-                        CVEcomp temp = JsonConvert.DeserializeObject<CVEcomp>(x["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
-                        try {
+        public IActionResult CheckSinglePackage([FromBody] PackageForApi packageName) {
+            if (!(this.Request.Headers.Accept.Equals("application/json") || this.Request.Headers.Accept.Equals("*/*"))) {
+                return StatusCode(406);
+            }
+            using (Operation.Time($"Complete Time for Query-SingleSearch after Package \"{packageName}\"")) {
+                List<CveResult> results = [];
+                DataTable dtResult = SearchInMySql(packageName.PackageName);
+                // convert the result
+                foreach (DataRow x in dtResult.Rows) {
+                    CveResult y = new CveResult() {
+                        CveNumber = x["cve_number"].ToString() ?? "",
+                        Designation = x["designation"].ToString() ?? "",
+                        Version = x["version_affected"].ToString() ?? ""
+                    };
+                    CVEcomp temp = JsonConvert.DeserializeObject<CVEcomp>(x["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
+                    try {
+                        if (temp.containers.cna.metrics.Count != 0) {
                             y.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
+                        }
+                        if (temp.containers.cna.descriptions.Count != 0) {
                             y.Description = temp.containers.cna.descriptions[0];
                         }
-                        finally {
-                            results.Add(y);
-                        }
                     }
-                    // return's
-                    if (results.Count > 0) {
-                        return Ok(JsonConvert.SerializeObject(results));
-                    }
-                    else {
-                        return NoContent();
+                    finally {
+                        results.Add(y);
                     }
                 }
+                // return's
+                if (results.Count > 0) {
+                    JsonLdObject resultAsJsonLd = new JsonLdObject() {
+                        Context = "https://localhost:7203/views/cveResult",
+                        Data = results
+                    };
+                    return Ok(resultAsJsonLd);
+                }
+                else {
+                    return NoContent();
+                }
             }
-            else {
-                // find all json files of cve                    
-                return Ok(JsonConvert.SerializeObject(SearchInJson(packageName)));
-            }
-            #region oldcode
-            //if (packageVersion!.Equals("")) { // search all versions
-            //    if (isDbSearch) {
-            //        SearchDbController searchDbController = new SearchDbController();
-            //        List<CveResult> res = [];
-            //        using (Operation.Time($"Package \"{packageName}\"")) {
-            //            res = searchDbController.SearchSinglePackage(packageName);
-            //        }
-            //        if (res.Count > 0) {
-            //            return Ok(JsonConvert.SerializeObject(res));
-            //        }
-            //        else {
-            //            return NoContent();
-            //        }
-            //    }
-            //    else {
-            //        // find all json files of cve                    
-            //        return Ok(JsonConvert.SerializeObject(SearchInJson(packageName)));
-            //    }
-            //}
-            //else {
-            //    // TODO: search after a specific version
-            //}
-            //return Ok();
-            #endregion
         }
 
         /// <summary>
@@ -366,15 +244,18 @@ namespace AmIVulnerable.Controllers {
         /// </summary>
         /// <param name="packages">List of tuple: package, version</param>
         /// <returns>OK, if exists. OK, if no package list searched. NoContent if not found.</returns>
-        [HttpPost]
+        [HttpGet]
         [Route("checkPackageList")]
-        public async Task<IActionResult> CheckPackageListAsync([FromBody] List<Tuple<string, string>> packages) {
+        public async Task<IActionResult> CheckPackageListAsync([FromBody] List<PackageForApi> packages) {
+            if (!(this.Request.Headers.Accept.Equals("application/json") || this.Request.Headers.Accept.Equals("*/*"))) {
+                return StatusCode(406);
+            }
             List<CveResult> results = [];
             using (Operation.Time($"Complete Time for Query-Search after List of Packages")) {
-                foreach (Tuple<string, string> x in packages) {
-                    DataTable dtResult = SearchInMySql(x.Item1);
+                foreach (PackageForApi x in packages) {
+                    DataTable dtResult = SearchInMySql(x.PackageName);
                     // convert the result
-                    foreach(DataRow y in dtResult.Rows) {
+                    foreach (DataRow y in dtResult.Rows) {
                         CveResult z = new CveResult() {
                             CveNumber = y["cve_number"].ToString() ?? "",
                             Designation = y["designation"].ToString() ?? "",
@@ -382,8 +263,12 @@ namespace AmIVulnerable.Controllers {
                         };
                         CVEcomp temp = JsonConvert.DeserializeObject<CVEcomp>(y["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
                         try {
-                            z.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
-                            z.Description = temp.containers.cna.descriptions[0];
+                            if (temp.containers.cna.metrics.Count != 0) {
+                                z.CvssV31 = temp.containers.cna.metrics[0].cvssV3_1;
+                            }
+                            if (temp.containers.cna.descriptions.Count != 0) {
+                                z.Description = temp.containers.cna.descriptions[0];
+                            }
                         }
                         finally {
                             results.Add(z);
@@ -391,33 +276,44 @@ namespace AmIVulnerable.Controllers {
                     }
                 }
             }
-            return Ok(results.Count == 0 ? "No result" : JsonConvert.SerializeObject(results));
-            #region oldcode
-            //if (packages.Count > 0) {
-            //    SearchDbController searchDbController = new SearchDbController();
-            //    List<CveResult> resultsOld = [];
-            //    List<string> strings = [];
-            //    foreach (Tuple<string, string> item in packages) {
-            //        strings.Add(item.Item1);
-            //        if (item.Item1.Equals("")) {
-            //            continue;
-            //        }
-            //        using (Operation.Time($"Time by mono {item.Item1}")) {
-            //            resultsOld.AddRange(searchDbController.SearchSinglePackage(item.Item1));
-            //        }
-            //    }
-            //    using (Operation.Time($"Time by pipe")) {
-            //        resultsOld = await searchDbController.SearchPackagesAsList(strings);
-            //    }
-            //    if (resultsOld.Count > 0) {
-            //        return Ok(JsonConvert.SerializeObject(resultsOld));
-            //    }
-            //    else {
-            //        return NoContent();
-            //    }
-            //}
-            //return Ok("No package List delivered.");
-            #endregion
+
+            JsonLdObject resultAsJsonLd = new JsonLdObject() {
+                Context = "https://localhost:7203/views/cveResult",
+                Data = results
+            };
+            return Ok(results.Count == 0 ? "No result" : resultAsJsonLd);
+        }
+
+        [HttpGet]
+        [Route("checkGuid")]
+        public IActionResult CheckDownloadedProjectWithGuid([FromQuery] Guid projectGuid) {
+            // MySql Connection
+            MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
+
+            MySqlCommand cmd = new MySqlCommand($"" +
+                $"SELECT * " +
+                $"FROM repositories " +
+                $"WHERE guid='{projectGuid}';", connection);
+
+            DataTable dataTable = new DataTable();
+            connection.Open();
+            MySqlDataReader reader = cmd.ExecuteReader();
+            dataTable.Load(reader);
+            connection.Close();
+
+            if (dataTable.Rows.Count == 1) {
+                object res = new {
+                    guid = dataTable.Rows[0]["guid"].ToString(),
+                    repoUrl = dataTable.Rows[0]["repoUrl"].ToString(),
+                    repoOwner = dataTable.Rows[0]["repoOwner"].ToString(),
+                    repoDesignation = dataTable.Rows[0]["repoDesignation"].ToString(),
+                    tag = dataTable.Rows[0]["tag"].ToString()
+                };
+                return Ok(res);
+            }
+            else {
+                return NotFound("Not found");
+            }
         }
         #endregion
 
