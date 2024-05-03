@@ -1,5 +1,24 @@
 \subsubsection{ReposVul} \label{sec:ReposVul}
-    Im Paper \glqq ReposVul: A Repository-Level High-Quality Vulnerability Dataset\grqq~von Xinchen Wang et al. wird ein Datenbeschaffungs-Framework vorgestellt, welches auf Basis des Quellcodes Schwachstellendatensätze konstruiert. %TODO:Quelle
-    Hierbei wird zwischen Code-Änderungen und Patches zu Schwachstellen unterschieden, Aufrufbeziehungen von Schwachstellen extrahiert und ein Filtermodul für veraltete Patches bereitgestellt.
-    Analysiert wurden unter anderem auch transitive Abhängigkeiten.
-    Es wurden in dieser Analyse C++, C, Java und Python als Programmiersprachen betrachtet und über 1491 Projekte ausgewertet.
+    \begin{description}
+        \item[Adressierte Punkte]\hfill \\
+            Im Paper \glqq ReposVul: A Repository-Level High-Quality Vulnerability Dataset\grqq\cite{article:wang2024reposvul} von Xinchen Wang et al. wird ein Datenbeschaffungs-Framework vorgestellt, welches Schwachstellendatensätze konstruiert.
+            Notwendig ist diese Arbeit durch die immer weiter steigende Anzahl an Open-Source-Software sowie deren Sicherheitsauswirkungen.
+            In dieser Arbeit wird sich verworrenen und veralteten Patches in bestehenden Schwachstellendatensätzen gewidmet.
+            Ziel ist es, einen hochwertigen Schwachstellendatensatz herzustellen.
+            Dieser soll für Schwachstellenerkennungsmodell später nutzbar sein.
+        \item[Duchgeführte Maßnahmen]\hfill \\
+            Um nun einen solchen Datensatz erstellen zu können wurde zuerst ein automatisiertes Datenbeschaffungs-Framework, \glqq ReposVul\grqq, erstellt.
+            Dieses erstellte einen ersten Schwachstellendatensatz auf Repository-Level.
+            Unter Verwendung von Large Language Models sowie statischen Codeanalysetools wurde zwischen Code-Änderungen und verworrenen Patches unterschieden.
+            Veraltete Patches werden hier letztendlich durch ein implementiertes tracebasiertes Filtermodul erkannt.
+            Weiterhin wurden interprozeduale Aufrufbeziehungen von Schwachstellen erfasst und extrahiert.
+            Die resultierende Datensammlung enthält 6.134 CVE-Einträge mit 236 CWE-Typen, die die Programmiersprachen c++, C, Java sowie Python in 1.491 Projekten darstellen.
+        \item[Ergebnisse]\hfill \\
+            Es wurde ein hochwertiger Schwachstellendatensatz auf Repository-Level erstellt.
+            Dieser verringert die Probleme, welche durch verworrene oder veraltete Patches in anderen Datensätzen entstehen.
+            Es wird hier eine effektive Methode für Kennzeichnung und Erkennung von Schwachstellen sowie veralteten Patches bereitgestellt.
+        \item[Unterschiede]\hfill \\
+            Es wird in dieser Arbeit nicht auf die Entwicklung einer Softwarelösung, sondern dem erstellen einer Umfangreichen Datenbasis wert gelegt.
+            Es werden weiterhin keine Möglichkeiten betrachtet, welche die Resultierenden Daten besser für Mensch und Maschine Nutzbar machen, wie zum Beispiel \ac{JSON-LD}.
+            Außerdem ist es hier nicht möglich direkt ein einzelnen Repository zu analysieren.
+    \end{description}
