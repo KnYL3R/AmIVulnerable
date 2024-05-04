@@ -1,4 +1,5 @@
 \subsection{Implementation V2} \label{sec:Implementation2}
+    Aus den Ergebnissen der Experimente, aus Kapitel \ref{sec:ExperimenteDB} und \ref{sec:MySQL_Indexierung}, werden Anpassungen an der Implementation vorgenommen.
     Folgende Komponenten wurden für die zweite Implementation der \ac{API} genutzt:
     \begin{itemize}
         \item Framework ASP.NET (C\#)
@@ -6,7 +7,7 @@
         \item Docker-Compose zur Container-Orchestration
     \end{itemize}
 
-    Weiterhin gab es eine anpassung am Containernetzwerk, die MySQL Datenbank hat nun ihren eigenen Container, da diese nicht in ASP.NET eingebettet ist.
+    Weiterhin gab es eine Anpassung am Containernetzwerk, die MySQL Datenbank hat nun ihren eigenen Container, da diese nicht in ASP.NET eingebettet ist.
     Außerdem sind folgende Anpassungen an den Controllern vorgenommen worden:
     \begin{itemize}
         \item DbController \label{api_controller:three}
@@ -37,8 +38,8 @@
 
         \item GitController \label{api_controller:one}
             \begin{itemize}
-                \item Clone --> CloneRepo hinzugefügt
-                \item PullCveAndConvert (die aus dem ersten Controller sind jetzt hier) hinzugefügt
+                \item Clone zu CloneRepo umbenannt
+                \item PullCveAndConvert (Endpunkte des ersten Controllers sind nun hier) hinzugefügt
             \end{itemize}
         \item MySqlConnectionController \label{api_controller_2:five}
             \begin{itemize}

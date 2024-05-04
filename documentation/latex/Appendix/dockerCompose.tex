@@ -1,0 +1,37 @@
+\section{docker-compose.yml} \label{sec:dockerComposeYml}
+    \begin{lstlisting}[style=yaml]
+version: '3.4'
+
+services:
+amivulnerable_db:
+    container_name: MySqlDbAmIVulnerable
+    image: mysql:8.0.2
+    environment:
+    - MYSQL_ROOT_PASSWORD=cvecve
+    - MYSQL_DATABASE=cve
+    - MYSQL_USER=u
+    - MYSQL_PASSWORD=p
+    - MYSQL_ALLOW_EMPTY_PASSWORD=1
+    volumes:
+    - db_volume:/var/lib/mysql
+    - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: on-failure
+    healthcheck:
+    test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    timeout: 20s
+    retries: 10
+    ports:
+    - 3306:3306
+    command: --default-authentication-plugin=mysql_native_password
+
+amivulnerable:
+    container_name: ApiAmIVulnerable
+    build:
+    context: .
+    dockerfile: AmIVulnerable/Dockerfile
+    depends_on:
+    - amivulnerable_db
+
+volumes:
+db_volume:
+    \end{lstlisting}

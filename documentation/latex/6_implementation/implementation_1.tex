@@ -44,6 +44,8 @@
                 \item ConvertRawDirToDb-Endpunkt \\
                     Dieser Endpunkt dient der Konvertierung des heruntergeladenen \ac{CVE}-Daten-Repositories in die intern nutzbaren LiteDB Datenbankdateien.
                     Dies ist für die Vermeidung der Volltextsuche auf den \ac{JSON}-Dateien des \ac{CVE}-Repositories zwingend notwendig.
+                    Dabei auffällig ist, dass manche Paketbezeichnungen leer und nicht nachträglich auffindbar sind.
+                    Um diese Bezeichnungen nicht leer zu lassen wurde sich für die Bezeichnung \glqq n/a\grqq$~$für \glqq not available\grqq$~$entschieden.
                     \\
                     \textbf{OK} wird immer zurückgegeben.
                 \item checkSinglePackage-Endpunkt \\
@@ -84,7 +86,7 @@
             \end{itemize}
 
         \item GitController \label{api_controller:one} \\
-            Da die \ac{CVE}-Daten sowie die zu untersuchenden Repositories ihre Datenbasis in GitHub\cite{GITHUB} haben, werden diese durch diesen Controller gecloned.
+            Da die \ac{CVE}-Daten sowie die zu untersuchenden Repositories ihre Datenbasis in GitHub\textsuperscript{\cite{GITHUB}} haben, werden diese durch diesen Controller gecloned.
             \begin{itemize}
                 \item Clone-Endpunkt \\
                     Bei diesem Post-Endpunkt wird das CVE-Daten-Repository bzw. das zu analysierende Repository aus GitHub heruntergeladen.

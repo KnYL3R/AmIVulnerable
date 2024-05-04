@@ -12,8 +12,6 @@
             Wurde erfolgreich umgesetzt.
             \\
             Unter dem Abschnitt \ref{sec:ExperimentePIPE} \nameref{sec:ExperimentePIPE} kann man die dazu erfolgten Messungen einsehen.
-            \\
-            \textcolor{red}{Messungen NIST -- Argumentation \glqq spam\grqq für Abwahl dieser Lösung}
         \item[(3) Clonen eines Repositories von Github] siehe \hyperref[f:three]{\underline{hier}} \hfill \\
             Wurde erfolgreich umgesetzt.
             \\
@@ -29,7 +27,6 @@
             \\
             Über den Endpunkt ExtractTree des DependeciesControllers ist es möglich, diesen Abhängig\-keitsbaums des Projektes zu erhalten.
             Weiterführend ist über die ExtractAndAnalyzeTree-Route des selbigen Controllers die Analyse der Pakete und Rückgabe in einem um die Angabe der Betroffenheit erweiterten Baum möglich.
-            \textcolor{red}{Bild einfügen???}
         \item[(6) Aktualisierung der Datenbank] siehe \hyperref[f:six]{\underline{hier}} \hfill \\
             Nicht erfolgreich umgesetzt.
             \\
@@ -48,9 +45,25 @@
         \item[(1) Dauer der Paketsuche (einzelne Abfrage) unter 5ms] siehe \hyperref[nf:one]{\underline{hier}} \hfill \\
             Nicht erreicht.
             \\
-            Wie im Appendix unter \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallWenigerPaketeAlsDatenbanken} einsehbar, beträgt die Dauer einer einzelnen Paketabfrage nicht unter 2 Sekunden.
-            Somit ist dieses Ziel um mind. Größenordnung 40 verfehlt und muss in der V2 besonderes Augenmerk genießen.
-        \item[(2) Skalierbarkeit der Anwendung] siehe \hyperref[nf:two]{\underline{hier}} \hfill \\
+            Wie im Appendix unter \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallWenigerPaketeAlsDatenbanken} \& \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallMehrPaketeAlsDatenbanken} einsehbar, können folgende Werte für die Paketsuche ermittelt werden:
+            \begin{tabularx}{0.8\textwidth}{|c|c|c|}
+                \hline
+                Weniger Pakete als DBs & Minimum & $2689,8$ ms \\
+                & Maximum & $4750,3$ ms \\
+                & Durchschnitt & $2918,63$ ms \\
+                & Median & $2740,45$ ms \\
+                & Standardabweichung & $485,59$ ms \\ \hline
+                Mehr Pakete als DBs & Minimum & $2594,6$ ms \\
+                & Maximum & $7208,94$ ms \\
+                & Durchschnitt & $2714,60$ ms \\
+                & Median & $2667,3$ ms \\
+                & Standardabweichung & $315,7627$ ms \\ \hline
+                \caption{Resultate aus den Rohdaten des Appendix \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallWenigerPaketeAlsDatenbanken} \& \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallMehrPaketeAlsDatenbanken}}
+                \label{tabularx:ResultatDatenDatenbankPaketsuchenAppendix}
+            \end{tabularx}
+            Die Dauer einer einzelnen Paketabfrage beträgt also nicht unter $2,5$ Sekunden.
+            Somit ist dieses Ziel um mindestens Größenordnung $40$ verfehlt und muss in der V2 besonderes Augenmerk genießen.
+        \item[(2) Skalierbarkeit der Anwendung herstellen] siehe \hyperref[nf:two]{\underline{hier}} \hfill \\
             Nicht erreicht.
             \\
             Aufgrund der Dateibasierten Datenbank LiteDb ist ein multipler Zugriff auf eine einzelne Datenbankdatei nicht möglich. Es ist also eine rein sequenzielle Abarbeitung der gestellten Anfragen möglich.
@@ -62,6 +75,16 @@
             Mittels der vom ASP.NET in der Projektkonfiguration mitgelieferten automatischen Erstellung einer OpenAPI-Unterstützung, wird eine Swagger-Dokumentation beim \textit{build} erstellt und kann unter dem Routen-Suffix \textit{[...]/swagger/index.html} eingesehen werden.
         \item[(4) Rückgabe im \acs{JSON-LD}-Format] siehe \hyperref[nf:four]{\underline{hier}} \hfill \\
             Wurde erfolgreich umgesetzt.
+            \\
+            Folgende Struktur ist bei der Rückgabe zu erwarten:
+            \begin{lstlisting}[language=json,firstnumber=1]
+{
+    "@context": {url}
+    "data": [
+        data
+    ]
+}
+            \end{lstlisting}
         \item[(5) Nutzung etablierter Technologien] siehe \hyperref[nf:five]{\underline{hier}} \hfill \\
             Wurde erfolgreich umgesetzt.
             \\
