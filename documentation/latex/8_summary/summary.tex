@@ -17,10 +17,19 @@
             \\
             Die Überwindung der Zeitmauer gelang dann durch die in der V2 (\ref{sec:Implementation2}) verwendeten anderen Datenbank -- dann MySQL.
     \end{description}
-    Der hauptsächliche Auftrag des Projektes bestand in der paraphrasierten Frage, wie transitive Schwachstellen ermittelt und ausgegeben werden können.
-    Dies wurde erfolgreich umgesetzt.
+    Erstmals war es gelungen einen Webservice zu implementieren, welcher ein Repository auf Schwachstellen untersucht, anstatt nur einzelne Pakete auf Treffer in Schwachstellendatenbanken zu überprüfen.
+    Unsere Arbeit konnte nachweisen, dass eine solche Implementierung nach genannter Architektur -- \ref{sec:ArchitekturV1} -- möglich und die Hauptfunktion einer Rückgabe eines Abhängigkeitsbaumes, angereichert mit Schwachstellendaten, erfüllt ist.
+    \\ \\
+    Basierend auf dieser Arbeit sehen wir die Forschungsfragen
+    \begin{itemize}
+        \item \glqq \textit{Wie sind Schwachstellen auf Versions- und Commitbasis verteilt}\grqq,
+        \item \glqq \textit{Wie gestaltet sich die Schwachstellenverteilung in verschiedenen Projekttypen, Frameworks oder Sprachen}\grqq$~$und
+        \item \glqq \textit{Untersuchung von mehrfach vorkommenden Schwachstellen durch gleiche Abhängigkeiten beziehungsweise verschiedene Versionen dieser}\grqq
+    \end{itemize}
+    als besonders wichtig an.
+    Da jene maßgeblich als Grundlage die Ergebnisse dieser Arbeit darstellen, um dem Endbenutzer eine einerseits fundierte und andererseits messbare Entscheidungsunterstützung im Verlauf eines Projektes beziehungsweise bei einem Refactoring zu bieten.
     \\
-    Die möglichen Erweiterungen -- besprochen in der \ref{sec:Diskussion} \nameref{sec:Diskussion} -- sind aufbauend und benötigen keine konkreten Änderungen in dem Grundgerüst, welches mit dem vorliegendem Projekt erreicht wurde.
+    Weitere mögliche Erweiterungen -- besprochen im Abschnitt \ref{sec:Diskussion} \nameref{sec:Diskussion} -- sind aufbauend und benötigen keine konkreten Änderungen in dem Grundgerüst, welches mit dem vorliegendem Projekt erreicht wurde.
     \\ \\
     Der zu dem Zeitpunkt der Abgabe aktuelle commit im Github-Repository wie folgt getagt: \\
     \href{https://github.com/WSE-research/AmIVulnerable/releases/tag/v2.0}{github.com/WSE-research/AmIVulnerable/releases/tag/v2.0}

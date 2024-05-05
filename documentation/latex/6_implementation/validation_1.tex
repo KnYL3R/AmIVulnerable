@@ -11,7 +11,14 @@
         \item[(2) Abgleich von Paketen] siehe \hyperref[f:two]{\underline{hier}} \hfill \\
             Wurde erfolgreich umgesetzt.
             \\
-            Unter dem Abschnitt \ref{sec:ExperimentePIPE} \nameref{sec:ExperimentePIPE} kann man die dazu erfolgten Messungen einsehen.
+            Als Kontrolle auf Korrektheit der Daten wurde das Ergebnis -- die Response der \acs{API} -- mit der Roh-Daten \ac{JSON} aus dem GitHub-Repository der Mitre\textsuperscript{\cite{link:CveRepo}} verglichen und kein Datenverlust festgestellt.
+            \\
+            Ein Vergleich mit der \textit{NIST-API}\textsuperscript{\cite{link:NISTAPI}} bewies die Korrektheit der Daten, die ebenfalls vom \acs{NIST} übermittelt werden.
+            Da deren Ergebnis -- siehe exemplarisch \cite{link:NISTapiAbfrageLiteDb} -- jedoch anders aufgebaut ist, konnten dabei nur die identischen Bereiche wie die \texttt{descriptions}, \texttt{cvssMetricV31}, oder \texttt{references} einem Abgleich unterzogen werden.
+            Dabei fiel bei der Untersuchung von 10 zufällig gewählten Demonstrationspaketen auf, dass die \acs{NIST} ihre Daten weiter aufbereitet mit zusätzlichen Informationen, wie der Quelle (\glqq source\grqq) im \texttt{references} Teil.
+            Es fehlten jedoch keine Informationen und es finden reine Ergänzungen durch die US-amerikanische Behörde statt. \textsuperscript{siehe Appendix\ref{sec:ListOfCheckedPackages}}
+            \\
+            Unter dem Abschnitt \ref{sec:ExperimentePIPE} \nameref{sec:ExperimentePIPE} kann man die erfolgten Zeit-Messungen einer Abfrage auf den entwickelten Webservice einsehen.
         \item[(3) Clonen eines Repositories von Github] siehe \hyperref[f:three]{\underline{hier}} \hfill \\
             Wurde erfolgreich umgesetzt.
             \\
