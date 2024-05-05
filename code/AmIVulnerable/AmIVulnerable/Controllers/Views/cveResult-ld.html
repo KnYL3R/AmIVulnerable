@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVE Result JSON-LD</title>
+</head>
+<body>
+    <h1>CVE Result JSON-LD</h1>
+
+    <h3>CveNumber</h3>
+    <label>
+        String Wert, der die CVE-Nummer aus den offiziellen Datensatz der Mitre-Cooperation angibt.
+    </label>
+
+    <h3>Version</h3>
+    <label>
+        Betroffene Version, die beachtet werden muss.
+    </label>
+
+    <h3>Designation</h3>
+    <label>
+        Name des Paketes, welches untersucht wurde.
+    </label>
+
+    <h3>Description</h3>
+    <label>
+        Dieser Eintrag besteht aus den folgenden Subeinträgen:
+    </label>
+
+    <h4>lang</h4>
+    <label>
+        Sprache.
+    </label>
+    <h4>cweId</h4>
+    <label>
+        Common Weakness Enumeration, ist eine Sammlung von standardisierten Namen und Beschreibungen für häufige Software-Schwachstellen.<br>
+        Tritt nur unter ProblemTypes als Elterntag auf.
+    </label>
+    <h4>description</h4>
+    <label>
+        Nähere Beschreibung des Produktes.
+    </label>
+    <h4>type</h4>
+    <label>
+        Nur unter ProblemTypes als Elterntag relevant und beschreibt den Problemtyp.
+    </label>
+    <h4>value</h4>
+    <label>
+        siehe `description`
+    </label>
+    <h4>supportingMedia</h4>
+    <label>
+        HTML basierte Beschreibung des Problems.
+    </label>
+
+    <h3>CvssV31</h3>
+    <label>
+        Beinhaltet folgende Werte, deren Erklärung sich aus den Namen ableitet:
+        <ul>
+            <li>version</li>
+            <li>attackVector</li>
+            <li>attackComplexity</li>
+            <li>privilegesRequired</li>
+            <li>userInteraction</li>
+            <li>scope</li>
+            <li>confidentialityImpact</li>
+            <li>integrityImpact</li>
+            <li>availabilityImpact</li>
+            <li>baseScore</li>
+            <li>baseSeverity</li>
+            <li>vectorString</li>
+        </ul>
+    </label>
+</body>
+</html>

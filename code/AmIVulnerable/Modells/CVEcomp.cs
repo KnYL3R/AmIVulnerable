@@ -86,7 +86,7 @@
         public string confidentialityImpact { get; set; } = "";
         public string integrityImpact { get; set; } = "";
         public string availabilityImpact { get; set; } = "";
-        public double baseScore { get; set; } = double.MinValue;
+        public double baseScore { get; set; } = -1;
         public string baseSeverity { get; set; } = "";
         public string vectorString { get; set; } = "";
     }

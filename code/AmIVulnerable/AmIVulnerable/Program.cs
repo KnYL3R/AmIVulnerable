@@ -17,26 +17,28 @@ namespace AmIVulnerable {
 
             WebApplication app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment()) {
+            //// Configure the HTTP request pipeline.
+            //if (app.Environment.IsDevelopment()) {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            //}
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.File(
-                    path: AppDomain.CurrentDomain.BaseDirectory + "Log/Logs.txt",
+                    path: "Log/Logs.txt",
                     rollingInterval: RollingInterval.Day
                     )
                 .CreateLogger();
 
+            // Allow CORS
+            app.UseCors(x => x.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin());
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
