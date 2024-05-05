@@ -6,13 +6,13 @@
         \item Docker-Compose zur Container-Orchestration
     \end{itemize}
 
-    Die genutzte Datenbank LiteDB wurde folgend genutzt:
+    \noindent Die genutzte Datenbank LiteDB wurde folgend genutzt:
     \begin{itemize}
         \item Speicherung aller \ac{CVE}-Daten
         \item Je Jahr der vorhandenen \ac{CVE}-Daten wurde eine Datenbankdatei angelegt
     \end{itemize}
 
-    Folgende Datenmodelle wurden zur Nutzung der Daten in der Datenbank und/oder zur internen Verarbeitung angelegt:
+    \noindent Folgende Datenmodelle wurden zur Nutzung der Daten in der Datenbank und/oder zur internen Verarbeitung angelegt:
     \begin{itemize}
         \item CVEcomp, für CVE-Complete \\
             Dieses Modell ist eine komplette Representation eines \ac{CVE}-Eintrags.
@@ -107,6 +107,6 @@
             \end{itemize}
     \end{itemize}
 
-    Um diese Applikation jetzt unabhängig vom Betriebssystem des Endgerätes zu machen, wurde eine docker-compose-Datei für die Containerisierung erstellt.
+    \noindent Um diese Applikation jetzt unabhängig vom Betriebssystem des Endgerätes zu machen, wurde eine docker-compose-Datei für die Containerisierung erstellt.
     Dieses referenzierte ein einzelnes Dockerfile mit dem Container der API.
     Ein eigenständiger Datenbankcontainer ist aufgrund der Eigenart von LiteDB als dateibasierte Datenbank nicht notwendig.

@@ -11,7 +11,7 @@
             In jenem Falle muss die Paketliste Stück für Stück in die Pipe eingefügt werden und beim Erreichen der Kapazität -- entsprechend der Anzahl der Datenbanken -- das früheste Paket entfernt und ein neues Paket am Anfang eingefügt werden.
     \end{description}
     
-    Die Verwaltung der 3 verschiedenen Staaten der Pipe ist in folgender Abbildung mit \ac{PAP} nachvollziehbar.
+    \noindent Die Verwaltung der 3 verschiedenen Staaten der Pipe ist in folgender Abbildung mit \ac{PAP} nachvollziehbar.
     Anschließend sind die 3 Fälle näher ausgeführt.
     \begin{figure}[H]
         \centering
@@ -28,7 +28,7 @@
         \caption{\ac{PAP} Befüllen der Pipeline}
         \label{png:case_a}
     \end{figure}
-    Zu Erkennen ist, dass solange ein neuer Task erstellt wird, wie die Anzahl erstens nicht die Anzahl der Datenbanken erreicht hat und zweitens die aktuelle Anzahl an Tasks nicht über dem Wert der Datenbankenmenge ist.
+    \noindent Zu Erkennen ist, dass solange ein neuer Task erstellt wird, wie die Anzahl erstens nicht die Anzahl der Datenbanken erreicht hat und zweitens die aktuelle Anzahl an Tasks nicht über dem Wert der Datenbankenmenge ist.
     Dies definiert das Befüllen der Pipe.
 
     \newpage
@@ -39,21 +39,19 @@
         \caption{\ac{PAP} Aufrechterhalten der Pipeline}
         \label{png:case_b}
     \end{figure}
-    Hier wird jetzt nachdem das älteste, am zeitigsten in der Pipe eingeführte und noch zu analysierende Paket aus der Liste entfernt und am Anfang der Datenbankenliste der nächste Eintrag wieder angeführt, um ebenfalls alle Datenbanken zu durchlaufen.
+    \noindent Hier wird jetzt nachdem das älteste, am zeitigsten in der Pipe eingeführte und noch zu analysierende Paket aus der Liste entfernt und am Anfang der Datenbankenliste der nächste Eintrag wieder angeführt, um ebenfalls alle Datenbanken zu durchlaufen.
     \\
     Dieser Prozess wird nur dadurch unterbunden, wenn der Zähler registriert, dass keine größere Zahl an noch zu analysierenden Paketen als Datenbankdateien wartend ist und somit das entleeren der Pipe eingeläutet werden muss.
 
-    \newpage
-    Beim Leeren der Pipeline:
+    \noindent Beim Leeren der Pipeline:
     \begin{figure}[H]
         \centering
-        \includegraphics[width=0.75\textwidth]{../pap/Case_C_k.png}
+        \includegraphics[width=0.70\textwidth]{../pap/Case_C_k.png}
         \caption{\ac{PAP} Leeren der Pipeline}
         \label{png:case_c}
     \end{figure}
     Hier wird beim vollständigen Durchlaufen eines Paketes dieses entfernt aus der Liste und alle weiteren rücken eine Eintrag nach vorne, wodurch die letzten Pakete ebenfalls noch durch die restlichen Datenbankdateien vollständig abgeglichen werden.
 
-    \newpage
     Aus der Implementation der Pipeline ergeben sich folgende Laufzeiten bei weniger Paketen als Datenbankdateien:\\
     \begin{tabularx}{0.8\textwidth}{|c|c|c|}
         \hline
