@@ -1,0 +1,17 @@
+\subsubsection{Transitivity and Granularity on Vulnerability Propagation} \label{sec:Transitivity}
+    \begin{description}
+        \item[Adressierte Punkte]\hfill \\
+            Im Paper \glqq On the Effect of Transitivity and Granularity on Vulnerability Propagation in the Maven Ecosystem\grqq\textsuperscript{\cite{article:OnTheEffect10123571}} von Amir M. Mir et al. wurden Schwachstellen im Maven-Ökosystem\textsuperscript{\cite{link:Maven}} durch eine Analyse von $3$ Millionen Maven-Paketen analysiert.
+            Dabei wurde vor allem ein Augenmerk auf Granularität sowie Transitivität der Schwachstellen gelegt.
+            Es wurde betrachtet, in wie fern sich Sicherheitslücken von direkten zu transitiven Abhängigkeiten propagieren.
+        \item[Duchgeführte Maßnahmen]\hfill \\
+            Aus den Daten einer Umfangreichen Analyse von Maven-Projekten auf Sicherheitslücken, direkte sowie auch transitive, wurden diese durch einen Wissensgraphen dargestellt.
+            Gesamt beinhaltet die Studie $1.300$ Sicherheitsberichte, welche für die Identifizierung von Schwachstellen genutzt wurden.
+        \item[Ergebnisse]\hfill \\
+            Es wurde aufgezeigt, dass unter Betrachtung aller transitiven Abhängigkeiten etwa $31$ \% der Projekte Schwachstellen beinhalten.
+            Die Granularitätsanalyse jedoch ergab, dass nur\linebreak[4]$1,2$ \% der schwachstellenbetroffenen Projekte auch wirklich schwachstellenbehafteten Code aus Abhängig\-keiten erreichen.
+            Es wird hier vorgeschlagen durch die niedrige Anzahl an wirklich erreichbaren Schwachstellen, die Betrachtungstiefe von transitiven Abhängigkeiten in Schachstellenanalysen der Laufzeit und Ressourcen zu gute kommend zu begrenzen.
+        \item[Unterschiede]\hfill \\
+            In dieser Arbeit wird nicht direkt ein Tool bereitgestellt, mit welchem eine Schwachstellenanalyse durchgeführt werden kann.
+            Weiterhin stellt sie aber die Frage, welche gefundenen Schwachstellen unter Betrachtung aller transitiven und direkten Abhängigkeiten wirklich Auswirkungen auf die Applikationssicherheit haben.
+    \end{description}

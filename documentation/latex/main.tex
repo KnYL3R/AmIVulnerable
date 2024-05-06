@@ -6,6 +6,7 @@
 \usepackage[center]{caption}
 \usepackage{booktabs}
 \usepackage{xcolor}
+\usepackage{enumitem}
 \usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{latexsym}
@@ -18,6 +19,7 @@
 \usepackage[ngerman]{babel}
 \usepackage{wrapfig}
 \usepackage{pgfplots}
+\usepackage{listings}
 
 % Biblatex
 \usepackage{csquotes}
@@ -59,11 +61,7 @@
 \newcommand*{\QEDA}{\hfill\ensuremath{\large{\lozenge}}}
 \newcommand*{\QEDAa}{\hfill\ensuremath{\square}}
 
-% Centering table of contents and list of table
-% \usepackage{tocloft}
-% \renewcommand{\contentsname}{\hfill\bfseries\Large Inhaltsverzeichnis \hfill}
-% \renewcommand{\cftaftertoctitle}{\hfill}
-
+\usepackage{titletoc} % for mutli toc's
 \usepackage[explicit]{titlesec}
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
@@ -100,8 +98,66 @@
     citecolor = blue
 }
 
+% Anhang
+\usepackage[toc,page]{appendix}
+\renewcommand\appendixname{Appendix}
+\renewcommand\appendixpagename{Appendix}
+\renewcommand\appendixtocname{Appendix}
+% Abkürzungen
+\usepackage{acronym}
+\usepackage{tabularx}
+\usepackage{ltablex}
+
+% lstlisting
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+    *{0}{{{\color{numb}0}}}{1}
+    {1}{{{\color{numb}1}}}{1}
+    {2}{{{\color{numb}2}}}{1}
+    {3}{{{\color{numb}3}}}{1}
+    {4}{{{\color{numb}4}}}{1}
+    {5}{{{\color{numb}5}}}{1}
+    {6}{{{\color{numb}6}}}{1}
+    {7}{{{\color{numb}7}}}{1}
+    {8}{{{\color{numb}8}}}{1}
+    {9}{{{\color{numb}9}}}{1}
+    {:}{{{\color{punct}{:}}}}{1}
+    {,}{{{\color{punct}{,}}}}{1}
+    {\{}{{{\color{delim}{\{}}}}{1}
+    {\}}{{{\color{delim}{\}}}}}{1}
+    {[}{{{\color{delim}{[}}}}{1}
+    {]}{{{\color{delim}{]}}}}{1},
+}
+
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{yaml}{
+    backgroundcolor=\color{backcolour},
+    basicstyle=\color{blue}\footnotesize,
+    rulecolor=\color{black},
+    string=[s]{'}{'},
+    stringstyle=\color{blue},
+    comment=[l]{:},
+    commentstyle=\color{black},
+    morecomment=[l]{-}
+}
+
 \begin{document}
     \nocite{*}
+
+    \input{deckblatt.tex}
 
     \phantomsection
     \addcontentsline{toc}{section}{Inhaltsverzeichnis}
@@ -109,55 +165,53 @@
 
     \newpage
 
-    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias aut, repellat ipsum facere voluptate dicta obcaecati deserunt nobis suscipit eaque?
-    \begin{wrapfigure}{l}{0.5\textwidth}
-        \centering
-        \begin{tikzpicture}
-            \begin{axis}[
-                ybar,
-                bar width=0.5cm,
-                width=0.48\textwidth,
-                height=6cm,
-                ymin=0,
-                xlabel={$x$},
-                ylabel={Werte},
-                xtick={1,2,3,4,5},
-                xticklabels={1, 2, 3, 4, 5},
-                xtick=data,
-                nodes near coords,
-                nodes near coords style={/pgf/number format/.cd,fixed zerofill,precision=1},
-                nodes near coords align={vertical},
-                ]
-                \addplot coordinates {(1,1) (2,34) (3,23) (4,123) (5,84)};
-                \addplot[smooth, red, mark=*] coordinates { 
-                    (0, {(1 + 34 + 23 + 123 + 84) / 5})
-                    (6, {(1 + 34 + 23 + 123 + 84) / 5})
-                };
-            \end{axis}
-        \end{tikzpicture}
-        \caption{Balkendiagramm}
-    \end{wrapfigure}
-    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias aut, repellat ipsum facere voluptate dicta obcaecati deserunt nobis suscipit eaque?
-    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias aut, repellat ipsum facere voluptate dicta obcaecati deserunt nobis suscipit eaque?
-    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias aut, repellat ipsum facere voluptate dicta obcaecati deserunt nobis suscipit eaque?
-    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias aut, repellat ipsum facere voluptate dicta obcaecati deserunt nobis suscipit eaque?
-    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias aut, repellat ipsum facere voluptate dicta obcaecati deserunt nobis suscipit eaque?
-    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias aut, repellat ipsum facere voluptate dicta obcaecati deserunt nobis suscipit eaque?
-    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias aut, repellat ipsum facere voluptate dicta obcaecati deserunt nobis suscipit eaque?
-    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias aut, repellat ipsum facere voluptate dicta obcaecati deserunt nobis suscipit eaque?
+    \input{1_abstract/abstract.tex}
+    \newpage
+    \input{2_motivation/motivation.tex}
+    \newpage
+    \input{3_definitions/definitions.tex}
+    \newpage
+    \input{4_other_work/other_work.tex}
+    \newpage
+    \input{5_concept/concept.tex}
+    \newpage
+    \input{6_implementation/implementation.tex}
+    \newpage
+    \input{7_discussion/discussion.tex}
+    \newpage
+    \input{8_summary/summary.tex} 
 
     \newpage
-    \input{sections/sec1.tex}
+    \begin{appendices}
+        \input{Appendix/abk.tex}
+        \newpage
+        \section{Messungen} \label{sec:Messungen}
+            \startcontents[Messungen]
+            \printcontents[Messungen]{}{2}{} % \printcontents[⟨name⟩]{⟨prefix⟩}{⟨start-level⟩}[⟨toc-depth⟩]{⟨toc-code⟩}
+            \input{Appendix/litedbInsert.tex}
+            \input{Appendix/jsonSearch.tex}
+            \newpage
+            \input{Appendix/litedbMonoPipe.tex}
+            \input{Appendix/mySqlWithIndex.tex}
+            \input{Appendix/mySqlWithoutIndex.tex}
+            \newpage
+            \input{Appendix/dockerCompose.tex}
+            \newpage
+            \input{Appendix/checkedPackagesNist.tex}
+            \newpage
+            \input{Appendix/packageMean.tex}
+            \stopcontents[Messungen]
+    \end{appendices}
 
     \newpage
     \phantomsection
     \printbibheading[title={Quellen}]
     \addcontentsline{toc}{section}{Quellen}
-    \printbibliography[type=book, heading=subbibliography, title={Literatur}]
-    % \newpage
-    % \printbibliography[type=online, heading=subbibliography, title={Links}]
-    % \newpage
-    % \printbibliography[type=article, heading=subbibliography, title={Zeitschriften}]
+    \printbibliography[type=online, heading=subbibliography, title={Links}]
+
+    \newpage
+    \phantomsection
+    \printbibliography[type=article, heading=subbibliography, title={Artikel}]
 
     \newpage
     \phantomsection

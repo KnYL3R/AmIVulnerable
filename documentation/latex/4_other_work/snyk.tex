@@ -1,0 +1,11 @@
+\subsubsection{Snyk} \label{sec:Snyk}
+    Die Synk-Plattform ist ein weiteres Tool, mit welchem Sicherheitsschwachstellen in Applikationen gemanagt werden können.
+    Es werden betroffene Abhängigkeiten identifiziert und Lösungen angeboten diese Schwachstellen zu schließen.\textsuperscript{\cite{link:SYNK}}
+
+    Es werden verschiedene Teile der Softwareentwicklung von Synk betrachtet darunter der Code selbst, Container und die Infrastruktur.
+    \glqq Synk Open Source\grqq~erkennt Schwachstellen in \glqq Open Source\grqq-Abhängigkeiten und \glqq Synk Code\grqq~erkennt diese im Code selbst.
+    \glqq Synk Container\grqq~erkennt Schwachstellen in Docker-Images sowie Kubernetes\textsuperscript{\cite{link:Kubernetes}}-Anwendungen.
+    \glqq Synk Infrastructure as Code (IaC)\grqq\textsuperscript{\cite{link:SynkIaC}} erkennt Fehlkonfigurationen in Terraform\textsuperscript{\cite{link:Terraform}}, CloudFormation\textsuperscript{\cite{link:CloudFormation}}, Kubernetes\textsuperscript{\cite{link:Kubernetes}} und Azure-Formlagen\textsuperscript{\cite{link:Azure}}.
+
+    Durch Synk werden nicht nur Meldungen generiert, welche Abhängigkeiten Schwachstellen aufweisen sondern in der gesamten Deployment-Kette auf Schwachstellen geachtet.
+    Lösungen bzw. Alternativen werden angeboten und zusätzlich kann dieses Tool auch in die CI/CD eingebunden werden um einen sicherheitskritischen Bau der Applikation zu verhindern.

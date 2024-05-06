@@ -1,0 +1,19 @@
+\subsubsection{Architektur V2} \label{sec:ArchitekturV2}
+    Aus den Ergebnissen der Experimente, aus Kapitel \ref{sec:ExperimenteDB} und \ref{sec:MySQL_Indexierung}, werden folgende Anpassungen an der Architektur vorgenommen:
+    \begin{enumerate}
+        \item \textbf{Datenbank}
+            \begin{itemize}
+                \item Nutzung der SQL-Datenbank MySQL anstatt der eingebetteten No-SQL-Datenbank LiteDB
+                \item Erstellung einer Tabelle für \ac{CVE}-Nummern, eine für heruntergeladene Repositories
+                \item Indexierung in der MySQL-Datenbank auf Spalte \glqq designation\grqq~bzw. Paketname
+            \end{itemize}
+        \item \textbf{Controller}
+            \begin{itemize}
+                \item Datenbankabfragen per SQL-Query anstatt internen Query-Builder für LiteDB
+            \end{itemize}
+        \item \textbf{Controller}
+            \begin{itemize}
+                \item Containerisierung von nicht nur der \ac{API} sondern auch der MySQL-Datenbank
+                \item Herstellung einer Verbindung über das interne Docker-Netzwerk
+            \end{itemize}
+    \end{enumerate}

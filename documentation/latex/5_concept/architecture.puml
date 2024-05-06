@@ -1,0 +1,42 @@
+@startuml
+
+    package "Webservice 'AmIVulnerable'" {
+
+        node "API" {
+            folder "ViewController" {
+                ' s
+            }
+            folder "MySqlController" {
+                ' s
+            }
+            folder "GitController" {
+                ' s
+            }
+            folder "DependeciesController" {
+                ' s
+            }
+            folder "DbController" {
+                ' [update]
+                ' [getFullTextFromCveNumber]
+                ' [checkSinglePackage]
+            }
+        }
+
+        database "cve" {
+            folder "repositories" {
+                ' [guid]
+                ' [repoUrl]
+                ' [repoOwner]
+                ' [repoDesignation]
+                ' [tag]
+            }
+            folder "cve" {
+                ' [cve_number]
+                ' [designation]
+                ' [version_affected]
+                ' [full_text]
+            }
+        }
+    }
+
+@enduml

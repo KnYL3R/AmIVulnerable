@@ -1,0 +1,17 @@
+\subsubsection{NIST-API} \label{sec:NIST-API}
+    Das \glqq \ac{NIST}\grqq~bietet zwei \ac{CVE}-\ac{API}'s an.\textsuperscript{\cite{link:NISTAPI}}
+    Diese sind die \ac{CVE}-\ac{API}\textsuperscript{\cite{link:NISTAPI}} und die \ac{CVE}-Change-History-\ac{API}\textsuperscript{\cite{link:NISTAPI}}.
+
+    Die \textbf{\ac{CVE}-\ac{API}} nimmt Anfragen zu einer oder mehreren \ac{CVE}-Einträgen entgegen und gibt diese einschließlich Details zu bekannten Sicherheitsanfälligkeiten wie Beschreibungen, betroffenen Softwareprodukten und Schweregraden zurück.
+    Um nun aktuelle \ac{CVE}-Daten abzurufen und zu Nutzen muss lediglich diese \ac{API} in eigene Anwendungen oder Tools zu integriert werden.
+    Dies ermöglicht es, automatisierte Prozesse zur Überprüfung von Abhängigkeiten auf Sicherheitslücken zu implementieren und schnell auf neu entdeckte \ac{CVE}'s zu reagieren.
+    Durch das Vorhandensein von mehr als 240.000 Einträgen wird hier eine offset-basierte Paginierung der Daten durchgeführt um Anfragen für große Sammlungen zu beantworten.
+
+    Die \textbf{\ac{CVE}-Change-History-\ac{API}} bietet einen historischen Überblick über Änderungen an \ac{CVE}-Einträgen.
+    Durch diese können Änderungsverläufe und Aktualisierungen von \ac{CVE}'s besser nachvollzogen werden.
+    Aus den dadurch bereitgestellten Daten können Muster oder Trends bei Sicherheitsvorfällen identifiziert werden und entsprechende Vorkehrungen seitens der Entwickler getroffen werden.
+
+    Durch eine Nutzung dieser \ac{NIST}-\ac{API}s können Entwickler und Sicherheitspersonal auf aktuelle \ac{CVE}-Daten zugreifen.
+    Die Sicherheit ihrer Softwarelösungen kann verbessert und potenzielle Risiken minimiert werden.
+    Im Vergleich zu anderen noch vorzustellenden Lösungen muss hier eine Applikation angebunden werden, die die Daten grafisch aufbereitet, da diese nur in einem JSON-Format zurückgegeben werden. 
+    Die Integration dieser Daten in Sicherheitstools und Plattformen trägt dazu bei, die Effektivität von Sicherheitsmaßnahmen in der Softwareentwicklung zu erhöhen und eine proaktive Sicherheitsstrategie zu fördern.

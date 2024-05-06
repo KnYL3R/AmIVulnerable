@@ -1,0 +1,12 @@
+\subsection{Funktionale Anforderungen} \label{sec:Funktionale_Anforderungen}
+    Bei der Umsetzung dieser Schwachstellenanalyse-\ac{API} ergeben sich nun verschiedene funktionale Anforderungen aus den Forschungsfragen:
+    \begin{enumerate}[label=\textbf{FRQ-\Roman*}, leftmargin=2.5cm]
+        \item Einladen und Konvertieren der Schwachstellendaten und persistente Speicherung dieser in einer internen Datenbank (betrifft \ref{q:one}, \ref{q:two})\label{f:one}
+        \item Überprüfung von Paketen auf Sicherheitslücken mittels Abgleich zur internen\linebreak[4] Schwachstellendatenbank (betrifft \ref{q:one}) \label{f:two}
+        \item Clonen eines Repositories über Git. (betrifft \ref{q:two}) \label{f:three}
+        \item Überprüfung von allen Abhängigkeiten eines Repositories mittels Abgleich zur internen Schwachstellendatenbank (betrifft \ref{q:two}) \label{f:four}
+        \item Extraktion und Rückgabe eines Abhängigkeitsbaums für alle Abhängigkeiten mit Sicherheits\-lücken (betrifft \ref{q:two}) \label{f:five}
+        \item Aktualisierung der Schwachstellendaten-Basis (betrifft \ref{q:five}) \label{f:six}
+        \item Bereitstellung der \ac{API} in einem Container (betrifft \ref{q:four}) \label{f:seven}
+    \end{enumerate}
+    Diese Funktionalitäten setzten teils mehrere interne Abläufe voraus und beinhalten mehrere Endpunkte der \ac{API}.

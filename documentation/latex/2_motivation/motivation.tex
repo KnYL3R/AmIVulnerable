@@ -1,0 +1,52 @@
+\section{Motivation} \label{subsec:Motivation}
+    Beim Entwickeln von Softwarelösungen gibt es viele Herausforderungen und Probleme. 
+    Diese werden durch viele bereits vorhandene Softwarepakete, wie etwa Bibliotheken oder Frameworks, bewältigt.
+    Die Nutzung frei verfügbarer Softwarepakete ist deshalb im Arbeitsalltag gang und gäbe.
+    Freiwillige oder Hobby-Programmierer ermöglichen mit ihrem Einsatz, dass weltweit die Entwicklung neuer Software sowohl im kommerziellen als auch privaten und öffentlichen Bereich vereinfacht, vereinheitlicht und beschleunigt wird.
+    Dank der Konkurrenz freier Pakete, zum Beispiel anhand ihrer Nutzungszahl, gestaltet sich dort ein Wettbewerb, der Pakete (a) an Bedeutung verlieren lässt bzw. (b) soweit verbessert, dass ihre Funktionen und Benutzbarkeit anschließend überzeugen konnten.
+
+    Neben der Funktionalität besteht ein anderer essentieller Aspekt in der Sicherheit.
+    Eben jener muss sich bei jedem Paket separat und gekapselt gesehen auf einem solchem Niveau befinden, dass ihre Verwendung keine fahrlässig Gefahr darstellt.
+    Dies beginnt bei zu kurzen Schlüssellängen und endet bei komplexen Programmen mit verschiedenen Angriffsschwachstellen.
+    Aber die Aufgabe, für jedes verwendete Paket einzeln die Sicherheitslücken nachzulesen oder für eine Paketsammlung nachzuvollziehen, ist selbst mit dem vorhandenen Angeboten zeitaufwendig und ressourcenintensiv -- schließlich werden so personelle Kräfte und Rechenkapazitäten gebunden.
+
+    Daher besteht ein dringender Bedarf an einem Werkzeug, dass Entwicklern und Managern eine transparente und umfassende Analyse der Abhängigkeiten auf Sicherheitslücken ganzer Projekte bietet.
+    Ein solches Automatisierungswerkzeug für die Analyse von Paketen trägt somit einer frühzeitigen Erkennung von Sicherheitslücken und -risiken bei und reduziert Zeitaufwand den der Nutzer.
+    Damit kann die Softwarequalität verbessert werden, indem erkannt werden kann, ob eine genutzte Softwarekomponente aktualisiert oder ausgetauscht werden muss.
+
+    Aus den aufgeführten Punkten ergeben sich folgende mögliche Forschungsfragen (FF):
+    \begin{enumerate}[label=\textbf{FF-\Roman*}, leftmargin=1.75cm]
+        \item \textbf{Welche Funktionen sind notwendig um ein Paket auf Sicherheitslücken zu untersuchen?}\label{q:one}
+        \item \textbf{Welche Funktionen sind notwendig um ein Repository auf Sicherheitslücken durch Abhängigkeiten zu untersuchen?}\label{q:two}
+        \item \textbf{Wie sind die Resultat-Daten für den Endnutzer sowie Maschinen zu strukturieren, damit jene ohne weitere aufwändige Aufbereitung zu verarbeiten sind?}\label{q:three}
+        \item \textbf{Wie ist ein Schwachstellen-Analyse-Tool in Betracht auf transitive Anhängig\-keiten von Repositories zu implementieren?}\label{q:four}
+        \item \textbf{Wie kann ein solches Tool leistungsstärker sowie laufzeiteffizienter werden?}\label{q:five}
+    \end{enumerate}
+    Insgesamt bringt solch ein Werkzeug Unternehmen verschiedene Vorteile, wie in der Softwareentwicklung, darunter Transparenz, Qualität sowie Sicherheit.
+    Die Gesamtsicherheit von Applikationen sowie auch Unternehmen kann durch nun sichtbare Schwachstellen in tiefen Ebenen der Softwareabhängigkeit verbessert werden.
+    Dieses Werkzeug hilft also bei der Entscheidungsfindung über externe Softwarekomponenten sowie bei der Aufdeckung von Sicherheitsrisiken.
+
+    \subsection*{Vorgehensweise} \label{subsec:Vorgehensweise}
+        Um eine geeignete Umsetzung zu entwickeln, muss zunächst eine Recherche ähnlicher Ansätze erfolgen.
+        Aus diesen kann dann extrahiert werden
+        \begin{itemize}
+            \item ob es bereits Umsetzungen gibt,
+            \item welche Bereiche besonders zu beachten sind,
+            \item welche Aspekte noch nirgends abgedeckt werden.
+        \end{itemize}
+        Da aufbauend auf der Recherche noch keine Grundlage vorhanden ist, muss davor noch eine Behandlung der zugrundeliegenden Begriffe geschehen.
+        Partiell aufgelistet wären dies exemplarisch \ac{CVE}, \ac{JSON-LD} oder transitive Abhängigkeiten.
+
+        Durch das erlangte Wissen soll eine erste Implementierung auf den parallel dazu erstellten Anforderungen geschehen, damit diese Anforderungen unmittelbar als realistisch erkannt werden können.
+        
+        Eine Auseinandersetzung mit den Technologien für die Umsetzung erzeugt anschließend eine Beurteilung, ob die nicht-funktionalen Anforderungen -- die auf Basis der funktionalen Anforderungen aufgestellt wurden -- vollständig erfüllt sind.
+        Je nach Ergebnis jener Beurteilung soll dann eine Umsetzung mit anderen Technologien erfolgen, um beispielsweise die gewünschten Leistungsmerkmale zu erfüllen.
+        
+        Mittels einer geeigneten Analyse von Demodaten und der Auswertung sind die aufgestellten funktionalen und nicht-funktionalen Anforderungen final zu bewerten.
+        Eine Validierung der zu diesem Zeitpunkt aktuellen Umsetzung ist damit gemeint.
+
+        Während die Ergebnisse ausgewertet werden und als Entscheidungsunterstützung dienen sollen, wird die eigentliche Analyse der Pakete auf Schwachstellen nicht näher behandelt.
+        Auch eine Bewertung der Resultate der Schwachstellenanalyse ist nicht Bestandteil der Arbeit.
+        Es erfolgt eine reine Ausgabe \ac{CVE}-bezogener Merkmale.
+
+        Die abschließende Diskussion -- in welcher der finale Stand bewertet, die zukünftigen Perspektiven beleuchtet und ein Ausblick auf mögliche Erweiterungen zu geben sind -- wird stellt vor der Zusammenfassung der Ergebnisse eine kritische Auseinandersetzung mit der eigenen Leistung dar.

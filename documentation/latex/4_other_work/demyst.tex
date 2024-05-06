@@ -1,0 +1,23 @@
+\subsubsection{Demystifying Vulnerability Propagation} \label{sec:DVP}
+    \begin{description}
+        \item[Adressierte Punkte]\hfill \\
+            Im Paper \glqq Demystifying the Vulnerability Propagation and Its Evolution via Dependency Trees in the NPM Ecosystem\grqq\textsuperscript{\cite{article:Liu2022DemystifyingTV}} von Chengwei Liu et al. wurde eine ausführliche Studie zum NPM-Ökosystem durchgeführt.
+            In dieser Studie wurde die Schwachstellenausbreitung und -entwicklung betrachtet.
+            Diese Schwachstellen wurden in Abhängigkeitsbäumen Identifiziert.
+            Aus diesen Daten wurden Lösungen zur Schwachstellenbehebung entwickelt.
+        \item[Duchgeführte Maßnahmen]\hfill \\
+            In dieser Arbeit wurden Abhängigkeitsbäume, auch Dependency-Graphen (DVGraph) genannt, konstruiert.
+            Es wurde weiterhin ein DVResolver-Algorithmus, welcher Abhängigkeitsbäume auflöst und ein DVReme-Tool entwickelt, welches der Schwachstellenbehebung dient.
+            Es wurde hier JavaScript für die Analyse der NPM-Pakete und Abhängigkeitsbäume genutzt.
+            Schachstellen wurden dabei durch die Verwendung von \ac{CVE}-Daten erkannt. 
+        \item[Ergebnisse]\hfill \\
+            Es wurden durch diese Studie weit verbreitete Schwachstellen in NPM-Paketen offen gelegt sowie ein Tool zur effektiven Bekämpfung dieses implementiert.
+            Dabei hat das entwickelte DVReme-Tool sogar eine bessere Leistung als das offizielle npm audit fix-Tool.
+            Ergebnis der Studie war, dass 20 \% der Bibliotheken im NPM-Ökosystem Schwachstellen aufweisen.
+            30 \% dieser Bibliotheken enthalten Schwachstellen aus direkten Abhängigkeiten.
+            Aus den erhaltenen Daten wurden Empfehlungen zur Verbesserung der Sicherheit im NPM-Ökosystem zusammengefasst.
+        \item[Unterschiede]\hfill \\
+            Im gegensatz zu dieser Arbeit wird sich hier auf das NPM-Ökosystem festgelegt.
+            Das entstandene Tool ist auch nur für diese geeignet und bietet in der Hinsicht auch keine Erweiterungsmöglichkeit auf weitere Programmiersprachen oder Frameworks.
+            Weiterhin sind die entstandenen nicht in einem Standardisierten Format für den Nutzer zu erhalten. 
+    \end{description}

@@ -1,0 +1,16 @@
+\subsection{Nichtfunktionale Anforderungen} \label{sec:N_Anforderungen}
+    Weiterhin ergeben sich der Umsetzung dieser \ac{API} aus den Forschungsfragen verschiedene nichtfunktionale Anforderungen:
+    \begin{enumerate}[label=\textbf{NFRQ-\Roman*}, leftmargin=2.5cm]
+        \item Die Suche eines einzelnen Pakets dauert nicht länger als 5 ms (betrifft \ref{q:five}) \label{nf:one}
+        \\
+        Erläuterung:
+        Die Dauer einer Antwort der API sollte 5 Sekunden nicht überschreiten.\textsuperscript{\cite{link:ApiResponseTime}}
+        \\
+        Appendix \ref{sec:PackageMeanPopGitJsRepos} weist nach, dass in den beliebtesten JavaScript-Repositories durchschnittlich $2.429,9$ Abhängigkeiten bestehen und somit maximal $\frac{5\text{ Sekunden}}{2.429,9}$ betragen sollte, was $0,002$ Sekunden, also 2 Millisekunden entspricht.
+        \\
+        Das ein Projekt jedoch solch hohe Anzahlen beinhaltet ist ebenfalls aus den Rohdaten der 10 Repositories nicht immer der Fall und somit wird für die Analyse mit $1.000$ Paketen gerechnet -- der Median der Reihe beträgt $788$ -- und es ermittelt sich daraus der Grenzwert $\frac{5\text{ Sekunden}}{1.000} = 5$ Millisekunden für die Suche eines einzelnen Paketes.
+        \item Skalierbarkeit der Anwendung herstellen (betrifft \ref{q:five}) \label{nf:two}
+        \item Dokumentation der Endpunkte (betrifft \ref{q:five}) \label{nf:three}
+        \item Rückgabe der Daten im \acs{JSON-LD}-Format (betrifft \ref{q:three}) \label{nf:four}
+        \item Nutzung etablierter Technologien (betrifft \ref{q:four}) \label{nf:five}
+    \end{enumerate}

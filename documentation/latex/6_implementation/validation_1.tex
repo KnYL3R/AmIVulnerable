@@ -1,0 +1,110 @@
+\subsection{Validierung V1} \label{sec:Vali1}
+    Unter \ref{sec:Funktionale_Anforderungen} \nameref{sec:Funktionale_Anforderungen} sind 7 \texttt{funktionale} Vorgaben aufgeführt.
+
+    \begin{description}
+        \item[(1) Persistente Speicherung nach Konvertierung der \ac{CVE}-Daten] siehe \hyperref[f:one]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Die beiden dazugehörigen Endpunkte, wo als erstes das Clonen in einen Ordner namens \textit{raw} erfolgt und beim Aufruf des zweiten Endpunktes die Konvertierung in die LiteDB-Datenbank stattfindet, waren unter den Dateien GitController.cs und DbController.cs zu finden.
+            \\
+            Der zeitliche Aufwand ist im Appendix unter \ref{subsec:ZeitaufwandDerKonvertierungVonRaw-CVEZuLiteDb} einsehbar.
+        \item[(2) Abgleich von Paketen] siehe \hyperref[f:two]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Als Kontrolle auf Korrektheit der Daten wurde das Ergebnis -- die Response der \acs{API} -- mit der Roh-Daten \ac{JSON} aus dem GitHub-Repository der Mitre\textsuperscript{\cite{link:CveRepo}} verglichen und kein Datenverlust festgestellt.
+            \\
+            Ein Vergleich mit der \textit{NIST-API}\textsuperscript{\cite{link:NISTAPI}} bewies die Korrektheit der Daten, die ebenfalls vom \acs{NIST} übermittelt werden.
+            Da deren Ergebnis -- siehe exemplarisch \cite{link:NISTapiAbfrageLiteDb} -- jedoch anders aufgebaut ist, konnten dabei nur die identischen Bereiche wie die \texttt{descriptions}, \texttt{cvssMetricV31}, oder \texttt{references} einem Abgleich unterzogen werden.
+            Dabei fiel bei der Untersuchung von 10 zufällig gewählten Demonstrationspaketen auf, dass die \acs{NIST} ihre Daten weiter aufbereitet mit zusätzlichen Informationen, wie der Quelle (\glqq source\grqq) im \texttt{references} Teil.
+            Es fehlten jedoch keine Informationen und es finden reine Ergänzungen durch die US-amerikanische Behörde statt. \textsuperscript{siehe Appendix\ref{sec:ListOfCheckedPackages}}
+            \\
+            Unter dem Abschnitt \ref{sec:ExperimentePIPE} \nameref{sec:ExperimentePIPE} kann man die erfolgten Zeit-Messungen einer Abfrage auf den entwickelten Webservice einsehen.
+        \item[(3) Clonen eines Repositories von Github] siehe \hyperref[f:three]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Der Endpunkt für das Clonen eines beliebigen Github-Repo's ist in der Datei GitController.cs einsehbar.
+            Über das Setzen einer boolschen Variable war es dort möglich, ein zu analysierendes Repo anzugeben.
+            Der entsprechend andere Fall bestand in der Download-Möglichkeit der \ac{CVE}-Roh-Daten -- siehe hierzu den ersten Punkt der Validierung V1.
+        \item[(4) Aufstellen aller Abhängigkeiten des heruntergeladenen Repo's] siehe \hyperref[f:four]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Aufgrund der vorerst selbstauferlegten Beschränkung auf NodeJS-Projekte geschah die Umsetzung jener Anforderung über den npm native Befehl \texttt{npm list --all}.
+        \item[(5) Extrahieren und Rückgabe eines Abhängigkeitsbaums mit sicher\-heits\-lücken\-betroffenen Paketen] siehe \hyperref[f:five]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Über den Endpunkt ExtractTree des DependeciesControllers ist es möglich, diesen Abhängig\-keitsbaums des Projektes zu erhalten.
+            Weiterführend ist über die ExtractAndAnalyzeTree-Route des selbigen Controllers die Analyse der Pakete und Rückgabe in einem um die Angabe der Betroffenheit erweiterten Baum möglich.
+        \item[(6) Aktualisierung der Datenbank] siehe \hyperref[f:six]{\underline{hier}} \hfill \\
+            Nicht erfolgreich umgesetzt.
+            \\
+            Die Möglichkeit des Updates der LiteDB-Datenbasis bestand darin erneut den Endpunkt des Konvertierens aufzurufen.
+            Somit erfolgte eine erneute Erstellung der Datenbankdateien, was somit keinem Update sondern eher einer kompletten Erneuerung entsprach.
+        \item[(7) Containerisierung der \ac{API}] siehe \hyperref[f:seven]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Mittels der docker-compose.yml und einem Dockerfile in dem Ordner der API ist die Containerisierung erfolgt.
+            Da die Anwendung an sich lediglich in dem Container laufen musste und die Datenbankdateien dort dann erstellt wurden, ist es bei einem einzelnen Container zu diesem Zeitpunkt geblieben.
+    \end{description}
+
+    \noindent Unter \ref{sec:N_Anforderungen} \nameref{sec:N_Anforderungen} sind dagegen 5 \texttt{nicht-funktionale} Anforderungen aufgeführt.
+
+    \begin{description}
+        \item[(1) Dauer der Paketsuche (einzelne Abfrage) unter 5ms] siehe \hyperref[nf:one]{\underline{hier}} \hfill \\
+            Nicht erreicht.
+            \\
+            Wie im Appendix unter \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallWenigerPaketeAlsDatenbanken} \& \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallMehrPaketeAlsDatenbanken} einsehbar, können folgende Werte für die Paketsuche ermittelt werden:
+            \begin{tabularx}{0.8\textwidth}{|c|c|c|}
+                \hline
+                Weniger Pakete als DBs & Minimum & $2689,8$ ms \\
+                & Maximum & $4750,3$ ms \\
+                & Durchschnitt & $2918,63$ ms \\
+                & Median & $2740,45$ ms \\
+                & Standardabweichung & $485,59$ ms \\ \hline
+                Mehr Pakete als DBs & Minimum & $2594,6$ ms \\
+                & Maximum & $7208,94$ ms \\
+                & Durchschnitt & $2714,60$ ms \\
+                & Median & $2667,3$ ms \\
+                & Standardabweichung & $315,7627$ ms \\ \hline
+                \caption{Resultate aus den Rohdaten des Appendix \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallWenigerPaketeAlsDatenbanken} \& \ref{subsec:ZeitunterschiedAbfrageAufDenDatenbankenMonoPipeFallMehrPaketeAlsDatenbanken}}
+                \label{tabularx:ResultatDatenDatenbankPaketsuchenAppendix}
+            \end{tabularx}
+            Die Dauer einer einzelnen Paketabfrage beträgt also nicht unter $2,5$ Sekunden.
+            Somit ist dieses Ziel um mindestens Größenordnung $40$ verfehlt und muss in der V2 besonderes Augenmerk genießen.
+        \item[(2) Skalierbarkeit der Anwendung herstellen] siehe \hyperref[nf:two]{\underline{hier}} \hfill \\
+            Nicht erreicht.
+            \\
+            Aufgrund der Dateibasierten Datenbank LiteDb ist ein multipler Zugriff auf eine einzelne Datenbankdatei nicht möglich. Es ist also eine rein sequenzielle Abarbeitung der gestellten Anfragen möglich.
+            \\
+            Für Abhilfe in diesem Punkt wäre die duplizierte Vorhaltung der selben Daten möglich oder die Umsetzung in einem anderen Datenbank-System.
+        \item[(3) Dokumentation der Endpunkte] siehe \hyperref[nf:three]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Mittels der vom ASP.NET in der Projektkonfiguration mitgelieferten automatischen Erstellung einer OpenAPI-Unterstützung, wird eine Swagger-Dokumentation beim \textit{build} erstellt und kann unter dem Routen-Suffix \textit{[...]/swagger/index.html} eingesehen werden.
+        \item[(4) Rückgabe im \acs{JSON-LD}-Format] siehe \hyperref[nf:four]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Folgende Struktur ist bei der Rückgabe zu erwarten:
+            \begin{lstlisting}[language=json,firstnumber=1]
+{
+    "@context": {url}
+    "data": [
+        data
+    ]
+}
+            \end{lstlisting}
+        \item[(5) Nutzung etablierter Technologien] siehe \hyperref[nf:five]{\underline{hier}} \hfill \\
+            Wurde erfolgreich umgesetzt.
+            \\
+            Sowohl die \ac{API} mit ASP.NET, die Containerisierung mit Docker, als auch die Datenbank mit LiteDB sind mit etablierten Technologien umgesetzt worden.
+    \end{description}
+
+    \noindent Zusammenfassend kann festgehalten werden, dass die gesamte Anwendung zu jenem Zeitpunkt einsatzfähig war, jedoch die Laufzeiten mit Wartezeiten einer Analyseabfrage Sekundenbereich pro Paket als unbefriedigend eingestuft werden muss. Siehe dazu \ref{nf:one}.
+    Somit erfolgte die in Abschnitt \ref{sec:ExperimenteDB} \nameref{sec:ExperimenteDB} besprochene Neubetrachtung des Datenbankbereiches der Architektur.
+
+    % Validierung V1, sind die Ausgaben den Vorgaben entsprechend (funktional)
+    % \begin{itemize}
+    %     \item api/Db/checkSinglePackage
+    %     \item api/Db/checkPackageList
+    %     \item api/Dependecies/ExtractTree
+    %     \item api/Dependecies/ExtractAndAnalyzeTree
+    % \end{itemize}

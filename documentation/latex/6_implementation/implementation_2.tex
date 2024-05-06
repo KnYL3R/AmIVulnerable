@@ -1,0 +1,55 @@
+\subsection{Implementation V2} \label{sec:Implementation2}
+    Aus den Ergebnissen der Experimente, aus Kapitel \ref{sec:ExperimenteDB} und \ref{sec:MySQL_Indexierung}, werden Anpassungen an der Implementation vorgenommen.
+    Folgende Komponenten wurden für die zweite Implementation der \ac{API} genutzt:
+    \begin{itemize}
+        \item Framework ASP.NET (C\#)
+        \item Datenbank MySQL
+        \item Docker-Compose zur Container-Orchestration
+    \end{itemize}
+
+    \noindent Weiterhin gab es eine Anpassung am Containernetzwerk, die MySQL Datenbank hat nun ihren eigenen Container, da diese nicht in ASP.NET eingebettet ist.
+    Außerdem sind folgende Anpassungen an den Controllern vorgenommen worden:
+    \begin{itemize}
+        \item DbController \label{api_controller:three}
+            \begin{itemize}
+                \item CheckRawDir-Endpunkt entfällt siehe GitControlller api/Git/PullCveAndConvert Endpunkt
+                \item ConvertRawDirToDb-Endpunkt entfällt
+                \item Update-Endpunkt hinzugefügt \\
+                    Mit diesem Endpunkt werden die lokalen CVE-Daten aktualisiert ohne den gesamten Datensatz erneut zu laden.
+                    \\
+                    \textbf{OK} bei einem Update mit Rückgabe der Anzahl aktualisierter und eingefügter CVE-Einträge
+                    \\
+                    \textbf{Bad Request} bei einem Aufgetretenen Fehler
+                \item GetFullTextFromCveNumber-Endpunkt hinzugefügt \\
+                    Durch diesen Endpunkt erhäklt man bei Übergabe einer CVE-Nummer alle vorliegende Daten zu dieser.
+                    \\
+                    \textbf{OK} bei Fund der CVE-Nummer mit den vorliegenden Daten im Antwort-Body.
+                    \\
+                    \textbf{No Content} bei keinem Eintrag zur angegebenen CVE-Nummer. 
+                    \\
+                    \textbf{Bad Request} bei fehlerfahter übergebener Query.
+                \item CheckGuid-Endpunkt hinzugefügt \\
+                    Hier kann man durch angabe einer Guid das lokale Vorhandensein eines vorher heruntergeladenen Repositories überprüfen.
+                    \\
+                    \textbf{OK} falls das Repository mit der passenden Guid vorhanden ist mit dem gesamten DB-Datensatz dieses Repositories.
+                    \\
+                    \textbf{Not Found} falls das Repository nicht lokal vorliegt.
+            \end{itemize}
+
+        \item GitController \label{api_controller:one}
+            \begin{itemize}
+                \item Clone zu CloneRepo umbenannt
+                \item PullCveAndConvert (Endpunkte des ersten Controllers sind nun hier) hinzugefügt
+            \end{itemize}
+        \item MySqlConnectionController \label{api_controller_2:five}
+            \begin{itemize}
+                \item CheckReachable-Endpunkt hinzugefügt
+            \end{itemize}
+        \item ViewController \label{api_controller:four}
+            \begin{itemize}
+                \item Json-Ld-Endpunkt entfällt
+                \item CveResult-Endpunkt hinzugefügt
+                \item NodePackageResult-Endpunkt hinzugefügt
+            \end{itemize}
+           
+    \end{itemize}
