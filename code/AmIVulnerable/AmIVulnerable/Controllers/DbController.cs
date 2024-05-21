@@ -198,7 +198,7 @@ namespace AmIVulnerable.Controllers {
         /// <returns>Ok with result. NoContent if empty.</returns>
         [HttpGet]
         [Route("checkSinglePackage")]
-        public IActionResult CheckSinglePackage([FromBody] PackageForApi packageName) {
+        public IActionResult CheckSinglePackage([FromQuery] PackageForApi packageName) {
             if (!(this.Request.Headers.Accept.Equals("application/json") || this.Request.Headers.Accept.Equals("*/*"))) {
                 return StatusCode(406);
             }
@@ -246,7 +246,7 @@ namespace AmIVulnerable.Controllers {
         /// <returns>OK, if exists. OK, if no package list searched. NoContent if not found.</returns>
         [HttpGet]
         [Route("checkPackageList")]
-        public async Task<IActionResult> CheckPackageListAsync([FromBody] List<PackageForApi> packages) {
+        public async Task<IActionResult> CheckPackageListAsync([FromQuery] List<PackageForApi> packages) {
             if (!(this.Request.Headers.Accept.Equals("application/json") || this.Request.Headers.Accept.Equals("*/*"))) {
                 return StatusCode(406);
             }
