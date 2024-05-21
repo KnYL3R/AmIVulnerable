@@ -198,13 +198,14 @@ namespace AmIVulnerable.Controllers {
         /// <returns>Ok with result. NoContent if empty.</returns>
         [HttpGet]
         [Route("checkSinglePackage")]
-        public IActionResult CheckSinglePackage([FromBody] PackageForApi packageName) {
+        public IActionResult CheckSinglePackage([FromQuery] string PackageName,
+                                                    [FromQuery] string? PackageVersion) {
             if (!(this.Request.Headers.Accept.Equals("application/json") || this.Request.Headers.Accept.Equals("*/*"))) {
                 return StatusCode(406);
             }
-            using (Operation.Time($"Complete Time for Query-SingleSearch after Package \"{packageName}\"")) {
+            using (Operation.Time($"Complete Time for Query-SingleSearch after Package \"{PackageName}\"")) {
                 List<CveResult> results = [];
-                DataTable dtResult = SearchInMySql(packageName.PackageName);
+                DataTable dtResult = SearchInMySql(PackageName);
                 // convert the result
                 foreach (DataRow x in dtResult.Rows) {
                     CveResult y = new CveResult() {
@@ -240,7 +241,8 @@ namespace AmIVulnerable.Controllers {
         }
 
         /// <summary>
-        /// Search for a list of packages
+        /// Search for a list of packages.
+        /// Not useable in swagger because of body - but curl works fine.
         /// </summary>
         /// <param name="packages">List of tuple: package, version</param>
         /// <returns>OK, if exists. OK, if no package list searched. NoContent if not found.</returns>
