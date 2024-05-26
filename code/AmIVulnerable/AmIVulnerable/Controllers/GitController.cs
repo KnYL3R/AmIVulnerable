@@ -4,6 +4,7 @@ using Modells;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using SerilogTimings;
+using System;
 using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -86,14 +87,19 @@ namespace AmIVulnerable.Controllers {
             if (repositoryQuery.Rows.Count == 0) {
                 return NoContent();
             }
-            //var repositoryQueryJson = new {
-            //    foreach(DataRow row in repositoryQuery.Rows) {
-                    
-            //    }
-            //    repositoryQuery 
-            //};
 
-            return Ok(System.Text.Json.JsonSerializer.Serialize(repositoryQuery));
+            List<object> list = [];
+            foreach (DataRow row in repositoryQuery.Rows) {
+                list.Add(new {
+                    guid = row["guid"],
+                    repoUrl = row["repoUrl"],
+                    repoOwner = row["repoOwner"],
+                    repoDesignation = row["repoDesignation"],
+                    tag = row["tag"]
+                });
+            }
+
+            return Ok(list);
         }
 
         /// <summary></summary>
