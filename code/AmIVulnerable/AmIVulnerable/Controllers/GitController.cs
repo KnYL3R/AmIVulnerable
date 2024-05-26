@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp;
 using Modells;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using SerilogTimings;
-using System;
 using System.Data;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using CM = System.Configuration.ConfigurationManager;
 
