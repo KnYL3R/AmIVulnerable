@@ -79,7 +79,7 @@ namespace AmIVulnerable.Controllers {
                             ExecuteCommand("npm", "install", projectGuid.ToString());
                             ExecuteCommand("rm", "tree.json", projectGuid.ToString());
                             ExecuteCommand("npm", "list --all --json >> tree.json", projectGuid.ToString());
-                            List<NodePackage> depTree = ExtractTree(projectGuid.ToString() + "/tree.json");
+                            List<NodePackage> depTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString() + "/tree.json");
                             List<NodePackageResult> resTree = await AnalyzeTreeAsync(depTree) ?? [];
                             if (resTree.Count != 0) {
                                 JsonLdObject resultAsJsonLd = new JsonLdObject() {
@@ -106,9 +106,9 @@ namespace AmIVulnerable.Controllers {
         /// <param name="command">Command used for programm</param>
         private void ExecuteCommand(string prog, string command, string dir) {
             ProcessStartInfo process = new ProcessStartInfo {
-                FileName = "bash",
+                FileName = "cmd",
                 RedirectStandardInput = true,
-                WorkingDirectory = dir,
+                WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory + dir,
             };
             Process runProcess = Process.Start(process)!;
             runProcess.StandardInput.WriteLine($"{prog} {command}");
@@ -216,29 +216,6 @@ namespace AmIVulnerable.Controllers {
                 }
             }
             return resulstList;
-            #region oldcode
-            //SearchDbController searchDbController = new SearchDbController();
-            //List<string> designation = [];
-            //foreach (Tuple<string, string> x in nodePackages) {
-            //    designation.Add(x.Item1);
-            //}
-
-            //List<CveResult> results = await searchDbController.SearchPackagesAsList(designation);
-            ////List<CveResult> results = searchDbController.SearchPackagesAsListMono(designation);
-
-            //// find the critical points
-            //if (results.Count == 0) {
-            //    return null;
-            //}
-            //List<NodePackageResult?> resulstListOld = [];
-            //foreach (NodePackage x in depTree) {
-            //    NodePackageResult? temp = checkVulnerabilities(x, results);
-            //    if (temp is not null) {
-            //        resulstList.Add(temp);
-            //    }
-            //}
-            //return resulstList;
-            #endregion
         }
 
         /// <summary>
@@ -275,6 +252,8 @@ namespace AmIVulnerable.Controllers {
             foreach (CveResult x in cveData) { // check
                 if (x.Designation.Equals(package.Name)) {
                     r.isCveTracked = true;
+                    r.CvssV31 = x.CvssV31;
+                    r.Description = x.Description;
                 }
             }
             if (r.isCveTracked == false && !DepCheck(r)) {
