@@ -31,7 +31,7 @@ namespace AmIVulnerable.Controllers {
         /// <param name="repoObject"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("cloneRepo")]
+        [Route("repository")]
         public async Task<IActionResult> CloneRepoToAnalyze([FromBody] RepoObject repoObject) {
             if (repoObject.RepoUrl is null) {
                 return BadRequest();
@@ -69,6 +69,33 @@ namespace AmIVulnerable.Controllers {
 
                 return Ok(repoId);
             }
+        }
+
+        /// <summary>Gets guid, tag, ... of all Repositories that have been cloned</summary>
+        /// <returns>Return all data of repos</returns>
+        [HttpGet]
+        [Route("allrepositories")]
+        public async Task<IActionResult> GetRepositories() {
+            DataTable repositoryQuery = ExecuteMySqlCommand($"" +
+                $"SELECT * " +
+                $"FROM cve.repositories;");
+
+            if (repositoryQuery.Rows.Count == 0) {
+                return NoContent();
+            }
+
+            List<object> list = [];
+            foreach (DataRow row in repositoryQuery.Rows) {
+                list.Add(new {
+                    guid = row["guid"],
+                    repoUrl = row["repoUrl"],
+                    repoOwner = row["repoOwner"],
+                    repoDesignation = row["repoDesignation"],
+                    tag = row["tag"]
+                });
+            }
+
+            return Ok(list);
         }
 
         /// <summary></summary>
