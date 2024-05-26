@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp;
 using Modells;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using SerilogTimings;
 using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using CM = System.Configuration.ConfigurationManager;
 
@@ -31,7 +34,7 @@ namespace AmIVulnerable.Controllers {
         /// <param name="repoObject"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("cloneRepo")]
+        [Route("repository")]
         public async Task<IActionResult> CloneRepoToAnalyze([FromBody] RepoObject repoObject) {
             if (repoObject.RepoUrl is null) {
                 return BadRequest();
@@ -69,6 +72,28 @@ namespace AmIVulnerable.Controllers {
 
                 return Ok(repoId);
             }
+        }
+
+        /// <summary>Gets designation and tag of all Repositories that have been cloned</summary>
+        /// <returns>Return all designations and tags of repos</returns>
+        [HttpGet]
+        [Route("allrepositories")]
+        public async Task<IActionResult> GetRepositories() {
+            DataTable repositoryQuery = ExecuteMySqlCommand($"" +
+                $"SELECT * " +
+                $"FROM cve.repositories;");
+
+            if (repositoryQuery.Rows.Count == 0) {
+                return NoContent();
+            }
+            //var repositoryQueryJson = new {
+            //    foreach(DataRow row in repositoryQuery.Rows) {
+                    
+            //    }
+            //    repositoryQuery 
+            //};
+
+            return Ok(System.Text.Json.JsonSerializer.Serialize(repositoryQuery));
         }
 
         /// <summary></summary>
