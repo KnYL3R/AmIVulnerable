@@ -75,8 +75,8 @@ namespace AmIVulnerable.Controllers {
             }
         }
 
-        /// <summary>Gets designation and tag of all Repositories that have been cloned</summary>
-        /// <returns>Return all designations and tags of repos</returns>
+        /// <summary>Gets guid, tag, ... of all Repositories that have been cloned</summary>
+        /// <returns>Return all data of repos</returns>
         [HttpGet]
         [Route("allrepositories")]
         public async Task<IActionResult> GetRepositories() {
