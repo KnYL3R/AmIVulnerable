@@ -46,3 +46,8 @@ CREATE TABLE IF NOT EXISTS cve.repositories(
     repoDesignation VARCHAR(300) NOT NULL,
     tag VARCHAR(500) DEFAULT ''
 );
+
+CREATE TABLE IF NOT EXISTS cve.reports(
+    guid VARCHAR(36) PRIMARY KEY NOT NULL,
+    metrics JSON NOT NULL
+);
