@@ -13,6 +13,7 @@ namespace AmIVulnerable.Controllers {
 
     [Route("api/[controller]")]
     [ApiController]
+
     public class DependeciesController : ControllerBase {
 
         #region Config
@@ -43,7 +44,7 @@ namespace AmIVulnerable.Controllers {
                         ExecuteCommand("npm", "install", projectGuid.ToString());
                         ExecuteCommand("rm", "tree.json", projectGuid.ToString());
                         ExecuteCommand("npm", "list --all --json >> tree.json", projectGuid.ToString());
-                        List<NodePackage> resTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString() + "/tree.json");
+                        List<Package> resTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString() + "/tree.json");
                         F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString() + "/depTree.json", JsonConvert.SerializeObject(resTree));
 
                         JsonLdObject resultAsJsonLd = new JsonLdObject() {
@@ -79,8 +80,8 @@ namespace AmIVulnerable.Controllers {
                             ExecuteCommand("npm", "install", projectGuid.ToString());
                             ExecuteCommand("rm", "tree.json", projectGuid.ToString());
                             ExecuteCommand("npm", "list --all --json >> tree.json", projectGuid.ToString());
-                            List<NodePackage> depTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString() + "/tree.json");
-                            List<NodePackageResult> resTree = await AnalyzeTreeAsync(depTree) ?? [];
+                            List<Package> depTree = ExtractTree(AppDomain.CurrentDomain.BaseDirectory + projectGuid.ToString() + "/tree.json");
+                            List<PackageResult> resTree = await AnalyzeTreeAsync(depTree) ?? [];
                             if (resTree.Count != 0) {
                                 JsonLdObject resultAsJsonLd = new JsonLdObject() {
                                     Context = "https://localhost:7203/views/nodePackageResult",
@@ -121,13 +122,13 @@ namespace AmIVulnerable.Controllers {
         /// </summary>
         /// <param name="filePath">File path to rawAnalyze/tree.json</param>
         /// <returns>List of vulnerable packages.</returns>
-        private List<NodePackage> ExtractTree(string filePath) {
-            List<NodePackage> packages = [];
+        private List<Package> ExtractTree(string filePath) {
+            List<Package> packages = [];
             using (JsonDocument jsonDocument = JsonDocument.Parse(F.ReadAllText(filePath))) {
                 if (jsonDocument.RootElement.TryGetProperty("dependencies", out JsonElement dependenciesElement) &&
                     dependenciesElement.ValueKind == JsonValueKind.Object) {
                     foreach (JsonProperty dependency in dependenciesElement.EnumerateObject()) {
-                        NodePackage nodePackage = ExtractDependencyInfo(dependency);
+                        Package nodePackage = ExtractDependencyInfo(dependency);
 
                         packages.Add(nodePackage);
                     }
@@ -141,8 +142,8 @@ namespace AmIVulnerable.Controllers {
         /// </summary>
         /// <param name="dependency">Dependency that is searched for sundependencies and versions.</param>
         /// <returns>NodePackage with all found dependencies and versions.</returns>
-        private NodePackage ExtractDependencyInfo(JsonProperty dependency) {
-            NodePackage nodePackage = new NodePackage {
+        private Package ExtractDependencyInfo(JsonProperty dependency) {
+            Package nodePackage = new Package {
                 Name = dependency.Name
             };
             if (dependency.Value.TryGetProperty("version", out JsonElement versionElement) &&
@@ -152,7 +153,7 @@ namespace AmIVulnerable.Controllers {
             if (dependency.Value.TryGetProperty("dependencies", out JsonElement subDependenciesElement) &&
                 subDependenciesElement.ValueKind == JsonValueKind.Object) {
                 foreach (JsonProperty subDependency in subDependenciesElement.EnumerateObject()) {
-                    NodePackage subNodePackage = ExtractDependencyInfo(subDependency);
+                    Package subNodePackage = ExtractDependencyInfo(subDependency);
                     nodePackage.Dependencies.Add(subNodePackage);
                 }
             }
@@ -165,12 +166,12 @@ namespace AmIVulnerable.Controllers {
         /// </summary>
         /// <param name="depTree">List of all top level node packages.</param>
         /// <returns>List of NodePackageResult.</returns>
-        private async Task<List<NodePackageResult?>> AnalyzeTreeAsync(List<NodePackage> depTree) {
+        private async Task<List<PackageResult?>> AnalyzeTreeAsync(List<Package> depTree) {
             List<Tuple<string, string>> nodePackages = [];
             // preperation list
-            foreach (NodePackage x in depTree) {
-                List<NodePackage> y = AnalyzeSubtree(x);
-                foreach (NodePackage z in y) {
+            foreach (Package x in depTree) {
+                List<Package> y = AnalyzeSubtree(x);
+                foreach (Package z in y) {
                     Tuple<string, string> tuple = new Tuple<string, string>(z.Name, z.Version);
                     if (!nodePackages.Contains(tuple)) {
                         nodePackages.Add(tuple);
@@ -208,9 +209,9 @@ namespace AmIVulnerable.Controllers {
             if (cveResults.Count == 0) {
                 return null;
             }
-            List<NodePackageResult?> resulstList = [];
-            foreach (NodePackage x in depTree) {
-                NodePackageResult? temp = CheckVulnerabilities(x, cveResults);
+            List<PackageResult?> resulstList = [];
+            foreach (Package x in depTree) {
+                PackageResult? temp = CheckVulnerabilities(x, cveResults);
                 if (temp is not null) {
                     resulstList.Add(temp);
                 }
@@ -223,9 +224,9 @@ namespace AmIVulnerable.Controllers {
         /// </summary>
         /// <param name="nodePackage">Node package to search</param>
         /// <returns>List of all node package dependencies of a single node package.</returns>
-        private List<NodePackage> AnalyzeSubtree(NodePackage nodePackage) {
-            List<NodePackage> res = [];
-            foreach (NodePackage x in nodePackage.Dependencies) {
+        private List<Package> AnalyzeSubtree(Package nodePackage) {
+            List<Package> res = [];
+            foreach (Package x in nodePackage.Dependencies) {
                 res.AddRange(AnalyzeSubtree(x));
             }
             res.Add(nodePackage);
@@ -238,13 +239,13 @@ namespace AmIVulnerable.Controllers {
         /// <param name="package">Package to search for cve tracked dependencies.</param>
         /// <param name="cveData">List of CveResult data.</param>
         /// <returns>NodePackageResult with all dependencies and status if it is a cve tracked dependency.</returns>
-        private NodePackageResult? CheckVulnerabilities(NodePackage package, List<CveResult> cveData) {
-            NodePackageResult r = new NodePackageResult() {
+        private PackageResult? CheckVulnerabilities(Package package, List<CveResult> cveData) {
+            PackageResult r = new PackageResult() {
                 Name = "",
                 isCveTracked = false
             };
-            foreach (NodePackage x in package.Dependencies) {
-                NodePackageResult? temp = CheckVulnerabilities(x, cveData);
+            foreach (Package x in package.Dependencies) {
+                PackageResult? temp = CheckVulnerabilities(x, cveData);
                 if (temp is not null) {
                     r.Dependencies.Add(temp);
                 }
@@ -269,8 +270,8 @@ namespace AmIVulnerable.Controllers {
         /// </summary>
         /// <param name="package"></param>
         /// <returns>True if any dependency is tracked. False if no dependencies are tracked.</returns>
-        private bool DepCheck(NodePackageResult package) {
-            foreach (NodePackageResult x in package.Dependencies) {
+        private bool DepCheck(PackageResult package) {
+            foreach (PackageResult x in package.Dependencies) {
                 bool isTracked = DepCheck(x);
                 if (isTracked) {
                     goto isTrue;
