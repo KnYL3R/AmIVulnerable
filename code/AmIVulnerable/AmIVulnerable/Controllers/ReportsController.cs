@@ -2,8 +2,15 @@
 using Modells;
 using Modells.Packages;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
+using Org.BouncyCastle.Utilities;
+using SerilogTimings;
 using System.Data;
 using System.Diagnostics;
+using System.Text.Json;
+using static Mysqlx.Error.Types;
+using F = System.IO.File;
+using MP = Modells.Project;
 
 namespace AmIVulnerable.Controllers {
 
@@ -29,18 +36,23 @@ namespace AmIVulnerable.Controllers {
         /// <returns></returns>
         [HttpPost]
         [Route("simpleAnalyseNpmList")]
-        public async Task<IActionResult> SimpleAnalyseNpmList([FromBody] List<Modells.Project> npmList) {
+        public async Task<IActionResult> SimpleAnalyseNpmList([FromBody] List<MP> npmList) {
             List<SimpleReportLine> simpleReport = [];
-            foreach (Modells.Project npm in npmList) {
+            foreach (MP npm in npmList) {
                 string dirGuid = await CloneProject(npm);
                 if (dirGuid.Equals("Err")) {
                     return BadRequest("Could not clone project!");
                 }
-                foreach(string tag in npm.Tags) {
-                    CheckoutTagProject(tag, dirGuid);
-                    List<PackageResult> depTreeRelease = AnalyseTree(ExtractTree(MakeTree(dirGuid)), "release");
-                    List<PackageResult> depTreeCurrent = AnalyseTree(ExtractTree(MakeTree(dirGuid)), "current");
-                    simpleReport.Add(GenerateSimpleReportLine(depTreeRelease, depTreeCurrent));
+                foreach (string tag in npm.Tags) {
+                    // checkot HEAD
+                    // CheckoutTagProject(dirGuid); (Not needed due to always cloning newest commit)
+                    // Use DateTime.Now to use all CVE Data
+                    List<PackageResult> depTreeCurrent = AnalyseTree(ExtractTree(MakeTree(dirGuid)), DateTime.Now);
+                    // checkout release tag
+                    CheckoutTagProject(dirGuid, tag);
+                    List<PackageResult> depTreeRelease = AnalyseTree(ExtractTree(MakeTree(dirGuid)), GetCommitDateTime(dirGuid));
+
+                    simpleReport.Add(GenerateSimpleReportLine(depTreeRelease, depTreeCurrent, npm.ProjectUrl, tag));
                 }
                 DeleteProject(dirGuid);
             }
@@ -138,7 +150,7 @@ namespace AmIVulnerable.Controllers {
         /// 
         /// </summary>
         /// <param name="tag"></param>
-        private bool CheckoutTagProject(string tag, string dir) {
+        private bool CheckoutTagProject(string dir, string tag = "-") {
             try {
                 ProcessStartInfo process = new ProcessStartInfo {
                     FileName = "bash",
@@ -164,7 +176,7 @@ namespace AmIVulnerable.Controllers {
         /// </summary>
         /// <param name="dir"></param>
         private void DeleteProject(string dir) {
-            if(Directory.Exists(dir)) {
+            if (Directory.Exists(dir)) {
                 RemoveReadOnlyAttribute(dir);
                 Directory.Delete(dir, true);
 
@@ -172,6 +184,8 @@ namespace AmIVulnerable.Controllers {
                 ExecuteMySqlCommand($"DELETE FROM cve.repositories WHERE guid LIKE '{dir}';");
             }
         }
+
+        #region MakeTree
 
         /// <summary>
         /// Make a tree.json file
@@ -186,43 +200,388 @@ namespace AmIVulnerable.Controllers {
             return "/tree.json";
         }
 
+        #endregion
+
+        #region ExtractTree
+
         /// <summary>
         /// Extract internal representation of tree from tree.json
         /// </summary>
         /// <param name="treeFilePath"></param>
         /// <returns></returns>
         private List<Package> ExtractTree(string treeFilePath) {
-            //dirGuid + treeFilePath
-            //Use absolute Path for finding tree.json
-            return [];
+            List<Package> packageList = [];
+            using (JsonDocument jsonDocument = JsonDocument.Parse(F.ReadAllText(treeFilePath))) {
+                if (jsonDocument.RootElement.TryGetProperty("dependencies", out JsonElement dependenciesElement) &&
+                    dependenciesElement.ValueKind == JsonValueKind.Object) {
+                    foreach (JsonProperty dependency in dependenciesElement.EnumerateObject()) {
+                        Package package = ExtractDependencyInfo(dependency);
+
+                        packageList.Add(package);
+                    }
+                }
+            }
+            return packageList;
         }
+
+        /// <summary>
+        /// Extracts dependencies of a single dependency.
+        /// </summary>
+        /// <param name="dependency">Dependency that is searched for sundependencies and versions.</param>
+        /// <returns>NodePackage with all found dependencies and versions.</returns>
+        private Package ExtractDependencyInfo(JsonProperty dependency) {
+            Package package = new Package {
+                Name = dependency.Name
+            };
+            if (dependency.Value.TryGetProperty("version", out JsonElement versionElement) &&
+                versionElement.ValueKind == JsonValueKind.String) {
+                package.Version = versionElement.GetString() ?? "";
+            }
+            if (dependency.Value.TryGetProperty("dependencies", out JsonElement subDependenciesElement) &&
+                subDependenciesElement.ValueKind == JsonValueKind.Object) {
+                foreach (JsonProperty subDependency in subDependenciesElement.EnumerateObject()) {
+                    Package subPackage = ExtractDependencyInfo(subDependency);
+                    package.Dependencies.Add(subPackage);
+                }
+            }
+            return package;
+        }
+
+        #endregion
+
+        #region AnalyseTree
+
+        private record PackageRecord(string designation, string version);
 
         /// <summary>
         /// Check Package list agains cve data, differentiate between current cve database and past versions through cveVersion
         /// </summary>
         /// <param name="packageList"></param>
-        /// <param name="cveVersion"></param>
+        /// <param name="commitTime"></param>
         /// <returns></returns>
-        private List<PackageResult> AnalyseTree(List<Package> packageList, string cveVersion) {
-            if(cveVersion == "release") {
-                //Get all dependencies with depth (0 = direct, 1= 1st degree transitive, 2= 2nd degree...)
-                //Get number of subdependencies for every dependency
-                return [];
+        private List<PackageResult> AnalyseTree(List<Package> packages, DateTime commitTime) {
+            List<PackageRecord> uniquePackageRecords = [];
+            foreach (Package package in packages) {
+                List<Package> subPackages = ListSubTreePackages(package);
+                foreach (Package subPackage in subPackages) {
+                    PackageRecord packageRecord = new PackageRecord(subPackage.Name, subPackage.Version);
+                    if(!uniquePackageRecords.Contains(packageRecord)) {
+                        uniquePackageRecords.Add(packageRecord);
+                    }
+                }
+            }
+            List<CveResult> cveResults = [];
+            foreach (PackageRecord packageRecord in uniquePackageRecords) {
+                DataTable dataTableResults = SearchInMySql(packageRecord.designation, commitTime);
+                // dataTableResult to CveResult
+                foreach (DataRow dataTableResult in dataTableResults.Rows) {
+                    if(!HasPublishDateTimeBeforeCommitDateTime(dataTableResult, commitTime)) {
+                        continue;
+                    }
+                    CveResult cveResult = new CveResult() {
+                        CveNumber = dataTableResult["cve_number"].ToString() ?? "",
+                        Designation = dataTableResult["designation"].ToString() ?? "",
+                        Version = dataTableResult["version_affected"].ToString() ?? ""
+                    };
 
-            } else if(cveVersion == "current") {
+                    CVEcomp cVEcomp = JsonConvert.DeserializeObject<CVEcomp>(dataTableResult["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
+                    try {
+                        if (cVEcomp.containers.cna.metrics.Count != 0) {
+                            cveResult.CvssV31 = cVEcomp.containers.cna.metrics[0].cvssV3_1;
+                        }
+                        if (cVEcomp.containers.cna.descriptions.Count != 0) {
+                            cveResult.Description = cVEcomp.containers.cna.descriptions[0];
+                        }
+                    }
+                    finally {
+                        cveResults.Add(cveResult);
+                    }
+                }
+            }
+
+            if (cveResults.Count == 0) {
                 return [];
+            }
+
+            List<PackageResult> packageResults = [];
+            foreach (Package package in packages) {
+                PackageResult? packageResult = CheckVulnerabilities(package, cveResults);
+                if(packageResult is not null) {
+                    packageResults.Add(packageResult);
+                }
+            }
+            return packageResults;
+        }
+
+        /// <summary>
+        /// Searches for all node package dependencies of a single node package.
+        /// </summary>
+        /// <param name="package">Package to search</param>
+        /// <returns>List of all node package dependencies of a single node package.</returns>
+        private List<Package> ListSubTreePackages(Package package) {
+            List<Package> resultList = [];
+            foreach (Package x in package.Dependencies) {
+                resultList.AddRange(ListSubTreePackages(x));
+            }
+            resultList.Add(package);
+            return resultList;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packageName"></param>
+        /// <returns></returns>
+        private DataTable SearchInMySql(string designation, DateTime commitTime) {
+
+            // MySql Connection
+            MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
+
+            //TODO: Compare DateTime!
+            //TODO: Compare Version!
+            MySqlCommand mySqlCommand = new MySqlCommand($"" +
+                $"SELECT cve_number, designation, version_affected, full_text " +
+                $"FROM cve.cve " +
+                $"WHERE designation='{designation}';", connection);
+
+            //TODO: is Operation.TIme this still needed?
+            DataTable dataTable = new DataTable();
+            using (Operation.Time($"Query-Time for Package \"{designation}\"")) {
+                // read the result
+                connection.Open();
+                MySqlDataReader reader = mySqlCommand.ExecuteReader();
+                dataTable.Load(reader);
+                connection.Close();
+            }
+            return dataTable;
+        }
+
+        private bool HasPublishDateTimeBeforeCommitDateTime(DataRow row, DateTime commitDateTime) {
+            CVEcomp cVEcomp = JsonConvert.DeserializeObject<CVEcomp>(row["full_text"].ToString()!) ?? new CVEcomp();
+            try {
+                if(cVEcomp.containers.cna.datePublic < commitDateTime) {
+                    return true;
+                }
+                return false;
+                
+            } catch {
+                return false;
+            }
+        }
+
+        private DateTime GetCommitDateTime(string guid) {
+            ExecuteCommand("git", "log -1 --format=\"%at\" | xargs -I{} date -d @{} +%Y-%m-%dT%H:%M:%S", guid);
+            return new DateTime();
+        }
+
+
+        /// <summary>
+        /// Compares node package dependencies with cve data.
+        /// </summary>
+        /// <param name="package">Package to search for cve tracked dependencies.</param>
+        /// <param name="cveData">List of CveResult data.</param>
+        /// <returns>NodePackageResult with all dependencies and status if it is a cve tracked dependency.</returns>
+        private PackageResult? CheckVulnerabilities(Package package, List<CveResult> cveData) {
+            PackageResult packageResult = new PackageResult() {
+                Name = "",
+                isCveTracked = false
+            };
+            foreach (Package x in package.Dependencies) {
+                PackageResult? temp = CheckVulnerabilities(x, cveData);
+                if (temp is not null) {
+                    packageResult.Dependencies.Add(temp);
+                }
+            }
+            foreach (CveResult x in cveData) { // check
+                if (x.Designation.Equals(package.Name)) {
+                    packageResult.isCveTracked = true;
+                    packageResult.CvssV31 = x.CvssV31;
+                    packageResult.Description = x.Description;
+                }
+            }
+            if (packageResult.isCveTracked == false && !DepCheck(packageResult)) {
+                return null;
+            }
+            packageResult.Name = package.Name;
+            packageResult.Version = package.Version;
+            return packageResult;
+        }
+
+        /// <summary>
+        /// If Package is cve tracked, return true. Check all dependencies recursively.
+        /// </summary>
+        /// <param name="package"></param>
+        /// <returns>True if any dependency is tracked. False if no dependencies are tracked.</returns>
+        private bool DepCheck(PackageResult package) {
+            foreach (PackageResult packageResult in package.Dependencies) {
+                bool isTracked = DepCheck(packageResult);
+                if (isTracked) {
+                    goto isTrue;
+                }
+            }
+            if (package.isCveTracked) {
+                return true;
             }
             else {
-                return [];
+                return false;
             }
-            //Needs to compare designations AND versions of Used Packages with Cve
-            //Compare on cve database at the time AND
-            //Compare on cve database now
+        isTrue:
+            return true;
         }
 
-        private SimpleReportLine GenerateSimpleReportLine(List<PackageResult> releaseVulnerabilitiesList, List<PackageResult> currentVulnerabilitiesList) {
+        #endregion
+
+        #region GenerateSimpleReportLine
+
+        private SimpleReportLine GenerateSimpleReportLine(List<PackageResult> releaseVulnerabilitiesList, List<PackageResult> currentVulnerabilitiesList, string projectUrl, string tag) {
+            SimpleReportLine simpleReportLine = new SimpleReportLine();
+            // Tag and URL
+            simpleReportLine.ProjectUrl = projectUrl;
+            simpleReportLine.Tag = tag;
+            // Num of Dependencies
+            simpleReportLine.TotalReleaseDirectDependencies = releaseVulnerabilitiesList.Count;
+            simpleReportLine.TotalReleaseDirectAndTransitiveDependencies = CountDirectAndTransitiveDependencies(releaseVulnerabilitiesList);
+            simpleReportLine.TotalCurrentDirectDependencies = currentVulnerabilitiesList.Count;
+            simpleReportLine.TotalCurrentDirectAndTransitiveDependencies = CountDirectAndTransitiveDependencies(currentVulnerabilitiesList);
+            // Num of Vulnerabilities
+            simpleReportLine.TotalReleaseDirectVulnerabilities = CountDirectVulnerabilities(releaseVulnerabilitiesList);
+            simpleReportLine.TotalReleaseDirectAndTransitiveVulnerabilities = CountDirectAndTransitiveVulnerabilities(releaseVulnerabilitiesList);
+            simpleReportLine.TotalCurrentDirectVulnerabilities = CountDirectVulnerabilities(currentVulnerabilitiesList);
+            simpleReportLine.TotalCurrentDirectAndTransitiveVulnerabilities = CountDirectAndTransitiveVulnerabilities(currentVulnerabilitiesList);
+            // Other Metrics
+            simpleReportLine.releaseVulnerabilitiesDepth = GetTransitiveVulnerabilitiesDepth(releaseVulnerabilitiesList);
+            simpleReportLine.releaseHighestDirectScore = GetHighestDirectScore(releaseVulnerabilitiesList);
+            simpleReportLine.currentHighestDirectScore = GetHighestDirectScore(currentVulnerabilitiesList);
+            simpleReportLine.releaseHighestDirectSeverity = GetHighestDirectSeverity(releaseVulnerabilitiesList);
+            simpleReportLine.currentHighestDirectSeverity = GetHighestDirectSeverity(currentVulnerabilitiesList);
+            simpleReportLine.releaseHighestTransitiveScore = GetHighestTransitiveScore(releaseVulnerabilitiesList);
+            simpleReportLine.currentHighestTransitiveScore = GetHighestTransitiveScore(currentVulnerabilitiesList);
             return new SimpleReportLine();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packageResults"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        private int CountDirectAndTransitiveDependencies(List<PackageResult> packageResults, int count = 0) {
+            foreach (PackageResult packageResult in packageResults) {
+                if(packageResult.Dependencies.Count > 0) {
+                    count += CountDirectAndTransitiveDependencies(packageResult.Dependencies);
+                }
+                count += 1;
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packageResults"></param>
+        /// <returns></returns>
+        private int CountDirectVulnerabilities(List<PackageResult> packageResults) {
+            int count = 0;
+            foreach (PackageResult packageResult in packageResults) {
+                if (packageResult.isCveTracked) {
+                    count += 1;
+                }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packageResults"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        private int CountDirectAndTransitiveVulnerabilities(List<PackageResult> packageResults, int count = 0) {
+            foreach (PackageResult packageResult in packageResults) {
+                if (packageResult.Dependencies.Count > 0) {
+                    count += CountDirectAndTransitiveDependencies(packageResult.Dependencies);
+                }
+                if (packageResult.isCveTracked) {
+                    count += 1;
+                }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packageResults"></param>
+        /// <param name="depth"></param>
+        /// <returns></returns>
+        private List<int> GetTransitiveVulnerabilitiesDepth(List<PackageResult> packageResults, int depth = 0) {
+            List<int> partitionedDepthList= [];
+            foreach(PackageResult packageResult in packageResults) {
+                if (packageResult.isCveTracked) {
+                    partitionedDepthList.Add(depth);
+                }
+                if(packageResult.Dependencies is not null) {
+                    partitionedDepthList.AddRange(GetTransitiveVulnerabilitiesDepth(packageResult.Dependencies, depth + 1));
+                }
+            }
+            return partitionedDepthList;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packageResults"></param>
+        /// <returns></returns>
+        private double GetHighestDirectScore(List<PackageResult> packageResults) {
+            double highestScore = 0.0;
+            foreach (PackageResult packageResult in packageResults) {
+                if (packageResult.CvssV31 is not null && packageResult.CvssV31.baseScore != -1 && packageResult.CvssV31.baseScore > highestScore) {
+                    highestScore = packageResult.CvssV31.baseScore;
+                }
+            }
+            return highestScore;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packageResults"></param>
+        /// <returns></returns>
+        private string GetHighestDirectSeverity(List<PackageResult> packageResults) {
+            string highestSeverity = "";
+            foreach (PackageResult packageResult in packageResults) {
+                if (packageResult.CvssV31 is not null && packageResult.CvssV31.baseSeverity is not null && packageResult.CvssV31.baseSeverity != "HIGH") {
+                    return packageResult.CvssV31.baseSeverity;
+                }
+                if (packageResult.CvssV31 is not null && packageResult.CvssV31.baseSeverity == "MEDIUM" ) {
+                    highestSeverity = "MEDIUM";
+                    continue;
+                }
+                highestSeverity = packageResult.CvssV31.baseSeverity;
+            }
+            return highestSeverity;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packageResults"></param>
+        /// <param name="highestTransitiveScore"></param>
+        /// <returns></returns>
+        private double GetHighestTransitiveScore(List<PackageResult> packageResults, double highestTransitiveScore = 0.0) {
+            foreach (PackageResult packageResult in packageResults) {
+                if (packageResult.CvssV31 is not null && packageResult.CvssV31.baseScore != -1 && packageResult.CvssV31.baseScore > highestTransitiveScore) {
+                    highestTransitiveScore = packageResult.CvssV31.baseScore;
+                }
+                if (packageResult.Dependencies is not null) {
+                    highestTransitiveScore = GetHighestTransitiveScore(packageResults, highestTransitiveScore);
+                }
+            }
+            return highestTransitiveScore;
+        }
+
+        #endregion
+
 
         /// <summary>
         /// Starts a process that runs a command.
@@ -241,6 +600,31 @@ namespace AmIVulnerable.Controllers {
             runProcess.WaitForExit();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        private DateTime GetTagDateTime(string dir) {
+            ProcessStartInfo process = new ProcessStartInfo {
+                FileName = "cmd",
+                RedirectStandardInput = true,
+                WorkingDirectory = dir,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+            };
+            Process runProcess = Process.Start(process)!;
+            runProcess.StandardInput.WriteLine($"git log -1 --date=format:\"%Y-%m-%dT%T\" --format=\"%ad\"");
+            runProcess.StandardInput.WriteLine($"exit");
+            runProcess.WaitForExit();
+
+            string dirtyStringTagDateTime = runProcess.StandardOutput.ReadToEnd();
+            int length = "0000-00-00T00:00:00".Length;
+            int startIndex = dirtyStringTagDateTime.LastIndexOf("--format=\"%ad\"") + "--format=\"%ad\"".Length;
+            string stringTagDateTime = dirtyStringTagDateTime[(startIndex + 2)..(startIndex + length + 2)];
+
+            return DateTime.Parse(stringTagDateTime);
+        }
         #endregion
     }
 
