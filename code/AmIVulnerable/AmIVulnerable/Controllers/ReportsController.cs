@@ -85,9 +85,9 @@ namespace AmIVulnerable.Controllers {
                 ExecuteMySqlCommand($"" +
                     $"INSERT INTO cve.repositories (guid, repoUrl, repoOwner, repoDesignation) " +
                     $"VALUES (" +
-                    $"'{repoId}'," +
-                    $"'{npm.ProjectUrl}'," +
-                    $"'{owner}'," +
+                    $"'{repoId}', " +
+                    $"'{npm.ProjectUrl}', " +
+                    $"'{owner}', " +
                     $"'{designation});");
 
                 await Clone(npm.ProjectUrl, repoId.ToString());
