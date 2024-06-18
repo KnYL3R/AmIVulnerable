@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Modells;
 using Modells.Packages;
 using MySql.Data.MySqlClient;
@@ -40,6 +41,8 @@ namespace AmIVulnerable.Controllers {
             List<SimpleReportLine> simpleReport = [];
             foreach (MP npm in npmList) {
                 string dirGuid = await CloneProject(npm);
+                ExecuteCommand("npm", "install", dirGuid);
+                ExecuteCommand("rm", "tree.json", dirGuid);
                 if (dirGuid.Equals("Err")) {
                     return BadRequest("Could not clone project!");
                 }
@@ -67,7 +70,7 @@ namespace AmIVulnerable.Controllers {
         /// 
         /// </summary>
         /// <param name="npm"></param>
-        private async Task<string> CloneProject(Modells.Project npm) {
+        private async Task<string> CloneProject(MP npm) {
             if (npm.ProjectUrl is null) {
                 return "Err";
             }
@@ -88,7 +91,7 @@ namespace AmIVulnerable.Controllers {
                     $"'{repoId}', " +
                     $"'{npm.ProjectUrl}', " +
                     $"'{owner}', " +
-                    $"'{designation});");
+                    $"'{designation}');");
 
                 await Clone(npm.ProjectUrl, repoId.ToString());
                 return repoId.ToString();
@@ -109,7 +112,7 @@ namespace AmIVulnerable.Controllers {
                         RemoveReadOnlyAttribute(dir);
                         Directory.Delete(dir, true);
                     }
-                    Process.Start("git", $"clone {url} {dir}");
+                    Process.Start("git", $"clone {url} {dir}").WaitForExit();
                 });
             }
             catch (Exception ex) {
@@ -197,7 +200,7 @@ namespace AmIVulnerable.Controllers {
             ExecuteCommand("npm", "install", dirGuid);
             ExecuteCommand("rm", "tree.json", dirGuid);
             ExecuteCommand("npm", "list --all --json >> tree.json", dirGuid);
-            return "/tree.json";
+            return dirGuid + "/tree.json";
         }
 
         #endregion
@@ -211,7 +214,7 @@ namespace AmIVulnerable.Controllers {
         /// <returns></returns>
         private List<Package> ExtractTree(string treeFilePath) {
             List<Package> packageList = [];
-            using (JsonDocument jsonDocument = JsonDocument.Parse(F.ReadAllText(treeFilePath))) {
+            using (JsonDocument jsonDocument = JsonDocument.Parse(F.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + treeFilePath))) {
                 if (jsonDocument.RootElement.TryGetProperty("dependencies", out JsonElement dependenciesElement) &&
                     dependenciesElement.ValueKind == JsonValueKind.Object) {
                     foreach (JsonProperty dependency in dependenciesElement.EnumerateObject()) {
@@ -590,7 +593,7 @@ namespace AmIVulnerable.Controllers {
         /// <param name="command">Command used for programm</param>
         private void ExecuteCommand(string prog, string command, string dir) {
             ProcessStartInfo process = new ProcessStartInfo {
-                FileName = "cmd",
+                FileName = "bash",
                 RedirectStandardInput = true,
                 WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory + dir,
             };
@@ -607,7 +610,7 @@ namespace AmIVulnerable.Controllers {
         /// <returns></returns>
         private DateTime GetTagDateTime(string dir) {
             ProcessStartInfo process = new ProcessStartInfo {
-                FileName = "cmd",
+                FileName = "bash",
                 RedirectStandardInput = true,
                 WorkingDirectory = dir,
                 RedirectStandardOutput = true,
