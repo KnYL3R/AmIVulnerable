@@ -1,15 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis;
 using Modells;
 using Modells.Packages;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Utilities;
 using SerilogTimings;
 using System.Data;
 using System.Diagnostics;
 using System.Text.Json;
-using static Mysqlx.Error.Types;
 using F = System.IO.File;
 using MP = Modells.Project;
 
@@ -20,6 +17,9 @@ namespace AmIVulnerable.Controllers {
     public class ReportsController : ControllerBase {
 
         #region Config
+
+        private readonly static string CLI = "bash";
+        private readonly string CLI_RM = CLI == "cmd" ? "del" : "rm";
 
         private readonly IConfiguration Configuration;
         public ReportsController(IConfiguration configuration) {
@@ -41,8 +41,6 @@ namespace AmIVulnerable.Controllers {
             List<SimpleReportLine> simpleReport = [];
             foreach (MP npm in npmList) {
                 string dirGuid = await CloneProject(npm);
-                ExecuteCommand("npm", "install", dirGuid);
-                ExecuteCommand("rm", "tree.json", dirGuid);
                 if (dirGuid.Equals("Err")) {
                     return BadRequest("Could not clone project!");
                 }
@@ -54,6 +52,8 @@ namespace AmIVulnerable.Controllers {
                     // checkout release tag
                     CheckoutTagProject(dirGuid, tag);
                     List<PackageResult> depTreeRelease = AnalyseTree(ExtractTree(MakeTree(dirGuid)), GetCommitDateTime(dirGuid));
+                    //checkout latest commit again for new tag analysis (if done prematurely you end up in detached HEAD state!)
+                    CheckoutTagProject(dirGuid);
 
                     simpleReport.Add(GenerateSimpleReportLine(depTreeRelease, depTreeCurrent, npm.ProjectUrl, tag));
                 }
@@ -112,7 +112,7 @@ namespace AmIVulnerable.Controllers {
                         RemoveReadOnlyAttribute(dir);
                         Directory.Delete(dir, true);
                     }
-                    Process.Start("git", $"clone {url} {dir}").WaitForExit();
+                    Process.Start("git", $"clone {url} {AppDomain.CurrentDomain.BaseDirectory + dir}").WaitForExit();
                 });
             }
             catch (Exception ex) {
@@ -156,12 +156,13 @@ namespace AmIVulnerable.Controllers {
         private bool CheckoutTagProject(string dir, string tag = "-") {
             try {
                 ProcessStartInfo process = new ProcessStartInfo {
-                    FileName = "bash",
+                    FileName = CLI,
                     RedirectStandardInput = true,
-                    WorkingDirectory = $"{dir}",
+                    WorkingDirectory = $"{AppDomain.CurrentDomain.BaseDirectory + dir}",
                 };
 
                 Process runProcess = Process.Start(process)!;
+                runProcess.StandardInput.WriteLine($"git " + "stash");
                 runProcess.StandardInput.WriteLine($"git " + $"checkout {tag}");
                 runProcess.StandardInput.WriteLine($"exit");
                 runProcess.WaitForExit();
@@ -198,7 +199,7 @@ namespace AmIVulnerable.Controllers {
         /// <returns>File path</returns>
         private string MakeTree(string dirGuid) {
             ExecuteCommand("npm", "install", dirGuid);
-            ExecuteCommand("rm", "tree.json", dirGuid);
+            ExecuteCommand(CLI_RM, "tree.json", dirGuid);
             ExecuteCommand("npm", "list --all --json >> tree.json", dirGuid);
             return dirGuid + "/tree.json";
         }
@@ -373,7 +374,7 @@ namespace AmIVulnerable.Controllers {
         }
 
         private DateTime GetCommitDateTime(string guid) {
-            ExecuteCommand("git", "log -1 --format=\"%at\" | xargs -I{} date -d @{} +%Y-%m-%dT%H:%M:%S", guid);
+            ExecuteCommand("git", "log -1 --date=format:\"%Y-%m-%dT%T\" --format=\"%ad\"", guid);
             return new DateTime();
         }
 
@@ -459,7 +460,7 @@ namespace AmIVulnerable.Controllers {
             simpleReportLine.currentHighestDirectSeverity = GetHighestDirectSeverity(currentVulnerabilitiesList);
             simpleReportLine.releaseHighestTransitiveScore = GetHighestTransitiveScore(releaseVulnerabilitiesList);
             simpleReportLine.currentHighestTransitiveScore = GetHighestTransitiveScore(currentVulnerabilitiesList);
-            return new SimpleReportLine();
+            return simpleReportLine;
         }
 
         /// <summary>
@@ -593,7 +594,7 @@ namespace AmIVulnerable.Controllers {
         /// <param name="command">Command used for programm</param>
         private void ExecuteCommand(string prog, string command, string dir) {
             ProcessStartInfo process = new ProcessStartInfo {
-                FileName = "bash",
+                FileName = CLI,
                 RedirectStandardInput = true,
                 WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory + dir,
             };
@@ -610,7 +611,7 @@ namespace AmIVulnerable.Controllers {
         /// <returns></returns>
         private DateTime GetTagDateTime(string dir) {
             ProcessStartInfo process = new ProcessStartInfo {
-                FileName = "bash",
+                FileName = CLI,
                 RedirectStandardInput = true,
                 WorkingDirectory = dir,
                 RedirectStandardOutput = true,
