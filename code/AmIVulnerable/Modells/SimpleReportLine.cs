@@ -10,6 +10,7 @@
         public double releaseHighestDirectScore { get; set; }
         public string releaseHighestDirectSeverity { get; set; }
         public double releaseHighestTransitiveScore { get; set; }
+        public DateTime releaseDateTime { get; set; }
         public int TotalCurrentDirectDependencies { get; set; }
         public int TotalCurrentDirectAndTransitiveDependencies { get; set; }
         public int TotalCurrentDirectVulnerabilities { get; set; }

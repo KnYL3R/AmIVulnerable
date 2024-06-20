@@ -51,11 +51,12 @@ namespace AmIVulnerable.Controllers {
                     List<PackageResult> depTreeCurrent = AnalyseTree(ExtractTree(MakeTree(dirGuid)), DateTime.Now);
                     // checkout release tag
                     CheckoutTagProject(dirGuid, tag);
-                    List<PackageResult> depTreeRelease = AnalyseTree(ExtractTree(MakeTree(dirGuid)), GetCommitDateTime(dirGuid));
+                    DateTime commitDateTime = GetCommitDateTime(dirGuid);
+                    List<PackageResult> depTreeRelease = AnalyseTree(ExtractTree(MakeTree(dirGuid)), commitDateTime);
                     //checkout latest commit again for new tag analysis (if done prematurely you end up in detached HEAD state!)
                     CheckoutTagProject(dirGuid);
 
-                    simpleReport.Add(GenerateSimpleReportLine(depTreeRelease, depTreeCurrent, npm.ProjectUrl, tag));
+                    simpleReport.Add(GenerateSimpleReportLine(depTreeRelease, depTreeCurrent, npm.ProjectUrl, tag, commitDateTime));
                 }
                 DeleteProject(dirGuid);
             }
@@ -436,7 +437,7 @@ namespace AmIVulnerable.Controllers {
 
         #region GenerateSimpleReportLine
 
-        private SimpleReportLine GenerateSimpleReportLine(List<PackageResult> releaseVulnerabilitiesList, List<PackageResult> currentVulnerabilitiesList, string projectUrl, string tag) {
+        private SimpleReportLine GenerateSimpleReportLine(List<PackageResult> releaseVulnerabilitiesList, List<PackageResult> currentVulnerabilitiesList, string projectUrl, string tag, DateTime commitDateTime) {
             SimpleReportLine simpleReportLine = new SimpleReportLine();
             // Tag and URL
             simpleReportLine.ProjectUrl = projectUrl;
@@ -459,6 +460,7 @@ namespace AmIVulnerable.Controllers {
             simpleReportLine.currentHighestDirectSeverity = GetHighestDirectSeverity(currentVulnerabilitiesList);
             simpleReportLine.releaseHighestTransitiveScore = GetHighestTransitiveScore(releaseVulnerabilitiesList);
             simpleReportLine.currentHighestTransitiveScore = GetHighestTransitiveScore(currentVulnerabilitiesList);
+            simpleReportLine.releaseDateTime = commitDateTime;
             return simpleReportLine;
         }
 
@@ -612,7 +614,7 @@ namespace AmIVulnerable.Controllers {
             ProcessStartInfo process = new ProcessStartInfo {
                 FileName = CLI,
                 RedirectStandardInput = true,
-                WorkingDirectory = dir,
+                WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory + dir,
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
             };
