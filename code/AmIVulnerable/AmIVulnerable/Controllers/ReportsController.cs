@@ -18,7 +18,7 @@ namespace AmIVulnerable.Controllers {
 
         #region Config
 
-        private readonly static string CLI = "bash";
+        private readonly static string CLI = "cmd";
         private readonly string CLI_RM = CLI == "cmd" ? "del" : "rm";
 
         private readonly IConfiguration Configuration;
@@ -374,8 +374,7 @@ namespace AmIVulnerable.Controllers {
         }
 
         private DateTime GetCommitDateTime(string guid) {
-            ExecuteCommand("git", "log -1 --date=format:\"%Y-%m-%dT%T\" --format=\"%ad\"", guid);
-            return new DateTime();
+            return GetTagDateTime(guid);
         }
 
 
@@ -578,7 +577,7 @@ namespace AmIVulnerable.Controllers {
                     highestTransitiveScore = packageResult.CvssV31.baseScore;
                 }
                 if (packageResult.Dependencies is not null) {
-                    highestTransitiveScore = GetHighestTransitiveScore(packageResults, highestTransitiveScore);
+                    highestTransitiveScore = GetHighestTransitiveScore(packageResult.Dependencies, highestTransitiveScore);
                 }
             }
             return highestTransitiveScore;
