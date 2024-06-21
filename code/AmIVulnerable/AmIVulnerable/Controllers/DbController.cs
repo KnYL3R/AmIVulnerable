@@ -113,13 +113,15 @@ namespace AmIVulnerable.Controllers {
                         if (affected.Length > 25_000) {
                             affected = "to long -> view full_text";
                         }
-                        string product = "n/a";
+                        string product = "| ";
                         try {
-                            product = cve.containers.cna.affected[0].product;
-                            if (product.Length > 500) {
-                                product = product[0..500];
+                            foreach (Affected singleProduct in cve.containers.cna.affected) {
+                                product += singleProduct.product + " | ";
                             }
-                            if (product.Equals("")) {
+                            if (product.Length > 1000) {
+                                product = product[0..1000];
+                            }
+                            if (product.Equals("| ")) {
                                 product = "n/a";
                             }
                         }
@@ -136,10 +138,10 @@ namespace AmIVulnerable.Controllers {
                         connection.Close();
                     }
 
-                    connection.Open();
-                    MySqlCommand cmdIndexCreated = new MySqlCommand("CREATE INDEX idx_designation ON cve (designation);", connection);
-                    cmdIndexCreated.ExecuteNonQuery();
-                    connection.Close();
+                    //connection.Open();
+                    //MySqlCommand cmdIndexCreated = new MySqlCommand("CREATE INDEX idx_designation ON cve (designation);", connection);
+                    //cmdIndexCreated.ExecuteNonQuery();
+                    //connection.Close();
 
                     return Ok(insertAndUpdateIndex);
                 }

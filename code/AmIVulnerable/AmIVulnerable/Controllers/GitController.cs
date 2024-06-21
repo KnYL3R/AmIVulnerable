@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using SerilogTimings;
 using System.Data;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using CM = System.Configuration.ConfigurationManager;
 
@@ -102,7 +103,7 @@ namespace AmIVulnerable.Controllers {
         /// <returns></returns>
         [HttpPost]
         [Route("pullCveAndConvert")]
-        public IActionResult PullAndConvertCveFiles() {
+        public IActionResult pullCveAndConvert() {
             try {
                 ProcessStartInfo process = new ProcessStartInfo {
                     FileName = "bash",
@@ -143,7 +144,7 @@ namespace AmIVulnerable.Controllers {
                         MySqlCommand cmdTable = new MySqlCommand("" +
                             "CREATE TABLE IF NOT EXISTS cve.cve(" +
                             "cve_number VARCHAR(20) PRIMARY KEY NOT NULL," +
-                            "designation VARCHAR(500) NOT NULL," +
+                            "designation VARCHAR(1000) NOT NULL," +
                             "version_affected TEXT NOT NULL," +
                             "full_text MEDIUMTEXT NOT NULL" +
                             ")", connection);
@@ -168,11 +169,16 @@ namespace AmIVulnerable.Controllers {
                             if (affected.Length > 25_000) {
                                 affected = "to long -> view full_text";
                             }
-                            string product = "n/a";
+                            string product = "| ";
                             try {
-                                product = cve.containers.cna.affected[0].product;
-                                if (product.Length > 500) {
-                                    product = product[0..500];
+                                foreach (Affected singleProduct in cve.containers.cna.affected) {
+                                    product += singleProduct.product + " | ";
+                                }
+                                if (product.Length > 1000) {
+                                    product = product[0..1000];
+                                }
+                                if (product.Equals("| ")) {
+                                    product = "n/a";
                                 }
                             }
                             catch {
@@ -188,10 +194,10 @@ namespace AmIVulnerable.Controllers {
                             connection.Close();
                         }
 
-                        connection.Open();
-                        MySqlCommand cmdIndexCreated = new MySqlCommand("CREATE INDEX idx_designation ON cve (designation);", connection);
-                        cmdIndexCreated.ExecuteNonQuery();
-                        connection.Close();
+                        //connection.Open();
+                        //MySqlCommand cmdIndexCreated = new MySqlCommand("CREATE INDEX idx_designation ON cve (designation);", connection);
+                        //cmdIndexCreated.ExecuteNonQuery();
+                        //connection.Close();
 
                         return Ok(insertIndex);
                     }

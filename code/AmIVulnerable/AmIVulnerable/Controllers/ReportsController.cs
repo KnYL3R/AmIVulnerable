@@ -18,7 +18,7 @@ namespace AmIVulnerable.Controllers {
 
         #region Config
 
-        private readonly static string CLI = "cmd";
+        private readonly static string CLI = "bash";
         private readonly string CLI_RM = CLI == "cmd" ? "del" : "rm";
 
         private readonly IConfiguration Configuration;
@@ -342,12 +342,11 @@ namespace AmIVulnerable.Controllers {
             // MySql Connection
             MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
 
-            //TODO: Compare DateTime!
             //TODO: Compare Version!
             MySqlCommand mySqlCommand = new MySqlCommand($"" +
                 $"SELECT cve_number, designation, version_affected, full_text " +
                 $"FROM cve.cve " +
-                $"WHERE designation='{designation}';", connection);
+                $"WHERE designation LIKE '%| {designation} |%';", connection);
 
             //TODO: is Operation.TIme this still needed?
             DataTable dataTable = new DataTable();
