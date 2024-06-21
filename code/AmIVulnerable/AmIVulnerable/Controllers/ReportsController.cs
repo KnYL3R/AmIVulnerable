@@ -622,10 +622,12 @@ namespace AmIVulnerable.Controllers {
             runProcess.StandardInput.WriteLine($"exit");
             runProcess.WaitForExit();
 
-            string dirtyStringTagDateTime = runProcess.StandardOutput.ReadToEnd();
-            int length = "0000-00-00T00:00:00".Length;
-            int startIndex = dirtyStringTagDateTime.LastIndexOf("--format=\"%ad\"") + "--format=\"%ad\"".Length;
-            string stringTagDateTime = dirtyStringTagDateTime[(startIndex + 2)..(startIndex + length + 2)];
+            string stringTagDateTime = runProcess.StandardOutput.ReadToEnd();
+            if (CLI.Equals("cmd")) {
+                int length = "0000-00-00T00:00:00".Length;
+                int startIndex = stringTagDateTime.LastIndexOf("--format=\"%ad\"") + "--format=\"%ad\"".Length;
+                stringTagDateTime = stringTagDateTime[(startIndex + 2)..(startIndex + length + 2)];
+            }
 
             return DateTime.Parse(stringTagDateTime);
         }
