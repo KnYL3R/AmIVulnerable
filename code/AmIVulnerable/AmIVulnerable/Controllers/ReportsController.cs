@@ -1,14 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyModel;
 using Modells;
+using Modells.OsvResult;
 using Modells.Packages;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
-using SerilogTimings;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing.Text;
 using System.Text.Json;
 using F = System.IO.File;
 using MP = Modells.Project;
+using MPP = Modells.Packages.Package;
+using Y = Modells.Yarn;
 
 namespace AmIVulnerable.Controllers {
 
@@ -18,7 +22,7 @@ namespace AmIVulnerable.Controllers {
 
         #region Config
 
-        private readonly static string CLI = "bash";
+        private readonly static string CLI = "cmd";
         private readonly string CLI_RM = CLI == "cmd" ? "del" : "rm";
 
         private readonly IConfiguration Configuration;
@@ -36,31 +40,57 @@ namespace AmIVulnerable.Controllers {
         /// <param name="mavenList"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("simpleAnalyseNpmList")]
-        public async Task<IActionResult> SimpleAnalyseNpmList([FromBody] List<MP> npmList) {
-            List<SimpleReportLine> simpleReport = [];
+        [Route("vulnerabilityTimeLineNpm")]
+        public async Task<IActionResult> VulnerabilityTimeLineNpm([FromBody] List<MP> npmList) {
+            List<TimeSlice> timeSeries = [];
             foreach (MP npm in npmList) {
+
+                // Clone
                 string dirGuid = await CloneProject(npm);
                 if (dirGuid.Equals("Err")) {
                     return BadRequest("Could not clone project!");
                 }
-                foreach (string tag in npm.Tags) {
-                    // checkot HEAD
-                    // CheckoutTagProject(dirGuid); (Not needed due to always cloning newest commit)
-                    // Use DateTime.Now to use all CVE Data
-                    List<PackageResult> depTreeCurrent = AnalyseTree(ExtractTree(MakeTree(dirGuid)), DateTime.Now);
-                    // checkout release tag
-                    CheckoutTagProject(dirGuid, tag);
-                    DateTime commitDateTime = GetCommitDateTime(dirGuid);
-                    List<PackageResult> depTreeRelease = AnalyseTree(ExtractTree(MakeTree(dirGuid)), commitDateTime);
-                    //checkout latest commit again for new tag analysis (if done prematurely you end up in detached HEAD state!)
-                    CheckoutTagProject(dirGuid);
 
-                    simpleReport.Add(GenerateSimpleReportLine(depTreeRelease, depTreeCurrent, npm.ProjectUrl, tag, commitDateTime));
+                // npm install
+                Install(dirGuid);
+                // osv-scanner for latest
+                string osvJsonLatest = OsvExtractVulnerabilities(dirGuid);
+                OsvResult osvResultLatest = JsonConvert.DeserializeObject<OsvResult>(osvJsonLatest) ?? new OsvResult();
+                // commit DateTime
+                DateTime commitdateLatest = GetTagDateTime(dirGuid);
+                // Make tree to find if vulnerability is transitive or not
+                string treeJsonPathLatest = MakeTree(dirGuid);
+
+                timeSeries.Add(MakeTimeSlice(osvResultLatest, treeJsonPathLatest, commitdateLatest, "release", dirGuid));
+
+                foreach (string tag in npm.Tags) {
+                    CheckoutTagProject(dirGuid, tag);
+                    // npm install
+                    Install(dirGuid);
+                    // osv-scanner for latest
+                    string osvJsonCurrent = OsvExtractVulnerabilities(dirGuid);
+                    OsvResult osvResultCurrent = JsonConvert.DeserializeObject<OsvResult>(osvJsonCurrent) ?? new OsvResult();
+                    // commit DateTime
+                    DateTime commitdateCurrent = GetTagDateTime(dirGuid);
+                    // Make tree to find if vulnerability is transitive or not
+                    string treeJsonPathCurrent = MakeTree(dirGuid);
+
+                    timeSeries.Add(MakeTimeSlice(osvResultCurrent, treeJsonPathCurrent, commitdateCurrent, tag, dirGuid));
                 }
                 DeleteProject(dirGuid);
             }
-            return Ok(simpleReport);
+            return Ok(timeSeries);
+        }
+
+        private void Install(string dirGuid) {
+            if (F.Exists(dirGuid + "/yarn.lock")) {
+                ExecuteCommand("npx yarn", "", dirGuid);
+                return;
+            }
+            else if (!F.Exists(dirGuid + "package-lock.json")) {
+                ExecuteCommand("npm", "install", dirGuid);
+                return;
+            }
         }
 
         #endregion
@@ -199,389 +229,15 @@ namespace AmIVulnerable.Controllers {
         /// <param name="Tag"></param>
         /// <returns>File path</returns>
         private string MakeTree(string dirGuid) {
-            ExecuteCommand("npm", "install", dirGuid);
-            ExecuteCommand(CLI_RM, "tree.json", dirGuid);
-            ExecuteCommand("npm", "list --all --json >> tree.json", dirGuid);
+            if (F.Exists(dirGuid + "yarn.lock")) {
+                ExecuteCommand(CLI_RM, "tree.json", dirGuid);
+                ExecuteCommand("npx yarn", "list --all --json >> tree.json", dirGuid);
+            }
+            else if (F.Exists(dirGuid + "package.lock")) {
+                ExecuteCommand(CLI_RM, "tree.json", dirGuid);
+                ExecuteCommand("npm", "list --all --json >> tree.json", dirGuid);
+            }
             return dirGuid + "/tree.json";
-        }
-
-        #endregion
-
-        #region ExtractTree
-
-        /// <summary>
-        /// Extract internal representation of tree from tree.json
-        /// </summary>
-        /// <param name="treeFilePath"></param>
-        /// <returns></returns>
-        private List<Package> ExtractTree(string treeFilePath) {
-            List<Package> packageList = [];
-            using (JsonDocument jsonDocument = JsonDocument.Parse(F.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + treeFilePath))) {
-                if (jsonDocument.RootElement.TryGetProperty("dependencies", out JsonElement dependenciesElement) &&
-                    dependenciesElement.ValueKind == JsonValueKind.Object) {
-                    foreach (JsonProperty dependency in dependenciesElement.EnumerateObject()) {
-                        Package package = ExtractDependencyInfo(dependency);
-
-                        packageList.Add(package);
-                    }
-                }
-            }
-            return packageList;
-        }
-
-        /// <summary>
-        /// Extracts dependencies of a single dependency.
-        /// </summary>
-        /// <param name="dependency">Dependency that is searched for sundependencies and versions.</param>
-        /// <returns>NodePackage with all found dependencies and versions.</returns>
-        private Package ExtractDependencyInfo(JsonProperty dependency) {
-            Package package = new Package {
-                Name = dependency.Name
-            };
-            if (dependency.Value.TryGetProperty("version", out JsonElement versionElement) &&
-                versionElement.ValueKind == JsonValueKind.String) {
-                package.Version = versionElement.GetString() ?? "";
-            }
-            if (dependency.Value.TryGetProperty("dependencies", out JsonElement subDependenciesElement) &&
-                subDependenciesElement.ValueKind == JsonValueKind.Object) {
-                foreach (JsonProperty subDependency in subDependenciesElement.EnumerateObject()) {
-                    Package subPackage = ExtractDependencyInfo(subDependency);
-                    package.Dependencies.Add(subPackage);
-                }
-            }
-            return package;
-        }
-
-        #endregion
-
-        #region AnalyseTree
-
-        private record PackageRecord(string designation, string version);
-
-        /// <summary>
-        /// Check Package list agains cve data, differentiate between current cve database and past versions through cveVersion
-        /// </summary>
-        /// <param name="packageList"></param>
-        /// <param name="commitTime"></param>
-        /// <returns></returns>
-        private List<PackageResult> AnalyseTree(List<Package> packages, DateTime commitTime) {
-            List<PackageRecord> uniquePackageRecords = [];
-            foreach (Package package in packages) {
-                List<Package> subPackages = ListSubTreePackages(package);
-                foreach (Package subPackage in subPackages) {
-                    PackageRecord packageRecord = new PackageRecord(subPackage.Name, subPackage.Version);
-                    if(!uniquePackageRecords.Contains(packageRecord)) {
-                        uniquePackageRecords.Add(packageRecord);
-                    }
-                }
-            }
-            List<CveResult> cveResults = [];
-            foreach (PackageRecord packageRecord in uniquePackageRecords) {
-                DataTable dataTableResults = SearchInMySql(packageRecord.designation, commitTime);
-                // dataTableResult to CveResult
-                foreach (DataRow dataTableResult in dataTableResults.Rows) {
-                    if(!HasPublishDateTimeBeforeCommitDateTime(dataTableResult, commitTime)) {
-                        continue;
-                    }
-                    CveResult cveResult = new CveResult() {
-                        CveNumber = dataTableResult["cve_number"].ToString() ?? "",
-                        Designation = dataTableResult["designation"].ToString() ?? "",
-                        Version = dataTableResult["version_affected"].ToString() ?? ""
-                    };
-
-                    CVEcomp cVEcomp = JsonConvert.DeserializeObject<CVEcomp>(dataTableResult["full_text"].ToString() ?? string.Empty) ?? new CVEcomp();
-                    try {
-                        if (cVEcomp.containers.cna.metrics.Count != 0) {
-                            cveResult.CvssV31 = cVEcomp.containers.cna.metrics[0].cvssV3_1;
-                        }
-                        if (cVEcomp.containers.cna.descriptions.Count != 0) {
-                            cveResult.Description = cVEcomp.containers.cna.descriptions[0];
-                        }
-                    }
-                    finally {
-                        cveResults.Add(cveResult);
-                    }
-                }
-            }
-
-            if (cveResults.Count == 0) {
-                return [];
-            }
-
-            List<PackageResult> packageResults = [];
-            foreach (Package package in packages) {
-                PackageResult? packageResult = CheckVulnerabilities(package, cveResults);
-                if(packageResult is not null) {
-                    packageResults.Add(packageResult);
-                }
-            }
-            return packageResults;
-        }
-
-        /// <summary>
-        /// Searches for all node package dependencies of a single node package.
-        /// </summary>
-        /// <param name="package">Package to search</param>
-        /// <returns>List of all node package dependencies of a single node package.</returns>
-        private List<Package> ListSubTreePackages(Package package) {
-            List<Package> resultList = [];
-            foreach (Package x in package.Dependencies) {
-                resultList.AddRange(ListSubTreePackages(x));
-            }
-            resultList.Add(package);
-            return resultList;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packageName"></param>
-        /// <returns></returns>
-        private DataTable SearchInMySql(string designation, DateTime commitTime) {
-
-            // MySql Connection
-            MySqlConnection connection = new MySqlConnection(Configuration["ConnectionStrings:cvedb"]);
-
-            //TODO: Compare Version!
-            MySqlCommand mySqlCommand = new MySqlCommand($"" +
-                $"SELECT cve_number, designation, version_affected, full_text " +
-                $"FROM cve.cve " +
-                $"WHERE designation LIKE '%| {designation} |%';", connection);
-
-            //TODO: is Operation.TIme this still needed?
-            DataTable dataTable = new DataTable();
-            using (Operation.Time($"Query-Time for Package \"{designation}\"")) {
-                // read the result
-                connection.Open();
-                MySqlDataReader reader = mySqlCommand.ExecuteReader();
-                dataTable.Load(reader);
-                connection.Close();
-            }
-            return dataTable;
-        }
-
-        private bool HasPublishDateTimeBeforeCommitDateTime(DataRow row, DateTime commitDateTime) {
-            CVEcomp cVEcomp = JsonConvert.DeserializeObject<CVEcomp>(row["full_text"].ToString()!) ?? new CVEcomp();
-            try {
-                if(cVEcomp.containers.cna.datePublic < commitDateTime) {
-                    return true;
-                }
-                return false;
-                
-            } catch {
-                return false;
-            }
-        }
-
-        private DateTime GetCommitDateTime(string guid) {
-            return GetTagDateTime(guid);
-        }
-
-
-        /// <summary>
-        /// Compares node package dependencies with cve data.
-        /// </summary>
-        /// <param name="package">Package to search for cve tracked dependencies.</param>
-        /// <param name="cveData">List of CveResult data.</param>
-        /// <returns>NodePackageResult with all dependencies and status if it is a cve tracked dependency.</returns>
-        private PackageResult? CheckVulnerabilities(Package package, List<CveResult> cveData) {
-            PackageResult packageResult = new PackageResult() {
-                Name = "",
-                isCveTracked = false
-            };
-            foreach (Package x in package.Dependencies) {
-                PackageResult? temp = CheckVulnerabilities(x, cveData);
-                if (temp is not null) {
-                    packageResult.Dependencies.Add(temp);
-                }
-            }
-            foreach (CveResult x in cveData) { // check
-                if (x.Designation.Equals(package.Name)) {
-                    packageResult.isCveTracked = true;
-                    packageResult.CvssV31 = x.CvssV31;
-                    packageResult.Description = x.Description;
-                }
-            }
-            if (packageResult.isCveTracked == false && !DepCheck(packageResult)) {
-                return null;
-            }
-            packageResult.Name = package.Name;
-            packageResult.Version = package.Version;
-            return packageResult;
-        }
-
-        /// <summary>
-        /// If Package is cve tracked, return true. Check all dependencies recursively.
-        /// </summary>
-        /// <param name="package"></param>
-        /// <returns>True if any dependency is tracked. False if no dependencies are tracked.</returns>
-        private bool DepCheck(PackageResult package) {
-            foreach (PackageResult packageResult in package.Dependencies) {
-                bool isTracked = DepCheck(packageResult);
-                if (isTracked) {
-                    goto isTrue;
-                }
-            }
-            if (package.isCveTracked) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        isTrue:
-            return true;
-        }
-
-        #endregion
-
-        #region GenerateSimpleReportLine
-
-        private SimpleReportLine GenerateSimpleReportLine(List<PackageResult> releaseVulnerabilitiesList, List<PackageResult> currentVulnerabilitiesList, string projectUrl, string tag, DateTime commitDateTime) {
-            SimpleReportLine simpleReportLine = new SimpleReportLine();
-            // Tag and URL
-            simpleReportLine.ProjectUrl = projectUrl;
-            simpleReportLine.Tag = tag;
-            // Num of Dependencies
-            simpleReportLine.TotalReleaseDirectDependencies = releaseVulnerabilitiesList.Count;
-            simpleReportLine.TotalReleaseDirectAndTransitiveDependencies = CountDirectAndTransitiveDependencies(releaseVulnerabilitiesList);
-            simpleReportLine.TotalCurrentDirectDependencies = currentVulnerabilitiesList.Count;
-            simpleReportLine.TotalCurrentDirectAndTransitiveDependencies = CountDirectAndTransitiveDependencies(currentVulnerabilitiesList);
-            // Num of Vulnerabilities
-            simpleReportLine.TotalReleaseDirectVulnerabilities = CountDirectVulnerabilities(releaseVulnerabilitiesList);
-            simpleReportLine.TotalReleaseDirectAndTransitiveVulnerabilities = CountDirectAndTransitiveVulnerabilities(releaseVulnerabilitiesList);
-            simpleReportLine.TotalCurrentDirectVulnerabilities = CountDirectVulnerabilities(currentVulnerabilitiesList);
-            simpleReportLine.TotalCurrentDirectAndTransitiveVulnerabilities = CountDirectAndTransitiveVulnerabilities(currentVulnerabilitiesList);
-            // Other Metrics
-            simpleReportLine.releaseVulnerabilitiesDepth = GetTransitiveVulnerabilitiesDepth(releaseVulnerabilitiesList);
-            simpleReportLine.releaseHighestDirectScore = GetHighestDirectScore(releaseVulnerabilitiesList);
-            simpleReportLine.currentHighestDirectScore = GetHighestDirectScore(currentVulnerabilitiesList);
-            simpleReportLine.releaseHighestDirectSeverity = GetHighestDirectSeverity(releaseVulnerabilitiesList);
-            simpleReportLine.currentHighestDirectSeverity = GetHighestDirectSeverity(currentVulnerabilitiesList);
-            simpleReportLine.releaseHighestTransitiveScore = GetHighestTransitiveScore(releaseVulnerabilitiesList);
-            simpleReportLine.currentHighestTransitiveScore = GetHighestTransitiveScore(currentVulnerabilitiesList);
-            simpleReportLine.releaseDateTime = commitDateTime;
-            return simpleReportLine;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packageResults"></param>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        private int CountDirectAndTransitiveDependencies(List<PackageResult> packageResults, int count = 0) {
-            foreach (PackageResult packageResult in packageResults) {
-                if(packageResult.Dependencies.Count > 0) {
-                    count += CountDirectAndTransitiveDependencies(packageResult.Dependencies);
-                }
-                count += 1;
-            }
-            return count;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packageResults"></param>
-        /// <returns></returns>
-        private int CountDirectVulnerabilities(List<PackageResult> packageResults) {
-            int count = 0;
-            foreach (PackageResult packageResult in packageResults) {
-                if (packageResult.isCveTracked) {
-                    count += 1;
-                }
-            }
-            return count;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packageResults"></param>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        private int CountDirectAndTransitiveVulnerabilities(List<PackageResult> packageResults, int count = 0) {
-            foreach (PackageResult packageResult in packageResults) {
-                if (packageResult.Dependencies.Count > 0) {
-                    count += CountDirectAndTransitiveDependencies(packageResult.Dependencies);
-                }
-                if (packageResult.isCveTracked) {
-                    count += 1;
-                }
-            }
-            return count;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packageResults"></param>
-        /// <param name="depth"></param>
-        /// <returns></returns>
-        private List<int> GetTransitiveVulnerabilitiesDepth(List<PackageResult> packageResults, int depth = 0) {
-            List<int> partitionedDepthList= [];
-            foreach(PackageResult packageResult in packageResults) {
-                if (packageResult.isCveTracked) {
-                    partitionedDepthList.Add(depth);
-                }
-                if(packageResult.Dependencies is not null) {
-                    partitionedDepthList.AddRange(GetTransitiveVulnerabilitiesDepth(packageResult.Dependencies, depth + 1));
-                }
-            }
-            return partitionedDepthList;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packageResults"></param>
-        /// <returns></returns>
-        private double GetHighestDirectScore(List<PackageResult> packageResults) {
-            double highestScore = 0.0;
-            foreach (PackageResult packageResult in packageResults) {
-                if (packageResult.CvssV31 is not null && packageResult.CvssV31.baseScore != -1 && packageResult.CvssV31.baseScore > highestScore) {
-                    highestScore = packageResult.CvssV31.baseScore;
-                }
-            }
-            return highestScore;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packageResults"></param>
-        /// <returns></returns>
-        private string GetHighestDirectSeverity(List<PackageResult> packageResults) {
-            string highestSeverity = "";
-            foreach (PackageResult packageResult in packageResults) {
-                if (packageResult.CvssV31 is not null && packageResult.CvssV31.baseSeverity is not null && packageResult.CvssV31.baseSeverity != "HIGH") {
-                    return packageResult.CvssV31.baseSeverity;
-                }
-                if (packageResult.CvssV31 is not null && packageResult.CvssV31.baseSeverity == "MEDIUM" ) {
-                    highestSeverity = "MEDIUM";
-                    continue;
-                }
-                highestSeverity = packageResult.CvssV31.baseSeverity;
-            }
-            return highestSeverity;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packageResults"></param>
-        /// <param name="highestTransitiveScore"></param>
-        /// <returns></returns>
-        private double GetHighestTransitiveScore(List<PackageResult> packageResults, double highestTransitiveScore = 0.0) {
-            foreach (PackageResult packageResult in packageResults) {
-                if (packageResult.CvssV31 is not null && packageResult.CvssV31.baseScore != -1 && packageResult.CvssV31.baseScore > highestTransitiveScore) {
-                    highestTransitiveScore = packageResult.CvssV31.baseScore;
-                }
-                if (packageResult.Dependencies is not null) {
-                    highestTransitiveScore = GetHighestTransitiveScore(packageResult.Dependencies, highestTransitiveScore);
-                }
-            }
-            return highestTransitiveScore;
         }
 
         #endregion
@@ -630,6 +286,214 @@ namespace AmIVulnerable.Controllers {
             }
 
             return DateTime.Parse(stringTagDateTime);
+        }
+        #endregion
+
+        #region work functions
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        private string OsvExtractVulnerabilities(string dir) {
+            ExecuteCommand("osv-scanner", " --format json . > osv.json", dir);
+            return F.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + dir + "/osv.json"); ;
+        }
+
+        private TimeSlice MakeTimeSlice(OsvResult osvResult, string treeJsonPath, DateTime timestamp, string tagName = "release", string dir) {
+            TimeSlice timeSlice = new TimeSlice();
+
+            timeSlice.TagName = tagName;
+            timeSlice.Timestamp = timestamp;
+
+            // Extract JsonTree
+            List<object> packageList = new List<object>();
+            using (JsonDocument jsonDocument = JsonDocument.Parse(F.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + treeJsonPath))) {
+                if (jsonDocument.RootElement.TryGetProperty("dependencies", out JsonElement npmDependenciesElement) &&
+                    npmDependenciesElement.ValueKind == JsonValueKind.Object) {
+                    foreach (JsonProperty dependency in npmDependenciesElement.EnumerateObject()) {
+                        MPP package = ExtractDependencyInfoNpm(dependency);
+
+                        packageList.Add(package);
+                    }
+                }
+                if (jsonDocument.RootElement.TryGetProperty("results", out JsonElement yarnDependenciesElement) &&
+                    yarnDependenciesElement.ValueKind == JsonValueKind.Object) {
+                    foreach (JsonProperty dependency in yarnDependenciesElement.EnumerateObject()) {
+                        Y.Child yarnPackage = ExtractDependencyInfoYarn(dependency);
+
+                        packageList.Add(yarnPackage);
+                    }
+                }
+            }
+            timeSlice.CountDirectDependencies = packageList.Count;
+
+            if (!F.Exists(dir + "/yarn.lock")) {
+                // Make list of all transitive dependencies
+                List<MPP> allTransitiveDependencies = new List<MPP>();
+                foreach (MPP package in packageList) {
+                    allTransitiveDependencies.AddRange(TransitiveDependencies(package.Dependencies));
+                }
+                timeSlice.CountTransitiveDependencies = allTransitiveDependencies.Count;
+
+                timeSlice.CountUniqueTransitiveDependencies = GetUniquePackagesFromList(allTransitiveDependencies).Count;
+
+                // Make list of direct vulnerabilities (Known and ToDate)
+                List<MPP> allKnownDirectVulnerabilities = new List<MPP>();
+                List<MPP> allToDateDirectVulnerabilities = new List<MPP>();
+                foreach (MPP package in packageList) {
+                    foreach (Packages vulnerablePackage in osvResult.results[0].packages) {
+                        if (package.Name == vulnerablePackage.package.name && package.Version == vulnerablePackage.package.version) {
+                            allToDateDirectVulnerabilities.Add(package);
+                            if (timestamp >= OldestPublishedVulnerabilityDateTime(vulnerablePackage.vulnerabilities)) {
+                                allKnownDirectVulnerabilities.Add(package);
+                            }
+                        }
+                    }
+                }
+                timeSlice.CountKnownDirectVulnerabilities = allKnownDirectVulnerabilities.Count;
+                timeSlice.CountToDateDirectVulnerabilities = allToDateDirectVulnerabilities.Count;
+
+                // Use List of all transitive Packages from "CountTransitiveDependencies"
+                List<MPP> allKnownTransitiveVulnerabilities = new List<MPP>();
+                List<MPP> allToDateTransitiveVulnerabilities = new List<MPP>();
+                foreach (Packages vulnerablePackage in osvResult.results[0].packages) {
+                    foreach (MPP package in allTransitiveDependencies) {
+                        if (package.Name == vulnerablePackage.package.name && package.Version == vulnerablePackage.package.version) {
+                            allToDateTransitiveVulnerabilities.Add(package);
+                            if (timestamp >= OldestPublishedVulnerabilityDateTime(vulnerablePackage.vulnerabilities)) {
+                                allKnownTransitiveVulnerabilities.Add(package);
+                            }
+                        }
+                    }
+                }
+                timeSlice.CountKnownTransitiveVulnerabilities = allKnownTransitiveVulnerabilities.Count;
+                timeSlice.CountToDateTransitiveVulnerabilities = allToDateTransitiveVulnerabilities.Count;
+
+                timeSlice.CountKnownUniqueTransitiveVulnerabilities = GetUniquePackagesFromList(allKnownTransitiveVulnerabilities).Count;
+                timeSlice.CountToDateUniqueTransitiveVulnerabilities = GetUniquePackagesFromList(allToDateTransitiveVulnerabilities).Count;
+
+                // Count all Vulnerabilities found in osv scan
+                int vulnerabilityCount = 0;
+                foreach (Packages osvPackage in osvResult.results[0].packages) {
+                    vulnerabilityCount += osvPackage.vulnerabilities.Count;
+                }
+                timeSlice.CountTotalFoundVulnerabilities = vulnerabilityCount;
+                return timeSlice;
+            }
+
+            if (F.Exists(dir + "/yarn.lock")) {
+
+                List<Y.Child> yarnAllTransitiveDependencies = new List<Y.Child>();
+                foreach (Y.Child yarnPackage in packageList) {
+                    yarnAllTransitiveDependencies.AddRange(yarnPackage.children);
+                }
+                timeSlice.CountTransitiveDependencies = yarnAllTransitiveDependencies.Count;
+                timeSlice.CountUniqueTransitiveDependencies = YarnGetUniquePackagesFromList(yarnAllTransitiveDependencies).Count;
+
+                //timeSlice.CountKnownDirectVulnerabilities
+                //timeSlice.CountToDateDirectVulnerabilities
+                //timeSlice.CountKnownTransitiveVulnerabilities
+                //timeSlice.CountToDateTransitiveVulnerabilities
+                //timeSlice.CountKnownUniqueTransitiveVulnerabilities
+                //timeSlice.CountToDateUniqueTransitiveVulnerabilities
+                //timeSlice.CountTotalFoundVulnerabilities
+            }
+            // Yarn stuff
+            // TODO: ANALYSE ANGULAR!!
+
+        }
+
+        private MPP ExtractDependencyInfoNpm(JsonProperty dependency) {
+            MPP package = new MPP {
+                Name = dependency.Name
+            };
+            if (dependency.Value.TryGetProperty("version", out JsonElement versionElement) &&
+                versionElement.ValueKind == JsonValueKind.String) {
+                package.Version = versionElement.GetString() ?? "";
+            }
+            if (dependency.Value.TryGetProperty("dependencies", out JsonElement subDependenciesElement) &&
+                subDependenciesElement.ValueKind == JsonValueKind.Object) {
+                foreach (JsonProperty subDependency in subDependenciesElement.EnumerateObject()) {
+                    MPP subPackage = ExtractDependencyInfoNpm(subDependency);
+                    package.Dependencies.Add(subPackage);
+                }
+            }
+            return package;
+        }
+
+        private Y.Child ExtractDependencyInfoYarn(JsonProperty dependency) {
+            string version = dependency.Name[0..(dependency.Name.LastIndexOf('@') + 1)];
+            if (version[0] == '~' || version[0] == '^') {
+                version = version[1..version.Length];
+            }
+            Y.Child childDependency = new Y.Child {
+                name = dependency.Name,
+                version = version
+            };
+            if (dependency.Value.TryGetProperty("children", out JsonElement childrenElement) &&
+                childrenElement.ValueKind == JsonValueKind.Object) {
+                foreach (JsonProperty child in childrenElement.EnumerateObject()) {
+                    Y.Child subChildDependency = ExtractDependencyInfoYarn(child);
+                    childDependency.children.Add(subChildDependency);
+                }
+            }
+            return childDependency;
+        }
+
+        private List<MPP> TransitiveDependencies(List<MPP> packages) {
+            if (!packages.Any()) {
+                return [];
+            }
+            List<MPP> transitiveDependencies = new List<MPP>();
+
+            foreach (MPP package in packages) {
+                transitiveDependencies.Add(package);
+                transitiveDependencies.AddRange(TransitiveDependencies(package.Dependencies));
+            }
+            return transitiveDependencies;
+        }
+
+        private List<Y.Child> YarnTransitiveDependencies(List<Y.Child> yarnTransitiveDependencies) {
+            if (!yarnTransitiveDependencies.Any()) {
+                return [];
+            }
+            List<Y.Child> children = new List<Y.Child>();
+
+            foreach (Y.Child child in yarnTransitiveDependencies) {
+                children.Add(child);
+                children.AddRange(YarnTransitiveDependencies(child.children));
+            }
+            return children;
+        }
+
+        private DateTime OldestPublishedVulnerabilityDateTime(List<Vulnerability> vulnerabilities) {
+            DateTime oldestPublishedVulnerabilityDateTime = DateTime.Now;
+            foreach (Vulnerability vulnerability in vulnerabilities) {
+                if (vulnerability.published < oldestPublishedVulnerabilityDateTime) {
+                    oldestPublishedVulnerabilityDateTime = vulnerability.published;
+                }
+            }
+            return oldestPublishedVulnerabilityDateTime;
+        }
+        private List<MPP> GetUniquePackagesFromList(List<MPP> packages) {
+            List<MPP> uniquePackages = new List<MPP>();
+            foreach (MPP package in packages) {
+                if (!uniquePackages.Exists(pack => pack.Name.Equals(package.Name) && pack.Version.Equals(package.Version))) {
+                    uniquePackages.Add(package);
+                }
+            }
+            return uniquePackages;
+        }
+
+        private List<Y.Child> YarnGetUniquePackagesFromList(List<Y.Child> packages) { 
+            List<Y.Child> uniquePackages = new List<Y.Child>();
+            foreach (Y.Child package in packages) { 
+                if (!uniquePackages.Exists(pack => pack.name.Equals(package.name) && pack.version.Equals(package.version))) {
+                    uniquePackages.Add(package);
+                }
+            }
+            return uniquePackages;
         }
         #endregion
     }
