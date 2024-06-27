@@ -41,12 +41,12 @@ namespace AmIVulnerable.Controllers {
         /// <returns></returns>
         [HttpPost]
         [Route("vulnerabilityTimeLineNpm")]
-        public async Task<IActionResult> VulnerabilityTimeLineNpm([FromBody] List<MP> npmList) {
+        public async Task<IActionResult> VulnerabilityTimeLineNpmYarn([FromBody] List<MP> projects) {
             List<TimeSlice> timeSeries = [];
-            foreach (MP npm in npmList) {
+            foreach (MP project in projects) {
 
                 // Clone
-                string dirGuid = await CloneProject(npm);
+                string dirGuid = await CloneProject(project);
                 if (dirGuid.Equals("Err")) {
                     return BadRequest("Could not clone project!");
                 }
@@ -61,9 +61,9 @@ namespace AmIVulnerable.Controllers {
                 // Make tree to find if vulnerability is transitive or not
                 string treeJsonPathLatest = MakeTree(dirGuid);
 
-                timeSeries.Add(MakeTimeSlice(osvResultLatest, treeJsonPathLatest, commitdateLatest, "release", dirGuid));
+                timeSeries.Add(MakeTimeSlice(osvResultLatest, treeJsonPathLatest, commitdateLatest, dirGuid, "release"));
 
-                foreach (string tag in npm.Tags) {
+                foreach (string tag in project.Tags) {
                     CheckoutTagProject(dirGuid, tag);
                     // npm install
                     Install(dirGuid);
@@ -75,7 +75,7 @@ namespace AmIVulnerable.Controllers {
                     // Make tree to find if vulnerability is transitive or not
                     string treeJsonPathCurrent = MakeTree(dirGuid);
 
-                    timeSeries.Add(MakeTimeSlice(osvResultCurrent, treeJsonPathCurrent, commitdateCurrent, tag, dirGuid));
+                    timeSeries.Add(MakeTimeSlice(osvResultCurrent, treeJsonPathCurrent, commitdateCurrent, dirGuid, tag));
                 }
                 DeleteProject(dirGuid);
             }
@@ -83,11 +83,11 @@ namespace AmIVulnerable.Controllers {
         }
 
         private void Install(string dirGuid) {
-            if (F.Exists(dirGuid + "/yarn.lock")) {
+            if (F.Exists(AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/yarn.lock")) {
                 ExecuteCommand("npx yarn", "", dirGuid);
                 return;
             }
-            else if (!F.Exists(dirGuid + "package-lock.json")) {
+            else if (!F.Exists(AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/package-lock.json")) {
                 ExecuteCommand("npm", "install", dirGuid);
                 return;
             }
@@ -229,13 +229,13 @@ namespace AmIVulnerable.Controllers {
         /// <param name="Tag"></param>
         /// <returns>File path</returns>
         private string MakeTree(string dirGuid) {
-            if (F.Exists(dirGuid + "yarn.lock")) {
+            if (F.Exists(AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/yarn.lock")) {
                 ExecuteCommand(CLI_RM, "tree.json", dirGuid);
-                ExecuteCommand("npx yarn", "list --all --json >> tree.json", dirGuid);
+                ExecuteCommand("npx yarn", "list --all --json > tree.json", dirGuid);
             }
-            else if (F.Exists(dirGuid + "package.lock")) {
+            else if (F.Exists(AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/package.lock")) {
                 ExecuteCommand(CLI_RM, "tree.json", dirGuid);
-                ExecuteCommand("npm", "list --all --json >> tree.json", dirGuid);
+                ExecuteCommand("npm", "list --all --json > tree.json", dirGuid);
             }
             return dirGuid + "/tree.json";
         }
@@ -300,7 +300,7 @@ namespace AmIVulnerable.Controllers {
             return F.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + dir + "/osv.json"); ;
         }
 
-        private TimeSlice MakeTimeSlice(OsvResult osvResult, string treeJsonPath, DateTime timestamp, string tagName = "release", string dir) {
+        private TimeSlice MakeTimeSlice(OsvResult osvResult, string treeJsonPath, DateTime timestamp, string dir, string tagName = "release") {
             TimeSlice timeSlice = new TimeSlice();
 
             timeSlice.TagName = tagName;
@@ -317,7 +317,7 @@ namespace AmIVulnerable.Controllers {
                         packageList.Add(package);
                     }
                 }
-                if (jsonDocument.RootElement.TryGetProperty("results", out JsonElement yarnDependenciesElement) &&
+                if (jsonDocument.RootElement.TryGetProperty("data", out JsonElement yarnDependenciesElement) &&
                     yarnDependenciesElement.ValueKind == JsonValueKind.Object) {
                     foreach (JsonProperty dependency in yarnDependenciesElement.EnumerateObject()) {
                         Y.Child yarnPackage = ExtractDependencyInfoYarn(dependency);
@@ -327,6 +327,13 @@ namespace AmIVulnerable.Controllers {
                 }
             }
             timeSlice.CountDirectDependencies = packageList.Count;
+
+            // Count all Vulnerabilities found in osv scan
+            int vulnerabilityCount = 0;
+            foreach (Packages osvPackage in osvResult.results[0].packages) {
+                vulnerabilityCount += osvPackage.vulnerabilities.Count;
+            }
+            timeSlice.CountTotalFoundVulnerabilities = vulnerabilityCount;
 
             if (!F.Exists(dir + "/yarn.lock")) {
                 // Make list of all transitive dependencies
@@ -372,36 +379,53 @@ namespace AmIVulnerable.Controllers {
 
                 timeSlice.CountKnownUniqueTransitiveVulnerabilities = GetUniquePackagesFromList(allKnownTransitiveVulnerabilities).Count;
                 timeSlice.CountToDateUniqueTransitiveVulnerabilities = GetUniquePackagesFromList(allToDateTransitiveVulnerabilities).Count;
-
-                // Count all Vulnerabilities found in osv scan
-                int vulnerabilityCount = 0;
-                foreach (Packages osvPackage in osvResult.results[0].packages) {
-                    vulnerabilityCount += osvPackage.vulnerabilities.Count;
-                }
-                timeSlice.CountTotalFoundVulnerabilities = vulnerabilityCount;
-                return timeSlice;
             }
 
             if (F.Exists(dir + "/yarn.lock")) {
 
                 List<Y.Child> yarnAllTransitiveDependencies = new List<Y.Child>();
                 foreach (Y.Child yarnPackage in packageList) {
-                    yarnAllTransitiveDependencies.AddRange(yarnPackage.children);
+                    yarnAllTransitiveDependencies.AddRange(YarnTransitiveDependencies(yarnPackage.children));
                 }
                 timeSlice.CountTransitiveDependencies = yarnAllTransitiveDependencies.Count;
                 timeSlice.CountUniqueTransitiveDependencies = YarnGetUniquePackagesFromList(yarnAllTransitiveDependencies).Count;
 
-                //timeSlice.CountKnownDirectVulnerabilities
-                //timeSlice.CountToDateDirectVulnerabilities
-                //timeSlice.CountKnownTransitiveVulnerabilities
-                //timeSlice.CountToDateTransitiveVulnerabilities
-                //timeSlice.CountKnownUniqueTransitiveVulnerabilities
-                //timeSlice.CountToDateUniqueTransitiveVulnerabilities
-                //timeSlice.CountTotalFoundVulnerabilities
-            }
-            // Yarn stuff
-            // TODO: ANALYSE ANGULAR!!
+                List<Y.Child> yarnAllKnownDirectVulnerabilities = new List<Y.Child>();
+                List<Y.Child> yarnToDateDirectVulnerabilities = new List<Y.Child>();
+                foreach (Y.Child yarnPackage in packageList) {
+                    foreach (Packages osvPackage in osvResult.results[0].packages) {
+                        if(yarnPackage.name == osvPackage.package.name && yarnPackage.version == osvPackage.package.version) {
+                            yarnAllKnownDirectVulnerabilities.Add(yarnPackage);
+                            if(timestamp >= OldestPublishedVulnerabilityDateTime(osvPackage.vulnerabilities)) {
+                                yarnToDateDirectVulnerabilities.Add(yarnPackage);
+                            }
+                        }
+                    }
+                }
+                timeSlice.CountKnownDirectVulnerabilities = yarnAllKnownDirectVulnerabilities.Count;
+                timeSlice.CountToDateDirectVulnerabilities = yarnToDateDirectVulnerabilities.Count;
 
+                List<Y.Child> yarnAllKnownTransitiveVulnerabilities = new List<Y.Child>();
+                List<Y.Child> yarnAllToDateTransitiveVulnerabilities = new List<Y.Child>();
+                foreach (Y.Child yarnTransitiveDependency in yarnAllTransitiveDependencies) {
+                    foreach (Packages osvPackage in osvResult.results[0].packages) {
+                        if (yarnTransitiveDependency.name == osvPackage.package.name && yarnTransitiveDependency.version == osvPackage.package.version) {
+                            yarnAllKnownTransitiveVulnerabilities.Add(yarnTransitiveDependency);
+                            if (timestamp >= OldestPublishedVulnerabilityDateTime(osvPackage.vulnerabilities)) {
+                                yarnAllToDateTransitiveVulnerabilities.Add(yarnTransitiveDependency);
+                            }
+                        }
+
+                    }
+                }
+                timeSlice.CountKnownTransitiveVulnerabilities = yarnAllKnownTransitiveVulnerabilities.Count;
+                timeSlice.CountToDateTransitiveVulnerabilities = yarnAllToDateTransitiveVulnerabilities.Count;
+
+                timeSlice.CountKnownUniqueTransitiveVulnerabilities = YarnGetUniquePackagesFromList(yarnAllKnownTransitiveVulnerabilities).Count;
+                timeSlice.CountToDateUniqueTransitiveVulnerabilities = YarnGetUniquePackagesFromList(yarnAllToDateTransitiveVulnerabilities).Count;
+            }
+
+            return timeSlice;
         }
 
         private MPP ExtractDependencyInfoNpm(JsonProperty dependency) {
