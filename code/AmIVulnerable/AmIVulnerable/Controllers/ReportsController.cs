@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyModel;
 using Modells;
 using Modells.OsvResult;
-using Modells.Packages;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using F = System.IO.File;
 using MP = Modells.Project;
 using MPP = Modells.Packages.Package;
@@ -87,7 +85,8 @@ namespace AmIVulnerable.Controllers {
                 ExecuteCommand("npx yarn", "", dirGuid);
                 return;
             }
-            else if (!F.Exists(AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/package-lock.json")) {
+            else {
+                ExecuteCommand(CLI_RM, ".npmrc", dirGuid);
                 ExecuteCommand("npm", "install", dirGuid);
                 return;
             }
@@ -233,7 +232,7 @@ namespace AmIVulnerable.Controllers {
                 ExecuteCommand(CLI_RM, "tree.json", dirGuid);
                 ExecuteCommand("npx yarn", "list --all --json > tree.json", dirGuid);
             }
-            else if (F.Exists(AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/package.lock")) {
+            else if (F.Exists(AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/package.json")) {
                 ExecuteCommand(CLI_RM, "tree.json", dirGuid);
                 ExecuteCommand("npm", "list --all --json > tree.json", dirGuid);
             }
@@ -319,10 +318,14 @@ namespace AmIVulnerable.Controllers {
                 }
                 if (jsonDocument.RootElement.TryGetProperty("data", out JsonElement yarnDependenciesElement) &&
                     yarnDependenciesElement.ValueKind == JsonValueKind.Object) {
-                    foreach (JsonProperty dependency in yarnDependenciesElement.EnumerateObject()) {
-                        Y.Child yarnPackage = ExtractDependencyInfoYarn(dependency);
-
-                        packageList.Add(yarnPackage);
+                    if (yarnDependenciesElement.TryGetProperty("trees", out JsonElement yarnDependenciesElementC)) {
+                        foreach (JsonElement tree in yarnDependenciesElementC.EnumerateArray()) {
+                            Y.Child? yarnChild = tree.Deserialize<Y.Child>();
+                            if (yarnChild is not null) {
+                                yarnChild = RecursiveVersionExtraction(yarnChild);
+                                packageList.Add(yarnChild);
+                            }
+                        }
                     }
                 }
             }
@@ -335,7 +338,7 @@ namespace AmIVulnerable.Controllers {
             }
             timeSlice.CountTotalFoundVulnerabilities = vulnerabilityCount;
 
-            if (!F.Exists(dir + "/yarn.lock")) {
+            if (!F.Exists(AppDomain.CurrentDomain.BaseDirectory + dir + "/yarn.lock")) {
                 // Make list of all transitive dependencies
                 List<MPP> allTransitiveDependencies = new List<MPP>();
                 foreach (MPP package in packageList) {
@@ -381,7 +384,7 @@ namespace AmIVulnerable.Controllers {
                 timeSlice.CountToDateUniqueTransitiveVulnerabilities = GetUniquePackagesFromList(allToDateTransitiveVulnerabilities).Count;
             }
 
-            if (F.Exists(dir + "/yarn.lock")) {
+            if (F.Exists(AppDomain.CurrentDomain.BaseDirectory + dir + "/yarn.lock")) {
 
                 List<Y.Child> yarnAllTransitiveDependencies = new List<Y.Child>();
                 foreach (Y.Child yarnPackage in packageList) {
@@ -394,9 +397,9 @@ namespace AmIVulnerable.Controllers {
                 List<Y.Child> yarnToDateDirectVulnerabilities = new List<Y.Child>();
                 foreach (Y.Child yarnPackage in packageList) {
                     foreach (Packages osvPackage in osvResult.results[0].packages) {
-                        if(yarnPackage.name == osvPackage.package.name && yarnPackage.version == osvPackage.package.version) {
+                        if (yarnPackage.name == osvPackage.package.name && yarnPackage.version == osvPackage.package.version) {
                             yarnAllKnownDirectVulnerabilities.Add(yarnPackage);
-                            if(timestamp >= OldestPublishedVulnerabilityDateTime(osvPackage.vulnerabilities)) {
+                            if (timestamp >= OldestPublishedVulnerabilityDateTime(osvPackage.vulnerabilities)) {
                                 yarnToDateDirectVulnerabilities.Add(yarnPackage);
                             }
                         }
@@ -446,23 +449,20 @@ namespace AmIVulnerable.Controllers {
             return package;
         }
 
-        private Y.Child ExtractDependencyInfoYarn(JsonProperty dependency) {
-            string version = dependency.Name[0..(dependency.Name.LastIndexOf('@') + 1)];
-            if (version[0] == '~' || version[0] == '^') {
-                version = version[1..version.Length];
-            }
-            Y.Child childDependency = new Y.Child {
-                name = dependency.Name,
-                version = version
-            };
-            if (dependency.Value.TryGetProperty("children", out JsonElement childrenElement) &&
-                childrenElement.ValueKind == JsonValueKind.Object) {
-                foreach (JsonProperty child in childrenElement.EnumerateObject()) {
-                    Y.Child subChildDependency = ExtractDependencyInfoYarn(child);
-                    childDependency.children.Add(subChildDependency);
+        private Y.Child RecursiveVersionExtraction(Y.Child child) {
+            try {
+                for (int i = 0; i < child.children.Count; i += 1) {
+                    child.children[i] = RecursiveVersionExtraction(child.children[i]);
                 }
+                child.version = child.name[(child.name.LastIndexOf('@') + 1)..child.name.Length];
+                if (child.version[0] == '~' || child.version[0] == '^') {
+                    child.version = child.version[1..child.version.Length];
+                }
+                return child;
             }
-            return childDependency;
+            catch {
+                return child;
+            }
         }
 
         private List<MPP> TransitiveDependencies(List<MPP> packages) {
@@ -486,7 +486,9 @@ namespace AmIVulnerable.Controllers {
 
             foreach (Y.Child child in yarnTransitiveDependencies) {
                 children.Add(child);
-                children.AddRange(YarnTransitiveDependencies(child.children));
+                if(child.children != null) {
+                    children.AddRange(YarnTransitiveDependencies(child.children));
+                }
             }
             return children;
         }
@@ -510,9 +512,9 @@ namespace AmIVulnerable.Controllers {
             return uniquePackages;
         }
 
-        private List<Y.Child> YarnGetUniquePackagesFromList(List<Y.Child> packages) { 
+        private List<Y.Child> YarnGetUniquePackagesFromList(List<Y.Child> packages) {
             List<Y.Child> uniquePackages = new List<Y.Child>();
-            foreach (Y.Child package in packages) { 
+            foreach (Y.Child package in packages) {
                 if (!uniquePackages.Exists(pack => pack.name.Equals(package.name) && pack.version.Equals(package.version))) {
                     uniquePackages.Add(package);
                 }
