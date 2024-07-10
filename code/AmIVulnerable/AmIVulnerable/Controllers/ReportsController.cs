@@ -22,6 +22,7 @@ namespace AmIVulnerable.Controllers {
 
         private readonly static string CLI = "cmd";
         private readonly string CLI_RM = CLI == "cmd" ? "del" : "rm";
+        private DateTime lastDateTime = new DateTime();
 
         private readonly IConfiguration Configuration;
         public ReportsController(IConfiguration configuration) {
@@ -48,18 +49,17 @@ namespace AmIVulnerable.Controllers {
                 if (dirGuid.Equals("Err")) {
                     return BadRequest("Could not clone project!");
                 }
-
                 // npm install
                 Install(dirGuid);
                 // osv-scanner for latest
                 string osvJsonLatest = OsvExtractVulnerabilities(dirGuid);
                 OsvResult osvResultLatest = JsonConvert.DeserializeObject<OsvResult>(osvJsonLatest) ?? new OsvResult();
                 // commit DateTime
-                DateTime commitdateLatest = GetTagDateTime(dirGuid);
+                lastDateTime = GetTagDateTime(dirGuid);
                 // Make tree to find if vulnerability is transitive or not
                 string treeJsonPathLatest = MakeTree(dirGuid);
 
-                timeSeries.Add(MakeTimeSlice(osvResultLatest, treeJsonPathLatest, commitdateLatest, dirGuid, "release"));
+                timeSeries.Add(MakeTimeSlice(osvResultLatest, treeJsonPathLatest, lastDateTime, dirGuid, "release"));
 
                 foreach (string tag in project.Tags) {
                     CheckoutTagProject(dirGuid, tag);
@@ -68,12 +68,14 @@ namespace AmIVulnerable.Controllers {
                     // osv-scanner for latest
                     string osvJsonCurrent = OsvExtractVulnerabilities(dirGuid);
                     OsvResult osvResultCurrent = JsonConvert.DeserializeObject<OsvResult>(osvJsonCurrent) ?? new OsvResult();
-                    // commit DateTime
-                    DateTime commitdateCurrent = GetTagDateTime(dirGuid);
                     // Make tree to find if vulnerability is transitive or not
                     string treeJsonPathCurrent = MakeTree(dirGuid);
+                    timeSeries.Add(MakeTimeSlice(osvResultCurrent, treeJsonPathCurrent, lastDateTime, dirGuid, tag));
+                    // commit DateTime
+                    lastDateTime = GetTagDateTime(dirGuid);
 
-                    timeSeries.Add(MakeTimeSlice(osvResultCurrent, treeJsonPathCurrent, commitdateCurrent, dirGuid, tag));
+                    timeSeries.Add(MakeTimeSlice(osvResultCurrent, treeJsonPathCurrent, lastDateTime, dirGuid, tag));
+                    lastDateTime = lastDateTime.AddSeconds(-1);
                 }
                 DeleteProject(dirGuid);
             }
@@ -88,6 +90,7 @@ namespace AmIVulnerable.Controllers {
             else {
                 ExecuteCommand(CLI_RM, ".npmrc", dirGuid);
                 ExecuteCommand("npm", "install", dirGuid);
+                ExecuteCommand("npm", "i --lockfile-version 3 --package-lock-only", dirGuid);
                 return;
             }
         }
@@ -99,15 +102,15 @@ namespace AmIVulnerable.Controllers {
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="npm"></param>
-        private async Task<string> CloneProject(MP npm) {
-            if (npm.ProjectUrl is null) {
+        /// <param name="project"></param>
+        private async Task<string> CloneProject(MP project) {
+            if (project.ProjectUrl is null) {
                 return "Err";
             }
 
             else { // clone the repo
                 Guid repoId = Guid.NewGuid();
-                string trimmedUrl = npm.ProjectUrl[(npm.ProjectUrl.IndexOf("//") + 2)..(npm.ProjectUrl.Length)];
+                string trimmedUrl = project.ProjectUrl[(project.ProjectUrl.IndexOf("//") + 2)..(project.ProjectUrl.Length)];
                 trimmedUrl = trimmedUrl[(trimmedUrl.IndexOf('/') + 1)..(trimmedUrl.Length)];
                 string owner = trimmedUrl[0..trimmedUrl.IndexOf('/', 1)];
                 string designation = trimmedUrl[(owner.Length + 1)..trimmedUrl.Length];
@@ -119,11 +122,11 @@ namespace AmIVulnerable.Controllers {
                     $"INSERT INTO cve.repositories (guid, repoUrl, repoOwner, repoDesignation) " +
                     $"VALUES (" +
                     $"'{repoId}', " +
-                    $"'{npm.ProjectUrl}', " +
+                    $"'{project.ProjectUrl}', " +
                     $"'{owner}', " +
                     $"'{designation}');");
 
-                await Clone(npm.ProjectUrl, repoId.ToString());
+                await Clone(project.ProjectUrl, repoId.ToString());
                 return repoId.ToString();
             }
         }
