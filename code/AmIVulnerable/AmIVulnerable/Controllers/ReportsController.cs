@@ -7,6 +7,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using F = System.IO.File;
 using MP = Modells.Project;
 using MPP = Modells.Packages.Package;
@@ -31,7 +32,7 @@ namespace AmIVulnerable.Controllers {
 
         #endregion
 
-        #region Controller
+        #region Controllers
 
         /// <summary>
         /// Generate a SimpleReport for a list of Projects
@@ -80,6 +81,33 @@ namespace AmIVulnerable.Controllers {
                 DeleteProject(dirGuid);
             }
             return Ok(timeSeries);
+        }
+
+        [HttpPost]
+        [Route("vulnerabilityMetrics")]
+        public async Task<IActionResult> VulnerabilityMetrics([FromBody] List<MP> projects) {
+            List<ProjectMetricResult> projectMetricResults = new List<ProjectMetricResult>();
+            foreach (MP project in projects) {
+                // Clone
+                string dirGuid = await CloneProject(project);
+                if (dirGuid.Equals("Err")) {
+                    return BadRequest("Could not clone project!");
+                }
+
+                // npm install
+                Install(dirGuid);
+                // osv-scanner for latest
+                string osvJson = OsvExtractVulnerabilities(dirGuid);
+                OsvResult osvResult = JsonConvert.DeserializeObject<OsvResult>(osvJson) ?? new OsvResult();
+                // commit DateTime
+                DateTime lastDateTime = GetTagDateTime(dirGuid);
+                // Make tree to find if vulnerability is transitive or not
+                string treeJsonPath = MakeTree(dirGuid);
+
+                projectMetricResults.Add(MakeMetricResult(osvResult, treeJsonPath, lastDateTime, dirGuid, project.ProjectUrl));
+                DeleteProject(dirGuid);
+            }
+            return Ok(projectMetricResults);
         }
 
         private void Install(string dirGuid) {
@@ -489,7 +517,7 @@ namespace AmIVulnerable.Controllers {
 
             foreach (Y.Child child in yarnTransitiveDependencies) {
                 children.Add(child);
-                if(child.children != null) {
+                if (child.children != null) {
                     children.AddRange(YarnTransitiveDependencies(child.children));
                 }
             }
@@ -524,6 +552,88 @@ namespace AmIVulnerable.Controllers {
             }
             return uniquePackages;
         }
+        private ProjectMetricResult MakeMetricResult(OsvResult osvResult, string treeJsonPath, DateTime timestamp, string dir, string url) {
+            ProjectMetricResult projectMetricResult = new ProjectMetricResult();
+            projectMetricResult.AnalyseTime = timestamp;
+            projectMetricResult.ProjectUrl = url;
+            projectMetricResult.VulnerabilityMetrics = MakeMetrics(osvResult, treeJsonPath, dir);
+            return new ProjectMetricResult();
+        }
+        private List<VulnerabilityMetric> MakeMetrics(OsvResult osvResult, string treeJsonPath, string dir) {
+            List<VulnerabilityMetric> vulnerabilityMetrics = new List<VulnerabilityMetric>();
+            foreach (Packages osvPackage in osvResult.results[0].packages) {
+                VulnerabilityMetric vulnerabilityMetric = new VulnerabilityMetric();
+
+                //General Data
+                foreach (Vulnerability vulnerability in osvPackage.vulnerabilities) {
+                    foreach (Severity severity in vulnerability.severity) {
+                        vulnerabilityMetric.CvssVersion.Add(severity.type);
+                        vulnerabilityMetric.NistSeverity.Add(MakeNistScore(severity.score));
+                        vulnerabilityMetric.MetricData.Add(MakeMetricData());
+                    }
+                }
+
+                //Metric Score Caluculation
+                vulnerabilityMetric.MetricScore = MakeMetricScore();
+
+                vulnerabilityMetrics.Add(vulnerabilityMetric);
+            }
+            return vulnerabilityMetrics;
+        }
+
+        //Nist Score using CVSS Version 3.1 Formula
+        private double MakeNistScore(string vector) {
+            //Do Nist Equations for CVSS_V3.1 (https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
+            return 0.0;
+        }
+
+        //Metric Cube Data
+        private MetricData MakeMetricData() {
+            MetricData metricData = new MetricData();
+            //metricData.TransitiveDepth = 
+            //metricData.Vector =
+            //metricData.UsageCount
+            //metricData.OwnDependenciesCount
+            //metricData.OwnVulnerabilitiesCount
+            //metricData.PublishedSince =
+            return metricData;
+        }
+
+        //Calculate Metric Score based on metricData for each Vulnerable Package (not every Vulnerability of package)
+        //this is done becuase using a different package will technically result in ALL vulnerabilities of the current package being resolved
+        private double MakeMetricScore() {
+            return 0.0;
+        }
+
+        //Make string vector to element of Vector class
+        private string MakeVector(string vectorString) {
+            Vector vector = new Vector();
+            Match attackVector = Regex.Match(vectorString, @"/AV:+\w{1}/");
+            switch (attackVector.Groups[0].Value) {
+                case "N": {
+                        vector.AttackVector = AttackVector.Network;
+                        break;
+                    }
+                case "A": {
+                        vector.AttackVector = AttackVector.Adjacent_Network;
+                        break;
+                    }
+                case "L": {
+                        vector.AttackVector = AttackVector.Local;
+                        break;
+                    }
+                case "P": {
+                        vector.AttackVector = AttackVector.Physial;
+                        break;
+                    }
+                default: {
+                        vector.AttackVector = AttackVector.Not_Available;
+                        break;
+                    }
+            }
+            return "";
+        }
+
         #endregion
     }
 
