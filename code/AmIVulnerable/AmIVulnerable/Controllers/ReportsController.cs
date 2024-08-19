@@ -104,7 +104,19 @@ namespace AmIVulnerable.Controllers {
                 // Make tree to find if vulnerability is transitive or not
                 string treeJsonPath = MakeTree(dirGuid);
 
-                projectMetricResults.Add(MakeMetricResult(osvResult, treeJsonPath, lastDateTime, dirGuid, project.ProjectUrl));
+                List<MPP> packageList = new List<MPP>();
+                using (JsonDocument jsonDocument = JsonDocument.Parse(F.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + treeJsonPath))) {
+                    if (jsonDocument.RootElement.TryGetProperty("dependencies", out JsonElement npmDependenciesElement) &&
+                        npmDependenciesElement.ValueKind == JsonValueKind.Object) {
+                        foreach (JsonProperty dependency in npmDependenciesElement.EnumerateObject()) {
+                            MPP package = ExtractDependencyInfoNpm(dependency);
+
+                            packageList.Add(package);
+                        }
+                    }
+                }
+
+                projectMetricResults.Add(MakeMetricResult(osvResult, treeJsonPath, lastDateTime, dirGuid, project.ProjectUrl, packageList));
                 DeleteProject(dirGuid);
             }
             return Ok(projectMetricResults);
@@ -552,33 +564,63 @@ namespace AmIVulnerable.Controllers {
             }
             return uniquePackages;
         }
-        private ProjectMetricResult MakeMetricResult(OsvResult osvResult, string treeJsonPath, DateTime timestamp, string dir, string url) {
+        private ProjectMetricResult MakeMetricResult(OsvResult osvResult, string treeJsonPath, DateTime timestamp, string dir, string url, List<MPP> packageList) {
             ProjectMetricResult projectMetricResult = new ProjectMetricResult();
             projectMetricResult.AnalyseTime = timestamp;
             projectMetricResult.ProjectUrl = url;
-            projectMetricResult.VulnerabilityMetrics = MakeMetrics(osvResult, treeJsonPath, dir);
+            projectMetricResult.VulnerabilityMetrics = MakeMetrics(osvResult, treeJsonPath, dir, packageList);
             return new ProjectMetricResult();
         }
-        private List<VulnerabilityMetric> MakeMetrics(OsvResult osvResult, string treeJsonPath, string dir) {
+        private List<VulnerabilityMetric> MakeMetrics(OsvResult osvResult, string treeJsonPath, string dir, List<MPP> packageList) {
             List<VulnerabilityMetric> vulnerabilityMetrics = new List<VulnerabilityMetric>();
             foreach (Packages osvPackage in osvResult.results[0].packages) {
                 VulnerabilityMetric vulnerabilityMetric = new VulnerabilityMetric();
-
+                vulnerabilityMetric.PackageName = osvPackage.package.name;
+                vulnerabilityMetric.PackageVersion = osvPackage.package.version;
+                MPP vulnerablePackage = packageList.Find(x => x.Name == osvPackage.package.name && x.Version == osvPackage.package.version) ?? new MPP();
                 //General Data
                 foreach (Vulnerability vulnerability in osvPackage.vulnerabilities) {
                     foreach (Severity severity in vulnerability.severity) {
                         vulnerabilityMetric.CvssVersion.Add(severity.type);
                         vulnerabilityMetric.NistSeverity.Add(MakeNistScore(severity.score));
-                        vulnerabilityMetric.MetricData.Add(MakeMetricData());
+                        vulnerabilityMetric.MetricData.Add(MakeMetricData(severity.score, treeJsonPath, dir, vulnerability, vulnerablePackage, osvResult.results[0].packages));
                     }
                 }
 
                 //Metric Score Caluculation
-                vulnerabilityMetric.MetricScore = MakeMetricScore();
+                vulnerabilityMetric.MetricScore = MakeMetricScore(vulnerabilityMetric.MetricData);
 
                 vulnerabilityMetrics.Add(vulnerabilityMetric);
             }
             return vulnerabilityMetrics;
+        }
+
+        //Metric Cube Data
+        private MetricData MakeMetricData(string vector, string treeJsonPath, string dir, Vulnerability vulnerability, MPP vulnerablePackage, List<Packages> osvPackages) {
+            MetricData metricData = new MetricData();
+            //metricData.TransitiveDepths = 
+            metricData.Vector = MakeVector(vector);
+            //metricData.UsageCount = 
+            List<MPP> ownDependencies = TransitiveDependencies([vulnerablePackage]);
+            metricData.OwnDependenciesCount = ownDependencies.Count();
+
+            List<MPP> ownUniqueVulnerabilities = new List<MPP>();
+            foreach (Packages osvPackage in osvPackages) {
+                foreach(MPP package in ownDependencies) {
+                    if(package.Name == osvPackage.package.name && package.Version == osvPackage.package.version && !ownUniqueVulnerabilities.Contains(package)) {
+                        ownUniqueVulnerabilities.Add(package);
+                    }
+                }
+            }
+            metricData.OwnUniqueVulnerabilitiesCount = ownUniqueVulnerabilities.Count();
+            metricData.PublishedSince = vulnerability.published;
+            return metricData;
+        }
+
+        //Calculate Metric Score based on list of metricData for each Vulnerable Package and its vulnerabilities (not every Vulnerability of package)
+        //this is done becuase using a different package will technically result in ALL vulnerabilities of the current package being resolved
+        private double MakeMetricScore(List<MetricData> metricData) {
+            return 0.0;
         }
 
         //Nist Score using CVSS Version 3.1 Formula
@@ -587,42 +629,25 @@ namespace AmIVulnerable.Controllers {
             return 0.0;
         }
 
-        //Metric Cube Data
-        private MetricData MakeMetricData() {
-            MetricData metricData = new MetricData();
-            //metricData.TransitiveDepth = 
-            //metricData.Vector =
-            //metricData.UsageCount
-            //metricData.OwnDependenciesCount
-            //metricData.OwnVulnerabilitiesCount
-            //metricData.PublishedSince =
-            return metricData;
-        }
-
-        //Calculate Metric Score based on metricData for each Vulnerable Package (not every Vulnerability of package)
-        //this is done becuase using a different package will technically result in ALL vulnerabilities of the current package being resolved
-        private double MakeMetricScore() {
-            return 0.0;
-        }
-
         //Make string vector to element of Vector class
-        private string MakeVector(string vectorString) {
+        private Vector MakeVector(string vectorString) {
             Vector vector = new Vector();
+
             Match attackVector = Regex.Match(vectorString, @"/AV:+\w{1}/");
             switch (attackVector.Groups[0].Value) {
-                case "N": {
+                case "/AV:N/": {
                         vector.AttackVector = AttackVector.Network;
                         break;
                     }
-                case "A": {
+                case "/AV:A/": {
                         vector.AttackVector = AttackVector.Adjacent_Network;
                         break;
                     }
-                case "L": {
+                case "/AV:L/": {
                         vector.AttackVector = AttackVector.Local;
                         break;
                     }
-                case "P": {
+                case "/AV:P/": {
                         vector.AttackVector = AttackVector.Physial;
                         break;
                     }
@@ -631,7 +656,135 @@ namespace AmIVulnerable.Controllers {
                         break;
                     }
             }
-            return "";
+
+            Match attackComplexity = Regex.Match(vectorString, @"/AC:+\w{1}/");
+            switch (attackComplexity.Groups[0].Value) {
+                case "/AC:L/": {
+                        vector.AttackComplexity = AttackComplexity.Low;
+                        break;
+                    }
+                case "/AC:H/": {
+                        vector.AttackComplexity = AttackComplexity.High;
+                        break;
+                    }
+                default: {
+                        vector.AttackComplexity = AttackComplexity.Not_Available;
+                        break;
+                    }
+            }
+
+            Match privilegesRequired = Regex.Match(vectorString, @"/PR:+\w{1}/");
+            switch (privilegesRequired.Groups[0].Value) {
+                case "/PR:N/": {
+                        vector.PrivilegesRequired = BaseScoreMetric.None;
+                        break;
+                    }
+                case "/PR:L/": {
+                        vector.PrivilegesRequired = BaseScoreMetric.Low;
+                        break;
+                    }
+                case "/PR:H/": {
+                        vector.PrivilegesRequired = BaseScoreMetric.High;
+                        break;
+                    }
+                default: {
+                        vector.PrivilegesRequired = BaseScoreMetric.Not_Available;
+                        break;
+                    }
+            }
+
+            Match userInteraction = Regex.Match(vectorString, @"/UI:+\w{1}/");
+            switch (userInteraction.Groups[0].Value) {
+                case "/UI:N/": {
+                        vector.UserInteraction = UserInteraction.None;
+                        break;
+                    }
+                case "/UI:R/": {
+                        vector.UserInteraction = UserInteraction.Required;
+                        break;
+                    }
+                default: {
+                        vector.UserInteraction = UserInteraction.Not_Available;
+                        break;
+                    }
+            }
+
+            Match scope = Regex.Match(vectorString, @"/S:+\w{1}/");
+            switch (scope.Groups[0].Value) {
+                case "/S:U/": {
+                        vector.Scope = Scope.Unchanged;
+                        break;
+                    }
+                case "/S:C/": {
+                        vector.Scope = Scope.Changed;
+                        break;
+                    }
+                default: {
+                        vector.Scope = Scope.Not_Available;
+                        break;
+                    }
+            }
+
+            Match confidentialityImpact = Regex.Match(vectorString, @"/C:+\w{1}/");
+            switch (confidentialityImpact.Groups[0].Value) {
+                case "/C:N/": {
+                        vector.ConfidentialityImpact = BaseScoreMetric.None;
+                        break;
+                    }
+                case "/C:L/": {
+                        vector.ConfidentialityImpact = BaseScoreMetric.Low;
+                        break;
+                    }
+                case "/C:H/": {
+                        vector.ConfidentialityImpact = BaseScoreMetric.High;
+                        break;
+                    }
+                default: {
+                        vector.ConfidentialityImpact = BaseScoreMetric.Not_Available;
+                        break;
+                    }
+            }
+
+            Match integrityImpact = Regex.Match(vectorString, @"/I:+\w{1}/");
+            switch (integrityImpact.Groups[0].Value) {
+                case "/I:N/": {
+                        vector.IntegrityImpact = BaseScoreMetric.None;
+                        break;
+                    }
+                case "/I:L/": {
+                        vector.IntegrityImpact = BaseScoreMetric.Low;
+                        break;
+                    }
+                case "/I:H/": {
+                        vector.IntegrityImpact = BaseScoreMetric.High;
+                        break;
+                    }
+                default: {
+                        vector.IntegrityImpact = BaseScoreMetric.Not_Available;
+                        break;
+                    }
+            }
+
+            Match availabilityImpact = Regex.Match(vectorString, @"/A:+\w{1}/");
+            switch (availabilityImpact.Groups[0].Value) {
+                case "/A:N/": {
+                        vector.AvailabilityImpact = BaseScoreMetric.None;
+                        break;
+                    }
+                case "/A:L/": {
+                        vector.AvailabilityImpact = BaseScoreMetric.Low;
+                        break;
+                    }
+                case "/A:H/": {
+                        vector.AvailabilityImpact = BaseScoreMetric.High;
+                        break;
+                    }
+                default: {
+                        vector.AvailabilityImpact = BaseScoreMetric.Not_Available;
+                        break;
+                    }
+            }
+            return vector;
         }
 
         #endregion

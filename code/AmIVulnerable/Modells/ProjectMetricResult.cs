@@ -20,6 +20,12 @@ namespace Modells {
 
     }
     public class VulnerabilityMetric {
+        [JsonProperty("PackageName")]
+        [JsonPropertyName("PackageName")]
+        public string PackageName { get; set; } = "";
+        [JsonProperty("PackageVersion")]
+        [JsonPropertyName("PackageVersion")]
+        public string PackageVersion { get; set; } = "";
         [JsonProperty("CvssVersion")]
         [JsonPropertyName("CvssVersion")]
         public List<string> CvssVersion { get; set; } = new List<string>();
@@ -34,9 +40,9 @@ namespace Modells {
         public List<MetricData> MetricData { get; set; } = new List<MetricData>();
     }
     public class MetricData {
-        [JsonProperty("TransitiveDepth")]
-        [JsonPropertyName("TransitiveDepth")]
-        public int TransitiveDepth { get; set; }
+        [JsonProperty("TransitiveDepths")]
+        [JsonPropertyName("TransitiveDepths")]
+        public List<int> TransitiveDepths { get; set; } = new List<int>();
         [JsonProperty("Vector")]
         [JsonPropertyName("Vector")]
         public Vector Vector { get; set; } = new Vector();
@@ -48,7 +54,7 @@ namespace Modells {
         public int OwnDependenciesCount { get; set; }
         [JsonProperty("OwnVulnerabilitiesCount")]
         [JsonPropertyName("OwnVulnerabilitiesCount")]
-        public int OwnVulnerabilitiesCount { get; set; }
+        public int OwnUniqueVulnerabilitiesCount { get; set; }
         [JsonProperty("PublishedSince")]
         [JsonPropertyName("PublishedSince")]
         public DateTime PublishedSince { get; set; }
