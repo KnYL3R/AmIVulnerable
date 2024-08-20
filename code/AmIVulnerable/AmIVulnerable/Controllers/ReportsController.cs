@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using F = System.IO.File;
 using MP = Modells.Project;
@@ -32,7 +31,7 @@ namespace AmIVulnerable.Controllers {
 
         #endregion
 
-        #region Controllers
+        #region Endpoints
 
         /// <summary>
         /// Generate a SimpleReport for a list of Projects
@@ -46,15 +45,15 @@ namespace AmIVulnerable.Controllers {
             foreach (MP project in projects) {
 
                 // Clone
-                string dirGuid = await CloneProject(project);
+                string dirGuid = await project.Clone();
                 if (dirGuid.Equals("Err")) {
                     return BadRequest("Could not clone project!");
                 }
                 // npm install
                 Install(dirGuid);
                 // osv-scanner for latest
-                string osvJsonLatest = OsvExtractVulnerabilities(dirGuid);
-                OsvResult osvResultLatest = JsonConvert.DeserializeObject<OsvResult>(osvJsonLatest) ?? new OsvResult();
+                OsvResult osvResultLatest = new OsvResult();
+                osvResultLatest = osvResultLatest.OsvExtractVulnerabilities(dirGuid);
                 // commit DateTime
                 lastDateTime = GetTagDateTime(dirGuid);
                 // Make tree to find if vulnerability is transitive or not
@@ -78,7 +77,6 @@ namespace AmIVulnerable.Controllers {
                     timeSeries.Add(MakeTimeSlice(osvResultCurrent, treeJsonPathCurrent, lastDateTime, dirGuid, tag));
                     lastDateTime = lastDateTime.AddSeconds(-1);
                 }
-                DeleteProject(dirGuid);
             }
             return Ok(timeSeries);
         }
@@ -89,7 +87,7 @@ namespace AmIVulnerable.Controllers {
             List<ProjectMetricResult> projectMetricResults = new List<ProjectMetricResult>();
             foreach (MP project in projects) {
                 // Clone
-                string dirGuid = await CloneProject(project);
+                string dirGuid = await project.Clone();
                 if (dirGuid.Equals("Err")) {
                     return BadRequest("Could not clone project!");
                 }
@@ -117,7 +115,6 @@ namespace AmIVulnerable.Controllers {
                 }
 
                 projectMetricResults.Add(MakeMetricResult(osvResult, treeJsonPath, lastDateTime, dirGuid, project.ProjectUrl, packageList));
-                DeleteProject(dirGuid);
             }
             return Ok(projectMetricResults);
         }
@@ -138,76 +135,6 @@ namespace AmIVulnerable.Controllers {
         #endregion
 
         #region Internal function(s)
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="project"></param>
-        private async Task<string> CloneProject(MP project) {
-            if (project.ProjectUrl is null) {
-                return "Err";
-            }
-
-            else { // clone the repo
-                Guid repoId = Guid.NewGuid();
-                string trimmedUrl = project.ProjectUrl[(project.ProjectUrl.IndexOf("//") + 2)..(project.ProjectUrl.Length)];
-                trimmedUrl = trimmedUrl[(trimmedUrl.IndexOf('/') + 1)..(trimmedUrl.Length)];
-                string owner = trimmedUrl[0..trimmedUrl.IndexOf('/', 1)];
-                string designation = trimmedUrl[(owner.Length + 1)..trimmedUrl.Length];
-                if (designation.Contains('/')) {
-                    designation = designation[0..trimmedUrl.IndexOf('/', owner.Length + 1)];
-                }
-
-                ExecuteMySqlCommand($"" +
-                    $"INSERT INTO cve.repositories (guid, repoUrl, repoOwner, repoDesignation) " +
-                    $"VALUES (" +
-                    $"'{repoId}', " +
-                    $"'{project.ProjectUrl}', " +
-                    $"'{owner}', " +
-                    $"'{designation}');");
-
-                await Clone(project.ProjectUrl, repoId.ToString());
-                return repoId.ToString();
-            }
-        }
-
-        /// <summary>
-        /// Clone a git repository.
-        /// </summary>
-        /// <param name="url">URL of git project to clone.</param>
-        /// <param name="tag">Tag of git project.</param>
-        /// <param name="dir">Directory where to clone project into.</param>
-        /// <returns></returns>
-        private static async Task Clone(string url, string dir) {
-            try {
-                await Task.Run(() => {
-                    if (Directory.Exists(dir)) {
-                        RemoveReadOnlyAttribute(dir);
-                        Directory.Delete(dir, true);
-                    }
-                    Process.Start("git", $"clone {url} {AppDomain.CurrentDomain.BaseDirectory + dir}").WaitForExit();
-                });
-            }
-            catch (Exception ex) {
-                await Console.Out.WriteLineAsync(ex.StackTrace);
-            }
-        }
-
-        /// <summary>
-        /// Removes read only access of files.
-        /// </summary>
-        /// <param name="path">File path to folder where all read only attributes of files need to be removed.</param>
-        private static void RemoveReadOnlyAttribute(string path) {
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
-
-            foreach (FileInfo file in directoryInfo.GetFiles()) {
-                file.Attributes &= ~FileAttributes.ReadOnly;
-            }
-
-            foreach (DirectoryInfo subDirectory in directoryInfo.GetDirectories()) {
-                RemoveReadOnlyAttribute(subDirectory.FullName);
-            }
-        }
 
         private DataTable ExecuteMySqlCommand(string command) {
             // MySql Connection
@@ -245,20 +172,6 @@ namespace AmIVulnerable.Controllers {
             catch (Exception ex) {
                 Console.WriteLine("Error with clone, tag?\n" + ex.Message);
                 return false;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dir"></param>
-        private void DeleteProject(string dir) {
-            if (Directory.Exists(dir)) {
-                RemoveReadOnlyAttribute(dir);
-                Directory.Delete(dir, true);
-
-                //dir is guid (folder named after guid)
-                ExecuteMySqlCommand($"DELETE FROM cve.repositories WHERE guid LIKE '{dir}';");
             }
         }
 

@@ -1,5 +1,8 @@
 ﻿using Newtonsoft.Json;
+using System.Diagnostics;
+using System.Net.Http.Headers;
 using System.Text.Json.Serialization;
+using F = System.IO.File;
 
 namespace Modells.OsvResult {
     public class OsvResult {
@@ -10,6 +13,24 @@ namespace Modells.OsvResult {
         [JsonProperty("experimental_config")]
         [JsonPropertyName("experimental_config")]
         public ExperimentalConfig experimental_config { get; set; }
+
+        private readonly static string CLI = "cmd";
+
+        public OsvResult OsvExtractVulnerabilities(string dir) {
+            ExecuteCommand("osv-scanner", " --format json . > osv.json", dir);
+            return JsonConvert.DeserializeObject<OsvResult>(F.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + dir + "/osv.json")) ?? new OsvResult();
+        }
+        private void ExecuteCommand(string prog, string command, string dir) {
+            ProcessStartInfo process = new ProcessStartInfo {
+                FileName = CLI,
+                RedirectStandardInput = true,
+                WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory + dir,
+            };
+            Process runProcess = Process.Start(process)!;
+            runProcess.StandardInput.WriteLine($"{prog} {command}");
+            runProcess.StandardInput.WriteLine($"exit");
+            runProcess.WaitForExit();
+        }
     }
     public class Affected {
         [JsonProperty("package")]
@@ -224,6 +245,4 @@ namespace Modells.OsvResult {
         [JsonPropertyName("database_specific")]
         public DatabaseSpecific database_specific { get; set; }
     }
-
-
 }
