@@ -114,21 +114,27 @@ namespace Modells {
                 ISC = 7.52m * (ISC_Base - 0.029m) - 3.25m * (decimal)Math.Pow(((double)ISC_Base - 0.02), 15.0);
             }
 
-            //Exploitability Score
-            decimal ESC = 8.22m * 
-                ((decimal)AttackVector/100) * 
-                ((decimal)AttackComplexity / 100) * 
-                ((decimal)PrivilegesRequired / 100) * 
-                ((decimal)UserInteraction / 100);
-
             //BaseScore
             if (ISC == 0) {
                 baseScore = 0;
-            } else if (Scope == Scope.Unchanged) {
-                baseScore = Math.Ceiling(Math.Min((ISC + ESC), 10));
-            } else if (Scope == Scope.Unchanged) {
-                baseScore = Math.Ceiling(1.08m * Math.Min((ISC + ESC), 10));
-
+            }
+            else if (Scope == Scope.Unchanged) {//Exploitability Score
+                decimal ESC = 8.22m *
+                    ((decimal)AttackVector / 100) *
+                    ((decimal)AttackComplexity / 100) *
+                    ((decimal)PrivilegesRequired / 100) *
+                    ((decimal)UserInteraction / 100);
+                baseScore = Math.Round(Math.Min((ISC + ESC), 10), 1);
+            }
+            else if (Scope == Scope.Changed) {//Exploitability Score
+                if (PrivilegesRequired == PrivilegesRequired.High) PrivilegesRequired = PrivilegesRequired.High_Scope_Changed;
+                if (PrivilegesRequired == PrivilegesRequired.Low) PrivilegesRequired = PrivilegesRequired.Low_Scope_Changed;
+                decimal ESC = 8.22m *
+                    ((decimal)AttackVector / 100) *
+                    ((decimal)AttackComplexity / 100) *
+                    ((decimal)PrivilegesRequired / 100) *
+                    ((decimal)UserInteraction / 100);
+                baseScore = Math.Round(1.08m * Math.Min((ISC + ESC), 10), 1);
             }
             return baseScore;
         }
@@ -138,22 +144,22 @@ namespace Modells {
         Adjacent_Network = 62,
         Local = 55,
         Physial = 20,
-        Not_Available = 0,
+        Not_Available = -1,
     }
     public enum AttackComplexity {
         Low = 77,
         High = 44,
-        Not_Available = 0,
+        Not_Available = -1,
     }
     public enum UserInteraction {
         None = 85,
         Required = 62,
-        Not_Available = 0,
+        Not_Available = -1,
     }
     public enum Scope {
         Unchanged,
         Changed,
-        Not_Available,
+        Not_Available = -1,
     }
     //higher if scope is changed
     public enum PrivilegesRequired {
@@ -162,12 +168,12 @@ namespace Modells {
         High = 27,
         Low_Scope_Changed = 68,
         High_Scope_Changed = 50,
-        Not_Available = 0,
+        Not_Available = -1,
     }
     public enum BaseScoreMetric {
         None = 0,
         Low = 22,
         High = 56,
-        Not_Available = 0,
+        Not_Available = -1,
     }
 }
