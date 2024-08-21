@@ -62,55 +62,112 @@ namespace Modells {
     public class Vector {
         [JsonProperty("AttackVector")]
         [JsonPropertyName("AttackVector")]
-        public AttackVector AttackVector {  get; set; } = new AttackVector();
+        public AttackVector AttackVector { get; set; } = AttackVector.Not_Available;
         [JsonProperty("AttackComplexity")]
         [JsonPropertyName("AttackComplexity")]
-        public AttackComplexity AttackComplexity { get; set; } = new AttackComplexity();
+        public AttackComplexity AttackComplexity { get; set; } = AttackComplexity.Not_Available;
         [JsonProperty("PrivilegesRequired")]
         [JsonPropertyName("PrivilegesRequired")]
-        public BaseScoreMetric PrivilegesRequired { get; set; } = new BaseScoreMetric();
+        public PrivilegesRequired PrivilegesRequired { get; set; } = PrivilegesRequired.Not_Available;
         [JsonProperty("UserInteraction")]
         [JsonPropertyName("UserInteraction")]
-        public UserInteraction UserInteraction { get; set; } = new UserInteraction();
+        public UserInteraction UserInteraction { get; set; } = UserInteraction.Not_Available;
         [JsonProperty("Scope")]
         [JsonPropertyName("Scope")]
-        public Scope Scope { get; set; } = new Scope();
+        public Scope Scope { get; set; } = Scope.Not_Available;
         [JsonProperty("ConfidentialityImpact")]
         [JsonPropertyName("ConfidentialityImpact")]
-        public BaseScoreMetric ConfidentialityImpact { get; set; } = new BaseScoreMetric();
+        public BaseScoreMetric ConfidentialityImpact { get; set; } = BaseScoreMetric.Not_Available;
         [JsonProperty("IntegrityImpact")]
         [JsonPropertyName("IntegrityImpact")]
-        public BaseScoreMetric IntegrityImpact { get; set; } = new BaseScoreMetric();
+        public BaseScoreMetric IntegrityImpact { get; set; } = BaseScoreMetric.Not_Available;
         [JsonProperty("AvailabilityImpact")]
         [JsonPropertyName("AvailabilityImpact")]
-        public BaseScoreMetric AvailabilityImpact { get; set; } = new BaseScoreMetric();
+        public BaseScoreMetric AvailabilityImpact { get; set; } = BaseScoreMetric.Not_Available;
+        public decimal BaseScore() {
+            decimal baseScore = -1;
+            //If any Vector property not set return -1
+            if (AttackVector == AttackVector.Not_Available ||
+                AttackComplexity == AttackComplexity.Not_Available ||
+                PrivilegesRequired == PrivilegesRequired.Not_Available ||
+                UserInteraction == UserInteraction.Not_Available ||
+                Scope == Scope.Not_Available ||
+                ConfidentialityImpact == BaseScoreMetric.Not_Available ||
+                IntegrityImpact == BaseScoreMetric.Not_Available ||
+                AvailabilityImpact == BaseScoreMetric.Not_Available) {
+                return baseScore;
+            }
+
+            //Impact Base Score
+            decimal ISC_Base = 1 - (
+                (1 - ((decimal)ConfidentialityImpact / 100)) *
+                (1 - ((decimal)IntegrityImpact / 100)) *
+                (1 - ((decimal)AvailabilityImpact / 100))
+                );
+
+            //Impact Score
+            decimal ISC = 0;
+            if (Scope == Scope.Unchanged) {
+                ISC = 6.42m * ISC_Base;
+            }
+            else if (Scope == Scope.Changed) {
+                ISC = 7.52m * (ISC_Base - 0.029m) - 3.25m * (decimal)Math.Pow(((double)ISC_Base - 0.02), 15.0);
+            }
+
+            //Exploitability Score
+            decimal ESC = 8.22m * 
+                ((decimal)AttackVector/100) * 
+                ((decimal)AttackComplexity / 100) * 
+                ((decimal)PrivilegesRequired / 100) * 
+                ((decimal)UserInteraction / 100);
+
+            //BaseScore
+            if (ISC == 0) {
+                baseScore = 0;
+            } else if (Scope == Scope.Unchanged) {
+                baseScore = Math.Ceiling(Math.Min((ISC + ESC), 10));
+            } else if (Scope == Scope.Unchanged) {
+                baseScore = Math.Ceiling(1.08m * Math.Min((ISC + ESC), 10));
+
+            }
+            return baseScore;
+        }
     }
     public enum AttackVector {
-        Network,
-        Adjacent_Network,
-        Local,
-        Physial,
-        Not_Available,
+        Network = 85,
+        Adjacent_Network = 62,
+        Local = 55,
+        Physial = 20,
+        Not_Available = 0,
     }
     public enum AttackComplexity {
-        Low,
-        High,
-        Not_Available,
+        Low = 77,
+        High = 44,
+        Not_Available = 0,
     }
     public enum UserInteraction {
-        None,
-        Required,
-        Not_Available,
+        None = 85,
+        Required = 62,
+        Not_Available = 0,
     }
     public enum Scope {
         Unchanged,
         Changed,
         Not_Available,
     }
+    //higher if scope is changed
+    public enum PrivilegesRequired {
+        None = 85,
+        Low = 62,
+        High = 27,
+        Low_Scope_Changed = 68,
+        High_Scope_Changed = 50,
+        Not_Available = 0,
+    }
     public enum BaseScoreMetric {
-        None,
-        Low,
-        High,
-        Not_Available,
+        None = 0,
+        Low = 22,
+        High = 56,
+        Not_Available = 0,
     }
 }
