@@ -589,19 +589,19 @@ namespace AmIVulnerable.Controllers {
             Match privilegesRequired = Regex.Match(vectorString, @"/PR:+\w{1}/");
             switch (privilegesRequired.Groups[0].Value) {
                 case "/PR:N/": {
-                        vector.PrivilegesRequired = BaseScoreMetric.None;
+                        vector.PrivilegesRequired = PrivilegesRequired.None;
                         break;
                     }
                 case "/PR:L/": {
-                        vector.PrivilegesRequired = BaseScoreMetric.Low;
+                        vector.PrivilegesRequired = PrivilegesRequired.Low;
                         break;
                     }
                 case "/PR:H/": {
-                        vector.PrivilegesRequired = BaseScoreMetric.High;
+                        vector.PrivilegesRequired = PrivilegesRequired.High;
                         break;
                     }
                 default: {
-                        vector.PrivilegesRequired = BaseScoreMetric.Not_Available;
+                        vector.PrivilegesRequired = PrivilegesRequired.Not_Available;
                         break;
                     }
             }

@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics;
-using F = System.IO.File;
+using Modells.Packages;
 
 namespace Modells {
     public class Project {
         public string ProjectUrl { get; set; } = string.Empty;
         public List<string> Tags { get; set; } = [];
+        public List<Package> Packages { get; set; } = [];
 
         private string dirGuid = "";
         private readonly static string CLI = "cmd";
@@ -29,7 +30,7 @@ namespace Modells {
                 }
 
                 await Clone(ProjectUrl, repoId.ToString());
-                this.dirGuid = repoId.ToString();
+                dirGuid = repoId.ToString();
                 return repoId.ToString();
             }
         }
@@ -80,6 +81,20 @@ namespace Modells {
             runProcess.StandardInput.WriteLine($"{prog} {command}");
             runProcess.StandardInput.WriteLine($"exit");
             runProcess.WaitForExit();
+        }
+
+
+        /// <summary>
+        /// Make a tree.json file
+        /// </summary>
+        /// <param name="projectUrl"></param>
+        /// <param name="Tag"></param>
+        /// <returns>File path</returns>
+        public string MakeTree(string dirGuid) {
+            ExecuteCommand("npm", "install", dirGuid);
+            ExecuteCommand(CLI_RM, "tree.json", dirGuid);
+            ExecuteCommand("npm", "list --all --json >> tree.json", dirGuid);
+            return dirGuid + "/tree.json";
         }
     }
 }
