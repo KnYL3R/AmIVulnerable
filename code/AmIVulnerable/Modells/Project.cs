@@ -1,5 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Text.Json;
 using Modells.Packages;
+using F = System.IO.File;
 
 namespace Modells {
     public class Project {
@@ -7,45 +10,44 @@ namespace Modells {
         public List<string> Tags { get; set; } = [];
         public List<Package> Packages { get; set; } = [];
 
-        private string dirGuid = "";
+        public string DirGuid { get; set; } = "";
         private readonly static string CLI = "cmd";
         private readonly string CLI_RM = CLI == "cmd" ? "del" : "rm";
 
-        public Project() { }
+        public Project(string projectUrl, List<string> tags) {
+            ProjectUrl = projectUrl;
+            Tags = tags;
+        }
 
-        public async Task<string> Clone() {
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dirGuid"></param>
+        /// <returns></returns>
+        public async void MakeDependencyTreeAsync() {
+            List<Package> dependencyTree = new List<Package>();
+            DirGuid = await Clone();
+            Install();
+            string treeJsonPath = MakeTree(DirGuid);
+            Packages = ExtractTree(treeJsonPath);
+        }
+
+        private async Task<string> Clone() {
             if (ProjectUrl is null) {
-                this.dirGuid = "Err";
+                this.DirGuid = "Err";
                 return "Err";
             }
 
             else { // clone the repo
-                Guid repoId = Guid.NewGuid();
-                string trimmedUrl = ProjectUrl[(ProjectUrl.IndexOf("//") + 2)..(ProjectUrl.Length)];
-                trimmedUrl = trimmedUrl[(trimmedUrl.IndexOf('/') + 1)..(trimmedUrl.Length)];
-                string owner = trimmedUrl[0..trimmedUrl.IndexOf('/', 1)];
-                string designation = trimmedUrl[(owner.Length + 1)..trimmedUrl.Length];
-                if (designation.Contains('/')) {
-                    designation = designation[0..trimmedUrl.IndexOf('/', owner.Length + 1)];
+                DirGuid = Guid.NewGuid().ToString();
+                try {
+                    ExecuteCommand("git", $"clone {ProjectUrl} {DirGuid}", "");
                 }
-
-                await Clone(ProjectUrl, repoId.ToString());
-                dirGuid = repoId.ToString();
-                return repoId.ToString();
-            }
-        }
-        private static async Task Clone(string url, string dir) {
-            try {
-                await Task.Run(() => {
-                    if (Directory.Exists(dir)) {
-                        RemoveReadOnlyAttribute(dir);
-                        Directory.Delete(dir, true);
-                    }
-                    Process.Start("git", $"clone {url} {AppDomain.CurrentDomain.BaseDirectory + dir}").WaitForExit();
-                });
-            }
-            catch (Exception ex) {
-                await Console.Out.WriteLineAsync(ex.StackTrace);
+                catch (Exception ex) {
+                    await Console.Out.WriteLineAsync(ex.StackTrace);
+                }
+                return DirGuid;
             }
         }
         private static void RemoveReadOnlyAttribute(string path) {
@@ -59,10 +61,10 @@ namespace Modells {
                 RemoveReadOnlyAttribute(subDirectory.FullName);
             }
         }
-        public void Install() {
-            ExecuteCommand(CLI_RM, ".npmrc", dirGuid);
-            ExecuteCommand("npm", "install", dirGuid);
-            ExecuteCommand("npm", "i --lockfile-version 3 --package-lock-only", dirGuid);
+        private void Install() {
+            ExecuteCommand(CLI_RM, ".npmrc", DirGuid);
+            ExecuteCommand("npm", "install", DirGuid);
+            ExecuteCommand("npm", "i --lockfile-version 3 --package-lock-only", DirGuid);
             return;
         }
 
@@ -83,18 +85,61 @@ namespace Modells {
             runProcess.WaitForExit();
         }
 
-
         /// <summary>
         /// Make a tree.json file
         /// </summary>
         /// <param name="projectUrl"></param>
         /// <param name="Tag"></param>
         /// <returns>File path</returns>
-        public string MakeTree(string dirGuid) {
+        private string MakeTree(string dirGuid) {
             ExecuteCommand("npm", "install", dirGuid);
             ExecuteCommand(CLI_RM, "tree.json", dirGuid);
             ExecuteCommand("npm", "list --all --json >> tree.json", dirGuid);
-            return dirGuid + "/tree.json";
+            return AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/tree.json";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        private List<Package> ExtractTree(string filePath) {
+            List<Package> packages = [];
+            using (JsonDocument jsonDocument = JsonDocument.Parse(F.ReadAllText(filePath))) {
+                if (jsonDocument.RootElement.TryGetProperty("dependencies", out JsonElement dependenciesElement) &&
+                    dependenciesElement.ValueKind == JsonValueKind.Object) {
+                    foreach (JsonProperty dependency in dependenciesElement.EnumerateObject()) {
+                        Package nodePackage = ExtractDependencyInfo(dependency);
+
+                        packages.Add(nodePackage);
+                    }
+                }
+            }
+            return packages;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dependency"></param>
+        /// <returns></returns>
+        private Package ExtractDependencyInfo(JsonProperty dependency) {
+            Package nodePackage = new Package {
+                Name = dependency.Name
+            };
+            if (dependency.Value.TryGetProperty("version", out JsonElement versionElement) &&
+                versionElement.ValueKind == JsonValueKind.String) {
+                nodePackage.Version = versionElement.GetString() ?? "";
+            }
+            if (dependency.Value.TryGetProperty("dependencies", out JsonElement subDependenciesElement) &&
+                subDependenciesElement.ValueKind == JsonValueKind.Object) {
+                foreach (JsonProperty subDependency in subDependenciesElement.EnumerateObject()) {
+                    Package subNodePackage = ExtractDependencyInfo(subDependency);
+                    nodePackage.Dependencies.Add(subNodePackage);
+                }
+            }
+
+            return nodePackage;
         }
     }
 }

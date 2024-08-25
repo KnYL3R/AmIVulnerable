@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Modells;
+using Modells.DTO;
 using Modells.OsvResult;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -40,41 +41,39 @@ namespace AmIVulnerable.Controllers {
         /// <returns></returns>
         [HttpPost]
         [Route("vulnerabilityTimeLineNpm")]
-        public async Task<IActionResult> VulnerabilityTimeLineNpmYarn([FromBody] List<MP> projects) {
+        public async Task<IActionResult> VulnerabilityTimeLineNpmYarn([FromBody] List<ProjectDto> projectsDto) {
+            List<MP> projects = new List<MP>();
+            foreach(ProjectDto projectDto in projectsDto) {
+                projects.Add(new MP(projectDto.ProjectUrl, projectDto.Tags));
+            }
             List<TimeSlice> timeSeries = [];
             foreach (MP project in projects) {
 
                 // Clone
-                string dirGuid = await project.Clone();
-                if (dirGuid.Equals("Err")) {
-                    return BadRequest("Could not clone project!");
-                }
-                // npm install
-                Install(dirGuid);
+                project.MakeDependencyTreeAsync();
                 // osv-scanner for latest
                 OsvResult osvResultLatest = new OsvResult();
-                osvResultLatest = osvResultLatest.OsvExtractVulnerabilities(dirGuid);
+                osvResultLatest = osvResultLatest.OsvExtractVulnerabilities(project.DirGuid);
                 // commit DateTime
-                lastDateTime = GetTagDateTime(dirGuid);
+                lastDateTime = GetTagDateTime(project.DirGuid);
                 // Make tree to find if vulnerability is transitive or not
-                string treeJsonPathLatest = MakeTree(dirGuid);
+                string treeJsonPathLatest = MakeTree(project.DirGuid);
 
-                timeSeries.Add(MakeTimeSlice(osvResultLatest, treeJsonPathLatest, lastDateTime, dirGuid, "release"));
+                timeSeries.Add(MakeTimeSlice(osvResultLatest, treeJsonPathLatest, lastDateTime, project.DirGuid, "release"));
 
                 foreach (string tag in project.Tags) {
-                    CheckoutTagProject(dirGuid, tag);
-                    // npm install
-                    Install(dirGuid);
+                    CheckoutTagProject(project.DirGuid, tag);
+                    project.MakeDependencyTreeAsync();
                     // osv-scanner for latest
-                    string osvJsonCurrent = OsvExtractVulnerabilities(dirGuid);
+                    string osvJsonCurrent = OsvExtractVulnerabilities(project.DirGuid);
                     OsvResult osvResultCurrent = JsonConvert.DeserializeObject<OsvResult>(osvJsonCurrent) ?? new OsvResult();
                     // Make tree to find if vulnerability is transitive or not
-                    string treeJsonPathCurrent = MakeTree(dirGuid);
-                    timeSeries.Add(MakeTimeSlice(osvResultCurrent, treeJsonPathCurrent, lastDateTime, dirGuid, tag));
+                    string treeJsonPathCurrent = MakeTree(project.DirGuid);
+                    timeSeries.Add(MakeTimeSlice(osvResultCurrent, treeJsonPathCurrent, lastDateTime, project.DirGuid, tag));
                     // commit DateTime
-                    lastDateTime = GetTagDateTime(dirGuid);
+                    lastDateTime = GetTagDateTime(project.DirGuid);
 
-                    timeSeries.Add(MakeTimeSlice(osvResultCurrent, treeJsonPathCurrent, lastDateTime, dirGuid, tag));
+                    timeSeries.Add(MakeTimeSlice(osvResultCurrent, treeJsonPathCurrent, lastDateTime, project.DirGuid, tag));
                     lastDateTime = lastDateTime.AddSeconds(-1);
                 }
             }
@@ -87,20 +86,14 @@ namespace AmIVulnerable.Controllers {
             List<ProjectMetricResult> projectMetricResults = new List<ProjectMetricResult>();
             foreach (MP project in projects) {
                 // Clone
-                string dirGuid = await project.Clone();
-                if (dirGuid.Equals("Err")) {
-                    return BadRequest("Could not clone project!");
-                }
-
-                // npm install
-                Install(dirGuid);
+                project.MakeDependencyTreeAsync();
                 // osv-scanner for latest
-                string osvJson = OsvExtractVulnerabilities(dirGuid);
+                string osvJson = OsvExtractVulnerabilities(project.DirGuid);
                 OsvResult osvResult = JsonConvert.DeserializeObject<OsvResult>(osvJson) ?? new OsvResult();
                 // commit DateTime
-                DateTime lastDateTime = GetTagDateTime(dirGuid);
+                DateTime lastDateTime = GetTagDateTime(project.DirGuid);
                 // Make tree to find if vulnerability is transitive or not
-                string treeJsonPath = MakeTree(dirGuid);
+                string treeJsonPath = MakeTree(project.DirGuid);
 
                 List<MPP> packageList = new List<MPP>();
                 using (JsonDocument jsonDocument = JsonDocument.Parse(F.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + treeJsonPath))) {
@@ -114,7 +107,7 @@ namespace AmIVulnerable.Controllers {
                     }
                 }
 
-                projectMetricResults.Add(MakeMetricResult(osvResult, treeJsonPath, lastDateTime, dirGuid, project.ProjectUrl, packageList));
+                projectMetricResults.Add(MakeMetricResult(osvResult, treeJsonPath, lastDateTime, project.DirGuid, project.ProjectUrl, packageList));
             }
             return Ok(projectMetricResults);
         }
@@ -449,9 +442,9 @@ namespace AmIVulnerable.Controllers {
             return children;
         }
 
-        private DateTime OldestPublishedVulnerabilityDateTime(List<Vulnerability> vulnerabilities) {
+        private DateTime OldestPublishedVulnerabilityDateTime(List<Modells.OsvResult.Vulnerability> vulnerabilities) {
             DateTime oldestPublishedVulnerabilityDateTime = DateTime.Now;
-            foreach (Vulnerability vulnerability in vulnerabilities) {
+            foreach (Modells.OsvResult.Vulnerability vulnerability in vulnerabilities) {
                 if (vulnerability.published < oldestPublishedVulnerabilityDateTime) {
                     oldestPublishedVulnerabilityDateTime = vulnerability.published;
                 }
@@ -492,7 +485,7 @@ namespace AmIVulnerable.Controllers {
                 vulnerabilityMetric.PackageVersion = osvPackage.package.version;
                 MPP vulnerablePackage = packageList.Find(x => x.Name == osvPackage.package.name && x.Version == osvPackage.package.version) ?? new MPP();
                 //General Data
-                foreach (Vulnerability vulnerability in osvPackage.vulnerabilities) {
+                foreach (Modells.OsvResult.Vulnerability vulnerability in osvPackage.vulnerabilities) {
                     foreach (Severity severity in vulnerability.severity) {
                         vulnerabilityMetric.CvssVersion.Add(severity.type);
                         vulnerabilityMetric.NistSeverity.Add(MakeNistScore(severity.score));
@@ -509,7 +502,7 @@ namespace AmIVulnerable.Controllers {
         }
 
         //Metric Cube Data
-        private MetricData MakeMetricData(string vector, string treeJsonPath, string dir, Vulnerability vulnerability, MPP vulnerablePackage, List<Packages> osvPackages) {
+        private MetricData MakeMetricData(string vector, string treeJsonPath, string dir, Modells.OsvResult.Vulnerability vulnerability, MPP vulnerablePackage, List<Packages> osvPackages) {
             MetricData metricData = new MetricData();
             //metricData.TransitiveDepths = 
             metricData.Vector = MakeVector(vector);
