@@ -27,8 +27,9 @@ namespace Modells {
         /// <returns></returns>
         public async void MakeDependencyTreeAsync() {
             List<Package> dependencyTree = new List<Package>();
-            DirGuid = await Clone();
-            Install();
+            //DirGuid = await Clone();
+            DirGuid = "eeb6f385-e135-4fc3-9671-42ab9735e398";
+            //Install();
             string treeJsonPath = MakeTree(DirGuid);
             Packages = ExtractTree(treeJsonPath);
         }
