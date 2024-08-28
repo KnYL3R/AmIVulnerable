@@ -1,37 +1,87 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Modells.Packages;
 using F = System.IO.File;
 
 namespace Modells {
     public class Project {
-        public string ProjectUrl { get; set; } = string.Empty;
+        public string ProjectUrl { get; set; } = "";
+        public List<Tag> Results { get; set; } = [];
+        [JsonIgnore]
         public List<string> Tags { get; set; } = [];
+        [JsonIgnore]
         public List<Package> Packages { get; set; } = [];
 
+        [JsonIgnore]
         public string DirGuid { get; set; } = "";
         private readonly static string CLI = "cmd";
         private readonly string CLI_RM = CLI == "cmd" ? "del" : "rm";
 
         public Project(string projectUrl, List<string> tags) {
-            ProjectUrl = projectUrl;
-            Tags = tags;
+                ProjectUrl = projectUrl;
+                Tags = tags;
         }
 
+        public class Tag {
+            public string TagName { get; set; } = "";
+            //List of either direct dependencies with vulnerabilities or vulnerabilities as root elements and their vulnerabilities
+            public List<Rootdependency> RootDependencies { get; set; } = [];
+        }
+
+        public class Rootdependency {
+            public string RootDependencyName { get; set; } = "";
+            public List<Vulnerability> Vulnerabilities { get; set; } = [];
+            public Rootdependency(string name, List<Vulnerability> vulnerabilities) {
+                RootDependencyName = name;
+                Vulnerabilities = vulnerabilities;
+            }
+        }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dirGuid"></param>
         /// <returns></returns>
-        public async void MakeDependencyTreeAsync() {
+        public async void MakeDependencyTreeCloneAsync() {
             List<Package> dependencyTree = new List<Package>();
-            //DirGuid = await Clone();
-            DirGuid = "eeb6f385-e135-4fc3-9671-42ab9735e398";
-            //Install();
+            DirGuid = await Clone();
+            Install();
             string treeJsonPath = MakeTree(DirGuid);
             Packages = ExtractTree(treeJsonPath);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public void MakeDependencyTreeCheckoutAsync(string tag) {
+            List<Package> dependencyTree = new List<Package>();
+            Checkout(tag);
+            Install();
+            string treeJsonPath = MakeTree(DirGuid);
+            Packages = ExtractTree(treeJsonPath);
+        }
+
+        public bool Checkout (string tag) {
+            try {
+                ProcessStartInfo process = new ProcessStartInfo {
+                    FileName = CLI,
+                    RedirectStandardInput = true,
+                    WorkingDirectory = $"{AppDomain.CurrentDomain.BaseDirectory + DirGuid}",
+                };
+
+                Process runProcess = Process.Start(process)!;
+                runProcess.StandardInput.WriteLine($"git " + "stash");
+                runProcess.StandardInput.WriteLine($"git " + $"checkout {tag}");
+                runProcess.StandardInput.WriteLine($"exit");
+                runProcess.WaitForExit();
+                return true;
+            }
+            catch (Exception ex) {
+                Console.WriteLine("Error with clone, tag?\n" + ex.Message);
+                return false;
+            }
+
         }
 
         private async Task<string> Clone() {
@@ -93,7 +143,6 @@ namespace Modells {
         /// <param name="Tag"></param>
         /// <returns>File path</returns>
         private string MakeTree(string dirGuid) {
-            ExecuteCommand("npm", "install", dirGuid);
             ExecuteCommand(CLI_RM, "tree.json", dirGuid);
             ExecuteCommand("npm", "list --all --json >> tree.json", dirGuid);
             return AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/tree.json";

@@ -1,0 +1,89 @@
+[
+    {
+        "ProjectUrl": "https//:...",
+        "Tags": [
+            {
+                "Tag": "V1.0",
+                "RootDependencies": [
+                    {
+                        "RootDependencyName": "A",
+                        "Vulnerabilities": [
+                            {
+                                "Name": "A",
+                                "Version": "B",
+                                "BaseScore": "10.0",
+                                "Depth": 2
+                            },
+                            {
+                                "Name": "B",
+                                "Version": "B",
+                                "BaseScore": "10.0",
+                                "Depth": 2
+                            }
+                        ]
+                    },
+                    {
+                        "RootDependencyName": "b",
+                        "Vulnerabilities": [
+                            {
+                                "Name": "A",
+                                "Version": "B",
+                                "BaseScore": "10.0",
+                                "Depth": 2
+                            },
+                            {
+                                "Name": "B",
+                                "Version": "B",
+                                "BaseScore": "10.0",
+                                "Depth": 2
+                            }
+                        ]
+                    }
+                ]
+                
+            },
+            {
+                "Tag": "V4.0",
+                "RootDependencies": [
+                    {
+                        "RootDependencyName": "C",
+                        "Vulnerabilities": [
+                            {
+                                "Name": "A",
+                                "Version": "B",
+                                "BaseScore": "10.0",
+                                "Depth": 2
+                            },
+                            {
+                                "Name": "B",
+                                "Version": "B",
+                                "BaseScore": "10.0",
+                                "Depth": 2
+                            }
+                        ]
+                    },
+                    {
+                        "RootDependencyName": "A",
+                        "Vulnerabilities": [
+                            {
+                                "Name": "A",
+                                "Version": "B",
+                                "RootDependency": "AB",
+                                "BaseScore": "10.0",
+                                "Depth": 2
+                            },
+                            {
+                                "Name": "B",
+                                "Version": "B",
+                                "RootDependency": "AB",
+                                "BaseScore": "10.0",
+                                "Depth": 2
+                            }
+                        ]
+                    }
+                ]
+                
+            }
+        ]
+    }
+]
