@@ -44,10 +44,12 @@ namespace AmIVulnerable.Controllers {
             }
 
             foreach (MP project in projects) {
+                Console.WriteLine("Now analysing: " +  project.ProjectUrl + " || master");
                 project.MakeDependencyTreeCloneAsync();
                 project.Results.Add(MakeDependencyResultEntry(project, "master"));
 
                 foreach (string tag in project.Tags) {
+                    Console.WriteLine("Now analysing: " + project.ProjectUrl + " || " + tag);
                     project.MakeDependencyTreeCheckoutAsync(tag);
                     project.Results.Add(MakeDependencyResultEntry(project, tag));
                 }
@@ -69,10 +71,12 @@ namespace AmIVulnerable.Controllers {
                 projects.Add(new MP(projectDto.ProjectUrl, projectDto.Tags));
             }
             foreach (MP project in projects) {
+                Console.WriteLine("Now analysing: " + project.ProjectUrl + " || master");
                 project.MakeDependencyTreeCloneAsync();
                 project.Results.Add(MakeVulnerabilityResultEntry(project, "master"));
 
                 foreach (string tag in project.Tags) {
+                    Console.WriteLine("Now analysing: " + project.ProjectUrl + " || " + tag);
                     project.MakeDependencyTreeCheckoutAsync(tag);
                     project.Results.Add(MakeVulnerabilityResultEntry(project, tag));
                 }
@@ -91,6 +95,10 @@ namespace AmIVulnerable.Controllers {
             osvResult = osvResult.OsvExtractVulnerabilities(project.DirGuid);
             MP.Tag tagWithEntries = new MP.Tag();
             tagWithEntries.TagName = tagName;
+            if (osvResult.results.Count == 0) {
+                tagWithEntries.RootDependencies = [];
+                return tagWithEntries;
+            }
 
             List<List<V>> directDependencyVulnerabilities = new List<List<V>>();
 
@@ -115,6 +123,10 @@ namespace AmIVulnerable.Controllers {
             osvResult = osvResult.OsvExtractVulnerabilities(project.DirGuid);
             MP.Tag tagWithEntries = new MP.Tag();
             tagWithEntries.TagName = tagName;
+            if (osvResult.results.Count == 0) {
+                tagWithEntries.RootDependencies = [];
+                return tagWithEntries;
+            }
 
             List<List<V>> vulnerabilitiesOfVulnerabilities = new List<List<V>>();
             List<PP> vulnerableDependencies = GetVulnerablePackages(osvResult.results[0].packages, project.Packages);

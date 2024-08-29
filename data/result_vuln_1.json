@@ -1,0 +1,2931 @@
+[
+    {
+      "projectUrl": "https://github.com/jquery/jquery.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "micromatch",
+                  "version": "4.0.7",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "underscore",
+              "vulnerabilities": [
+                {
+                  "name": "underscore",
+                  "version": "1.8.3",
+                  "baseSeverityScore": 9.8,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "webpack",
+                  "version": "5.93.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "5.93.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "4.0.0-beta.2",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "micromatch",
+                  "version": "4.0.7",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "requirejs",
+              "vulnerabilities": [
+                {
+                  "name": "requirejs",
+                  "version": "2.3.6",
+                  "baseSeverityScore": 10.7,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "underscore",
+              "vulnerabilities": [
+                {
+                  "name": "underscore",
+                  "version": "1.8.3",
+                  "baseSeverityScore": 9.8,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "webpack",
+                  "version": "5.92.1",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "5.92.1",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "4.0.0-beta",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "express",
+              "vulnerabilities": [
+                {
+                  "name": "express",
+                  "version": "4.18.2",
+                  "baseSeverityScore": 6,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "4.0.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "request",
+              "vulnerabilities": [
+                {
+                  "name": "request",
+                  "version": "2.88.2",
+                  "baseSeverityScore": 6,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "tough-cookie",
+                  "version": "2.5.0",
+                  "baseSeverityScore": 6.4,
+                  "transitiveDepth": 1
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "requirejs",
+              "vulnerabilities": [
+                {
+                  "name": "requirejs",
+                  "version": "2.3.6",
+                  "baseSeverityScore": 10.7,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "5.7.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "underscore",
+              "vulnerabilities": [
+                {
+                  "name": "underscore",
+                  "version": "1.8.3",
+                  "baseSeverityScore": 9.8,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "projectUrl": "https://github.com/chalk/chalk.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v5.3.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v5.2.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v5.1.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v5.0.0",
+          "rootDependencies": []
+        }
+      ]
+    },
+    {
+      "projectUrl": "https://github.com/tj/commander.js.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v12.1.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v12.0.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v11.1.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.5.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v11.0.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.5.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v10.0.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.3.8",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v9.5.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.3.8",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v9.4.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.3.7",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v9.3.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v9.2.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v9.1.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v9.0.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "projectUrl": "https://github.com/axios/axios.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "express",
+              "vulnerabilities": [
+                {
+                  "name": "express",
+                  "version": "4.18.2",
+                  "baseSeverityScore": 6,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "request",
+              "vulnerabilities": [
+                {
+                  "name": "request",
+                  "version": "2.88.2",
+                  "baseSeverityScore": 6,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "tough-cookie",
+                  "version": "2.5.0",
+                  "baseSeverityScore": 6.4,
+                  "transitiveDepth": 1
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "5.7.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.3.8",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.3.8",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "browserify-sign",
+                  "version": "4.2.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "semver",
+                  "version": "5.7.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.46.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.46.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "webpack",
+                  "version": "4.46.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "projectUrl": "https://github.com/isaacs/node-mkdirp.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v3.0.1",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v3.0.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.1.6",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.1.5",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.1.4",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.1.3",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.1.2",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.1.1",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.1.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.0.0",
+          "rootDependencies": []
+        }
+      ]
+    },
+    {
+      "projectUrl": "https://github.com/isaacs/node-glob.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v11.0.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v10.4.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v10.2.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v10.1.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v10.0.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v9.3.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v9.2.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v9.1.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v9.0.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v8.1.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v8.0.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "minimist",
+              "vulnerabilities": [
+                {
+                  "name": "minimist",
+                  "version": "1.2.5",
+                  "baseSeverityScore": 9.8,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "projectUrl": "https://github.com/yargs/yargs.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v17.7.2",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v17.7.1",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v17.7.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v17.6.2",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v17.6.1",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v17.6.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v17.5.1",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v17.5.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v17.4.1",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v17.4.0",
+          "rootDependencies": []
+        }
+      ]
+    },
+    {
+      "projectUrl": "https://github.com/uuidjs/uuid.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v10.0.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "yargs-parser",
+              "vulnerabilities": [
+                {
+                  "name": "yargs-parser",
+                  "version": "5.0.0-security.0",
+                  "baseSeverityScore": 5.2,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v9.0.1",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "yaml",
+              "vulnerabilities": [
+                {
+                  "name": "yaml",
+                  "version": "2.1.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "yargs-parser",
+              "vulnerabilities": [
+                {
+                  "name": "yargs-parser",
+                  "version": "5.0.0-security.0",
+                  "baseSeverityScore": 5.2,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v9.0.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "yaml",
+              "vulnerabilities": [
+                {
+                  "name": "yaml",
+                  "version": "2.1.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "yargs-parser",
+              "vulnerabilities": [
+                {
+                  "name": "yargs-parser",
+                  "version": "5.0.0-security.0",
+                  "baseSeverityScore": 5.2,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "projectUrl": "https://github.com/JedWatson/classnames.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.5.2",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.5.1",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.5.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.4.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.3.3",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.3.2",
+          "rootDependencies": []
+        }
+      ]
+    },
+    {
+      "projectUrl": "https://github.com/expressjs/body-parser.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "v2.0.0-beta.2",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "1.20.2",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "1.20.1",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "1.20.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "1.19.2",
+          "rootDependencies": []
+        }
+      ]
+    },
+    {
+      "projectUrl": "https://github.com/jquery/jquery.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "micromatch",
+                  "version": "4.0.7",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "underscore",
+              "vulnerabilities": [
+                {
+                  "name": "underscore",
+                  "version": "1.8.3",
+                  "baseSeverityScore": 9.8,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "webpack",
+                  "version": "5.93.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "5.93.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "4.0.0-beta.2",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "micromatch",
+                  "version": "4.0.7",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "requirejs",
+              "vulnerabilities": [
+                {
+                  "name": "requirejs",
+                  "version": "2.3.6",
+                  "baseSeverityScore": 10.7,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "underscore",
+              "vulnerabilities": [
+                {
+                  "name": "underscore",
+                  "version": "1.8.3",
+                  "baseSeverityScore": 9.8,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "webpack",
+                  "version": "5.92.1",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "5.92.1",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "4.0.0-beta",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "express",
+              "vulnerabilities": [
+                {
+                  "name": "express",
+                  "version": "4.18.2",
+                  "baseSeverityScore": 6,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "4.0.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "request",
+              "vulnerabilities": [
+                {
+                  "name": "request",
+                  "version": "2.88.2",
+                  "baseSeverityScore": 6,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "tough-cookie",
+                  "version": "2.5.0",
+                  "baseSeverityScore": 6.4,
+                  "transitiveDepth": 1
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "requirejs",
+              "vulnerabilities": [
+                {
+                  "name": "requirejs",
+                  "version": "2.3.6",
+                  "baseSeverityScore": 10.7,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "5.7.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "underscore",
+              "vulnerabilities": [
+                {
+                  "name": "underscore",
+                  "version": "1.8.3",
+                  "baseSeverityScore": 9.8,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "3.7.1",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "3.7.0",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "3.6.4",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "3.6.3",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "3.6.2",
+          "rootDependencies": []
+        },
+        {
+          "tagName": "3.6.1",
+          "rootDependencies": []
+        }
+      ]
+    },
+    {
+      "projectUrl": "https://github.com/yeoman/generator.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "micromatch",
+                  "version": "4.0.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v7.3.2",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "micromatch",
+                  "version": "4.0.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v7.3.1",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "micromatch",
+                  "version": "4.0.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v7.3.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "micromatch",
+                  "version": "4.0.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v7.2.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "micromatch",
+                  "version": "4.0.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v7.1.1",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "ejs",
+              "vulnerabilities": [
+                {
+                  "name": "ejs",
+                  "version": "3.1.9",
+                  "baseSeverityScore": 3.9,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "micromatch",
+                  "version": "4.0.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v7.1.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "ejs",
+              "vulnerabilities": [
+                {
+                  "name": "ejs",
+                  "version": "3.1.9",
+                  "baseSeverityScore": 3.9,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "micromatch",
+                  "version": "4.0.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v7.0.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "ejs",
+              "vulnerabilities": [
+                {
+                  "name": "ejs",
+                  "version": "3.1.9",
+                  "baseSeverityScore": 3.9,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "micromatch",
+              "vulnerabilities": [
+                {
+                  "name": "micromatch",
+                  "version": "4.0.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v6.0.1",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.5.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.5.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v6.0.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.5.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.5.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v5.10.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "mockery",
+              "vulnerabilities": [
+                {
+                  "name": "mockery",
+                  "version": "2.1.0",
+                  "baseSeverityScore": 9.8,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "request",
+              "vulnerabilities": [
+                {
+                  "name": "request",
+                  "version": "2.88.2",
+                  "baseSeverityScore": 6,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "tough-cookie",
+                  "version": "2.5.0",
+                  "baseSeverityScore": 6.4,
+                  "transitiveDepth": 1
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.3.7",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "tar",
+              "vulnerabilities": [
+                {
+                  "name": "tar",
+                  "version": "6.1.11",
+                  "baseSeverityScore": 6.4,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v5.9.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "mockery",
+              "vulnerabilities": [
+                {
+                  "name": "mockery",
+                  "version": "2.1.0",
+                  "baseSeverityScore": 9.8,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "request",
+              "vulnerabilities": [
+                {
+                  "name": "request",
+                  "version": "2.88.2",
+                  "baseSeverityScore": 6,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "tough-cookie",
+                  "version": "2.5.0",
+                  "baseSeverityScore": 6.4,
+                  "transitiveDepth": 1
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.3.7",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "tar",
+              "vulnerabilities": [
+                {
+                  "name": "tar",
+                  "version": "6.1.11",
+                  "baseSeverityScore": 6.4,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v5.8.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "mockery",
+              "vulnerabilities": [
+                {
+                  "name": "mockery",
+                  "version": "2.1.0",
+                  "baseSeverityScore": 9.8,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "request",
+              "vulnerabilities": [
+                {
+                  "name": "request",
+                  "version": "2.88.2",
+                  "baseSeverityScore": 6,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "tough-cookie",
+                  "version": "2.5.0",
+                  "baseSeverityScore": 6.4,
+                  "transitiveDepth": 1
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.3.7",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "projectUrl": "https://github.com/zloirock/core-js.git",
+      "results": [
+        {
+          "tagName": "master",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.38.1",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.38.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.6",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.6",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.37.1",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.37.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.36.1",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.5",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.36.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.35.1",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.35.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.34.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.33.3",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.33.2",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.33.1",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "browserify-sign",
+                  "version": "4.2.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.33.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "@babel/traverse",
+              "vulnerabilities": [
+                {
+                  "name": "@babel/traverse",
+                  "version": "7.23.0",
+                  "baseSeverityScore": 9.2,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "browserify-sign",
+                  "version": "4.2.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.47.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.32.1",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "@babel/traverse",
+              "vulnerabilities": [
+                {
+                  "name": "@babel/traverse",
+                  "version": "7.22.10",
+                  "baseSeverityScore": 9.2,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "browserify-sign",
+                  "version": "4.2.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.46.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.46.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.32.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "@babel/traverse",
+              "vulnerabilities": [
+                {
+                  "name": "@babel/traverse",
+                  "version": "7.22.8",
+                  "baseSeverityScore": 9.2,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "browserify-sign",
+                  "version": "4.2.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.46.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.46.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.31.1",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "@babel/traverse",
+              "vulnerabilities": [
+                {
+                  "name": "@babel/traverse",
+                  "version": "7.22.6",
+                  "baseSeverityScore": 9.2,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "browserify-sign",
+                  "version": "4.2.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "semver",
+                  "version": "5.7.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.46.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.46.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tagName": "v3.31.0",
+          "rootDependencies": [
+            {
+              "rootDependencyName": "@babel/traverse",
+              "vulnerabilities": [
+                {
+                  "name": "@babel/traverse",
+                  "version": "7.22.5",
+                  "baseSeverityScore": 9.2,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "6.3.0",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "semver",
+              "vulnerabilities": [
+                {
+                  "name": "semver",
+                  "version": "7.5.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 0
+                }
+              ]
+            },
+            {
+              "rootDependencyName": "webpack",
+              "vulnerabilities": [
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 2
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 6
+                },
+                {
+                  "name": "braces",
+                  "version": "2.3.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "braces",
+                  "version": "3.0.2",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "browserify-sign",
+                  "version": "4.2.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 3
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "elliptic",
+                  "version": "6.5.4",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 1
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "micromatch",
+                  "version": "3.1.10",
+                  "baseSeverityScore": 5.3,
+                  "transitiveDepth": 5
+                },
+                {
+                  "name": "semver",
+                  "version": "5.7.1",
+                  "baseSeverityScore": 7.5,
+                  "transitiveDepth": 4
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.46.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 0
+                },
+                {
+                  "name": "webpack",
+                  "version": "4.46.0",
+                  "baseSeverityScore": 6.3,
+                  "transitiveDepth": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
