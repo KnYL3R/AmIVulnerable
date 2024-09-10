@@ -136,7 +136,7 @@ namespace Modells {
                     ((decimal)AttackComplexity / 100) *
                     ((decimal)PrivilegesRequired / 100) *
                     ((decimal)UserInteraction / 100);
-                baseScore = Math.Round(1.08m * Math.Min((ISC + ESC), 10), 1);
+                baseScore = Math.Round(Math.Min(1.08m * (ISC + ESC), 10), 1);
             }
             return baseScore;
         }

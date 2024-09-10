@@ -18,9 +18,8 @@ namespace Modells {
         private readonly static string CLI = "cmd";
         private readonly string CLI_RM = CLI == "cmd" ? "del" : "rm";
 
-        public Project(string projectUrl, List<string> tags) {
+        public Project(string projectUrl) {
                 ProjectUrl = projectUrl;
-                Tags = tags;
         }
 
         public class Tag {
@@ -42,24 +41,32 @@ namespace Modells {
         /// 
         /// </summary>
         /// <returns></returns>
-        public async void MakeDependencyTreeCloneAsync() {
+        public async Task<string> MakeDependencyTreeCloneAsync() {
             List<Package> dependencyTree = new List<Package>();
             DirGuid = await Clone();
             Install();
             string treeJsonPath = MakeTree(DirGuid);
+            if(treeJsonPath == "NO_VALID_PROJECT") {
+                return "FAILED";
+            }
             Packages = ExtractTree(treeJsonPath);
+            return "SUCCESS";
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public void MakeDependencyTreeCheckoutAsync(string tag) {
+        public string MakeDependencyTreeCheckoutAsync(string tag) {
             List<Package> dependencyTree = new List<Package>();
             Checkout(tag);
             Install();
             string treeJsonPath = MakeTree(DirGuid);
+            if (treeJsonPath == "NO_VALID_PROJECT") {
+                return "FAILED";
+            }
             Packages = ExtractTree(treeJsonPath);
+            return "SUCCESS";
         }
 
         public bool Checkout (string tag) {
@@ -82,6 +89,12 @@ namespace Modells {
                 return false;
             }
 
+        }
+
+        public void SetTags() {
+            ExecuteCommand("git", "tag > tags.txt", DirGuid);
+            Tags = F.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + DirGuid + "/tags.txt").ToList();
+            Console.WriteLine(Tags);
         }
 
         private async Task<string> Clone() {
@@ -143,9 +156,19 @@ namespace Modells {
         /// <param name="Tag"></param>
         /// <returns>File path</returns>
         private string MakeTree(string dirGuid) {
-            ExecuteCommand(CLI_RM, "tree.json", dirGuid);
-            ExecuteCommand("npm", "list --all --json >> tree.json", dirGuid);
-            return AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/tree.json";
+            // If is npm project
+            if(F.Exists(AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/package.json")) {
+                ExecuteCommand(CLI_RM, "tree.json", dirGuid);
+                ExecuteCommand("npm", "list --all --json > tree.json", dirGuid);
+                return AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/tree.json";
+            } 
+            // If is Maven Project
+            if(F.Exists(AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/pom.xml")) {
+                ExecuteCommand(CLI_RM, "tree.json", dirGuid);
+                ExecuteCommand("mvn", "org.apache.maven.plugins:maven-dependency-plugin:3.8.0:tree -DoutputFile=mavenTree.json -DoutputType=json", dirGuid);
+                return AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/tree.json";
+            }
+            return "NO_VALID_PROJECT";
         }
 
         /// <summary>

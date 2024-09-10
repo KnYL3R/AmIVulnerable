@@ -7,7 +7,9 @@ using V = Modells.Vulnerability;
 using OSVV = Modells.OsvResult.Vulnerability;
 using System.Text.Json;
 using PP = Modells.Packages.Package;
+using F = System.IO.File;
 using Modells.DTO;
+using Newtonsoft.Json;
 
 namespace AmIVulnerable.Controllers {
 
@@ -40,19 +42,25 @@ namespace AmIVulnerable.Controllers {
         public IActionResult Dependency([FromBody] List<ProjectDto> projectsDto) {
             List<MP> projects = new List<MP>();
             foreach (ProjectDto projectDto in projectsDto) {
-                projects.Add(new MP(projectDto.ProjectUrl, projectDto.Tags));
+                projects.Add(new MP(projectDto.ProjectUrl));
             }
 
             foreach (MP project in projects) {
                 Console.WriteLine("Now analysing: " +  project.ProjectUrl + " || master");
-                project.MakeDependencyTreeCloneAsync();
+                if(project.MakeDependencyTreeCloneAsync().Result == "FAILED") {
+                    continue;
+                }
                 project.Results.Add(MakeDependencyResultEntry(project, "master"));
+                project.SetTags();
 
                 foreach (string tag in project.Tags) {
                     Console.WriteLine("Now analysing: " + project.ProjectUrl + " || " + tag);
-                    project.MakeDependencyTreeCheckoutAsync(tag);
+                    if (project.MakeDependencyTreeCheckoutAsync(tag) == "FAILED") {
+                        continue;
+                    }
                     project.Results.Add(MakeDependencyResultEntry(project, tag));
                 }
+                F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "cache.json", JsonConvert.SerializeObject(projects));
             }
             //Return list of enriched projects
             return Ok(projects);
@@ -68,16 +76,21 @@ namespace AmIVulnerable.Controllers {
         public IActionResult Vulnerablilty([FromBody] List<ProjectDto> projectsDto) {
             List<MP> projects = new List<MP>();
             foreach (ProjectDto projectDto in projectsDto) {
-                projects.Add(new MP(projectDto.ProjectUrl, projectDto.Tags));
+                projects.Add(new MP(projectDto.ProjectUrl));
             }
             foreach (MP project in projects) {
                 Console.WriteLine("Now analysing: " + project.ProjectUrl + " || master");
-                project.MakeDependencyTreeCloneAsync();
+                if (project.MakeDependencyTreeCloneAsync().Result == "FAILED") {
+                    continue;
+                }
                 project.Results.Add(MakeVulnerabilityResultEntry(project, "master"));
+                project.SetTags();
 
                 foreach (string tag in project.Tags) {
                     Console.WriteLine("Now analysing: " + project.ProjectUrl + " || " + tag);
-                    project.MakeDependencyTreeCheckoutAsync(tag);
+                    if (project.MakeDependencyTreeCheckoutAsync(tag) == "FAILED") {
+                        continue;
+                    }
                     project.Results.Add(MakeVulnerabilityResultEntry(project, tag));
                 }
             }
@@ -187,6 +200,8 @@ namespace AmIVulnerable.Controllers {
             foreach (OSVV osvVulnerability in osvPackageVulnerabilities) {
                 if (osvVulnerability.severity != null) {
                     foreach (Severity osvSeverity in osvVulnerability.severity) {
+                        Console.WriteLine(osvSeverity.score);
+                        Console.WriteLine(MakeVector(osvSeverity.score).BaseScore());
                         decimal vulnerabilitySeverity = MakeVector(osvSeverity.score).BaseScore();
                         if (vulnerabilitySeverity > severity) {
                             severity = vulnerabilitySeverity;
