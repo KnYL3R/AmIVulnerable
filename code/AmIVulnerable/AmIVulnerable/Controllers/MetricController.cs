@@ -407,7 +407,7 @@ namespace AmIVulnerable.Controllers {
                     }
             }
 
-            Match availabilityImpact = Regex.Match(vectorString, @"/A:+\w{1}");
+            Match availabilityImpact = Regex.Match(vectorString, @"/A:+\w{1}/{0,1}");
             switch (availabilityImpact.Groups[0].Value) {
                 case "/A:N": {
                         vector.AvailabilityImpact = BaseScoreMetric.None;

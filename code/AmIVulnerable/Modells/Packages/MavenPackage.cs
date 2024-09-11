@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Modells.Packages {
+﻿namespace Modells.Packages {
     public class MavenPackage {
         public string groupId { get; set; }
         //Package name
@@ -16,7 +10,7 @@ namespace Modells.Packages {
         public string classifier { get; set; }
         public string optional { get; set; }
         //Own Dependencies
-        public MavenPackage[] children { get; set; }
+        public List<MavenPackage> children { get; set; }
         
         /// <summary>
         /// Converts MavenPackage to Package
@@ -24,11 +18,20 @@ namespace Modells.Packages {
         /// <returns></returns>
         public Package ToPackage() {
             Package package = new Package();
-            package.Name = artifactId;
+            package.Name = groupId + ":" + artifactId;
             package.Version = version;
             //Own Dependencies???!?!?!?
+            package.Dependencies = GetChildren(children);
 
-            return null;
+            return package;
+        }
+
+        private List<Package> GetChildren(List<MavenPackage> mavenDependencies) {
+            List<Package> dependencies = new List<Package>();
+            foreach (MavenPackage mavenDependency in mavenDependencies) {
+                dependencies.Add(mavenDependency.ToPackage());
+            }
+            return dependencies;
         }
     }
 }

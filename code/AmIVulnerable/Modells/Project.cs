@@ -15,6 +15,8 @@ namespace Modells {
 
         [JsonIgnore]
         public string DirGuid { get; set; } = "";
+        [JsonIgnore]
+        public ProjectTypeEnum ProjectType { get; set; }
         private readonly static string CLI = "cmd";
         private readonly string CLI_RM = CLI == "cmd" ? "del" : "rm";
 
@@ -37,6 +39,11 @@ namespace Modells {
             }
         }
 
+        public enum ProjectTypeEnum {
+            maven = 0,
+            npm = 1,
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -44,7 +51,16 @@ namespace Modells {
         public async Task<string> MakeDependencyTreeCloneAsync() {
             List<Package> dependencyTree = new List<Package>();
             DirGuid = await Clone();
-            Install();
+            if (F.Exists(AppDomain.CurrentDomain.BaseDirectory + DirGuid + "/package.json")) {
+                ProjectType = ProjectTypeEnum.npm;
+                Install();
+            }
+            // If is Maven Project
+            if (F.Exists(AppDomain.CurrentDomain.BaseDirectory + DirGuid + "/pom.xml")) {
+                ProjectType = ProjectTypeEnum.maven;
+            }
+
+
             string treeJsonPath = MakeTree(DirGuid);
             if(treeJsonPath == "NO_VALID_PROJECT") {
                 return "FAILED";
@@ -60,7 +76,9 @@ namespace Modells {
         public string MakeDependencyTreeCheckoutAsync(string tag) {
             List<Package> dependencyTree = new List<Package>();
             Checkout(tag);
-            Install();
+            if(ProjectType == ProjectTypeEnum.npm) {
+                Install();
+            }
             string treeJsonPath = MakeTree(DirGuid);
             if (treeJsonPath == "NO_VALID_PROJECT") {
                 return "FAILED";
@@ -157,15 +175,15 @@ namespace Modells {
         /// <returns>File path</returns>
         private string MakeTree(string dirGuid) {
             // If is npm project
-            if(F.Exists(AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/package.json")) {
+            if(ProjectType == ProjectTypeEnum.npm) {
                 ExecuteCommand(CLI_RM, "tree.json", dirGuid);
                 ExecuteCommand("npm", "list --all --json > tree.json", dirGuid);
                 return AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/tree.json";
             } 
             // If is Maven Project
-            if(F.Exists(AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/pom.xml")) {
+            if(ProjectType == ProjectTypeEnum.maven) {
                 ExecuteCommand(CLI_RM, "tree.json", dirGuid);
-                ExecuteCommand("mvn", "org.apache.maven.plugins:maven-dependency-plugin:3.8.0:tree -DoutputFile=mavenTree.json -DoutputType=json", dirGuid);
+                ExecuteCommand("mvn", "org.apache.maven.plugins:maven-dependency-plugin:3.8.0:tree -DoutputFile=tree.json -DoutputType=json", dirGuid);
                 return AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/tree.json";
             }
             return "NO_VALID_PROJECT";
@@ -179,12 +197,24 @@ namespace Modells {
         private List<Package> ExtractTree(string filePath) {
             List<Package> packages = [];
             using (JsonDocument jsonDocument = JsonDocument.Parse(F.ReadAllText(filePath))) {
-                if (jsonDocument.RootElement.TryGetProperty("dependencies", out JsonElement dependenciesElement) &&
-                    dependenciesElement.ValueKind == JsonValueKind.Object) {
-                    foreach (JsonProperty dependency in dependenciesElement.EnumerateObject()) {
-                        Package nodePackage = ExtractDependencyInfo(dependency);
+                if(ProjectType == ProjectTypeEnum.npm) {
+                    if (jsonDocument.RootElement.TryGetProperty("dependencies", out JsonElement dependenciesElement) &&
+                        dependenciesElement.ValueKind == JsonValueKind.Object) {
+                        foreach (JsonProperty dependency in dependenciesElement.EnumerateObject()) {
+                            Package nodePackage = ExtractDependencyInfoFromProperty(dependency);
 
-                        packages.Add(nodePackage);
+                            packages.Add(nodePackage);
+                        }
+                    }
+                }
+                if(ProjectType == ProjectTypeEnum.maven) {
+                    if (jsonDocument.RootElement.TryGetProperty("children", out JsonElement dependenciesElement) &&
+                        dependenciesElement.ValueKind == JsonValueKind.Array) {
+                        foreach (JsonElement dependency in dependenciesElement.EnumerateArray()) {
+                            Package nodePackage = ExtractDependencyInfoFromElement(dependency);
+
+                            packages.Add(nodePackage);
+                        }
                     }
                 }
             }
@@ -196,23 +226,40 @@ namespace Modells {
         /// </summary>
         /// <param name="dependency"></param>
         /// <returns></returns>
-        private Package ExtractDependencyInfo(JsonProperty dependency) {
-            Package nodePackage = new Package {
-                Name = dependency.Name
-            };
-            if (dependency.Value.TryGetProperty("version", out JsonElement versionElement) &&
-                versionElement.ValueKind == JsonValueKind.String) {
-                nodePackage.Version = versionElement.GetString() ?? "";
-            }
-            if (dependency.Value.TryGetProperty("dependencies", out JsonElement subDependenciesElement) &&
-                subDependenciesElement.ValueKind == JsonValueKind.Object) {
-                foreach (JsonProperty subDependency in subDependenciesElement.EnumerateObject()) {
-                    Package subNodePackage = ExtractDependencyInfo(subDependency);
-                    nodePackage.Dependencies.Add(subNodePackage);
+        private Package ExtractDependencyInfoFromProperty(JsonProperty dependencyProperty) {
+            Package package = new Package();
+            if(ProjectType == ProjectTypeEnum.npm) {
+                package.Name = dependencyProperty!.Name;
+                if (dependencyProperty!.Value.TryGetProperty("version", out JsonElement versionElement) &&
+                    versionElement.ValueKind == JsonValueKind.String) {
+                    package.Version = versionElement.GetString() ?? "";
+                }
+                if (dependencyProperty!.Value.TryGetProperty("dependencies", out JsonElement subDependenciesElement) &&
+                    subDependenciesElement.ValueKind == JsonValueKind.Object) {
+                    foreach (JsonProperty subDependency in subDependenciesElement.EnumerateObject()) {
+                        Package subNodePackage = ExtractDependencyInfoFromProperty(subDependency);
+                        package.Dependencies.Add(subNodePackage);
+                    }
                 }
             }
+            return package;
+        }
 
-            return nodePackage;
+        private Package ExtractDependencyInfoFromElement(JsonElement dependencyElement) {
+            Package package = new Package();
+            if (ProjectType == ProjectTypeEnum.maven) {
+                package.Name = dependencyElement.GetProperty("groupId").ToString() + ":" + dependencyElement.GetProperty("artifactId").ToString();
+                if (dependencyElement.TryGetProperty("version", out JsonElement version) && version.ValueKind == JsonValueKind.String) {
+                    package.Version = version.ToString();
+                }
+                if (dependencyElement.TryGetProperty("children", out JsonElement childen) && childen.ValueKind == JsonValueKind.Array) {
+                    foreach (JsonElement subDependency in childen.EnumerateArray()) {
+                        Package subNodePackage = ExtractDependencyInfoFromElement(subDependency);
+                        package.Dependencies.Add(subNodePackage);
+                    }
+                }
+            }
+            return package;
         }
     }
 }
