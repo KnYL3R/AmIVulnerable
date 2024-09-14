@@ -96,7 +96,7 @@ namespace Modells {
                 };
 
                 Process runProcess = Process.Start(process)!;
-                runProcess.StandardInput.WriteLine($"git " + "stash");
+                runProcess.StandardInput.WriteLine($"git " + "reset --hard");
                 runProcess.StandardInput.WriteLine($"git " + $"checkout {tag}");
                 runProcess.StandardInput.WriteLine($"exit");
                 runProcess.WaitForExit();
@@ -112,6 +112,7 @@ namespace Modells {
         public void SetTags() {
             ExecuteCommand("git", "tag > tags.txt", DirGuid);
             Tags = F.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + DirGuid + "/tags.txt").ToList();
+            Tags.Reverse();
             Console.WriteLine(Tags);
         }
 
@@ -146,6 +147,7 @@ namespace Modells {
         private void Install() {
             ExecuteCommand(CLI_RM, ".npmrc", DirGuid);
             ExecuteCommand("npm", "install", DirGuid);
+            ExecuteCommand("git ", "status > status.txt", DirGuid);
             ExecuteCommand("npm", "i --lockfile-version 3 --package-lock-only", DirGuid);
             return;
         }

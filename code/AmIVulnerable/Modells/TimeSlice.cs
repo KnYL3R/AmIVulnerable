@@ -11,12 +11,13 @@ namespace Modells {
         public int CountDirectDependencies { get; set; }
         public int CountTransitiveDependencies { get; set; }
         public int CountUniqueTransitiveDependencies { get; set; }
-        public int CountKnownDirectVulnerabilities { get; set; }
-        public int CountKnownTransitiveVulnerabilities { get; set; }
-        public int CountKnownUniqueTransitiveVulnerabilities { get; set; }
-        public int CountToDateDirectVulnerabilities { get; set; }
-        public int CountToDateTransitiveVulnerabilities { get; set; }
-        public int CountToDateUniqueTransitiveVulnerabilities { get; set; }
+        public int CountKnownDirectVulnerableDependencies { get; set; }
+        public int CountKnownTransitiveVulnerableDependencies { get; set; }
+        public int CountKnownUniqueTransitiveVulnerableDependencies { get; set; }
+        public int CountToDateDirectVulnerableDependencies { get; set; }
+        public int CountToDateTransitiveVulnerableDependencies { get; set; }
+        public int CountToDateUniqueTransitiveVulnerableDependencies { get; set; }
         public int CountTotalFoundVulnerabilities { get; set; }
+        public bool InstallSuccessful { get; set; } = false;
     }
 }
