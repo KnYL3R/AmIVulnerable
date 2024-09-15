@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using MP = Modells.Project;
 namespace Modells {
     public class TimeSlice {
         public string TagName { get; set; } = "No tag or latest!";
@@ -18,6 +13,6 @@ namespace Modells {
         public int CountToDateTransitiveVulnerableDependencies { get; set; }
         public int CountToDateUniqueTransitiveVulnerableDependencies { get; set; }
         public int CountTotalFoundVulnerabilities { get; set; }
-        public bool InstallSuccessful { get; set; } = false;
+        public MP.ProjectTypeEnum ProjectEcosystem { get; set; }
     }
 }

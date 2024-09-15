@@ -30,9 +30,9 @@ namespace AmIVulnerable.Controllers {
         #region Endpoints
 
         /// <summary>
-        /// Generate a SimpleReport for a list of Projects
+        /// Generate TimeLine of project vulnerabilties
         /// </summary>
-        /// <param name="mavenList"></param>
+        /// <param name="projectsDto"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("vulnerabilityTimeLine")]
@@ -63,14 +63,13 @@ namespace AmIVulnerable.Controllers {
                     timeSeries.Add(MakeTimeSlice(project, currentTagDateTime, tag));
 
                     lastTagDateTime = currentTagDateTime.AddSeconds(-1);
+                    F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/reportCache.json", JsonConvert.SerializeObject(timeSeries));
                 }
-                F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "reportCache.json", JsonConvert.SerializeObject(timeSeries));
             }
             return Ok(timeSeries);
         }
 
         #endregion
-
 
         /// <summary>
         /// Starts a process that runs a command.
@@ -127,30 +126,29 @@ namespace AmIVulnerable.Controllers {
             timeSlice.TagName = tagName;
             timeSlice.Timestamp = timestamp;
 
-            string gitStatus = F.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/status.txt");
-            if (gitStatus.Contains("package-lock.json")) {
-                timeSlice.InstallSuccessful = true;
-            }
+            timeSlice.ProjectEcosystem = project.ProjectType;
 
             timeSlice.CountDirectDependencies = project.Packages.Count;
 
             // Count all Vulnerabilities found in osv scan
             int vulnerabilityCount = 0;
-            foreach (Packages osvPackage in osvResult.results[0].packages) {
-                vulnerabilityCount += osvPackage.vulnerabilities.Count;
+            if (osvResult.results.Count() != 0) {
+                foreach (Packages osvPackage in osvResult.results[0].packages) {
+                    vulnerabilityCount += osvPackage.vulnerabilities.Count;
+                }
             }
             timeSlice.CountTotalFoundVulnerabilities = vulnerabilityCount;
 
-            if (project.ProjectType == MP.ProjectTypeEnum.npm) {
-                // Make list of all transitive dependencies
-                List<MPP> allTransitiveDependencies = new List<MPP>();
-                foreach (MPP package in project.Packages) {
-                    allTransitiveDependencies.AddRange(TransitiveDependencies(package.Dependencies));
-                }
-                timeSlice.CountTransitiveDependencies = allTransitiveDependencies.Count;
+            // Make list of all transitive dependencies
+            List<MPP> allTransitiveDependencies = new List<MPP>();
+            foreach (MPP package in project.Packages) {
+                allTransitiveDependencies.AddRange(TransitiveDependencies(package.Dependencies));
+            }
+            timeSlice.CountTransitiveDependencies = allTransitiveDependencies.Count;
 
-                timeSlice.CountUniqueTransitiveDependencies = GetUniquePackagesFromList(allTransitiveDependencies).Count;
+            timeSlice.CountUniqueTransitiveDependencies = GetUniquePackagesFromList(allTransitiveDependencies).Count;
 
+            if(timeSlice.CountTotalFoundVulnerabilities > 0) {
                 // Make list of direct vulnerabilities (Known and ToDate)
                 List<MPP> allKnownDirectVulnerabilities = new List<MPP>();
                 List<MPP> allToDateDirectVulnerabilities = new List<MPP>();
@@ -166,7 +164,13 @@ namespace AmIVulnerable.Controllers {
                 }
                 timeSlice.CountKnownDirectVulnerableDependencies = allKnownDirectVulnerabilities.Count;
                 timeSlice.CountToDateDirectVulnerableDependencies = allToDateDirectVulnerabilities.Count;
+            } else {
 
+                timeSlice.CountKnownDirectVulnerableDependencies = 0;
+                timeSlice.CountToDateDirectVulnerableDependencies = 0;
+            }
+
+            if(timeSlice.CountTotalFoundVulnerabilities > 0) {
                 // Use List of all transitive Packages from "CountTransitiveDependencies"
                 List<MPP> allKnownTransitiveVulnerabilities = new List<MPP>();
                 List<MPP> allToDateTransitiveVulnerabilities = new List<MPP>();
@@ -185,6 +189,11 @@ namespace AmIVulnerable.Controllers {
 
                 timeSlice.CountKnownUniqueTransitiveVulnerableDependencies = GetUniquePackagesFromList(allKnownTransitiveVulnerabilities).Count;
                 timeSlice.CountToDateUniqueTransitiveVulnerableDependencies = GetUniquePackagesFromList(allToDateTransitiveVulnerabilities).Count;
+            } else {
+                timeSlice.CountKnownTransitiveVulnerableDependencies = 0;
+                timeSlice.CountToDateTransitiveVulnerableDependencies = 0;
+                timeSlice.CountKnownUniqueTransitiveVulnerableDependencies = 0;
+                timeSlice.CountToDateUniqueTransitiveVulnerableDependencies = 0;
             }
 
             return timeSlice;

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.Intrinsics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Modells.Packages;
@@ -113,7 +114,6 @@ namespace Modells {
             ExecuteCommand("git", "tag > tags.txt", DirGuid);
             Tags = F.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + DirGuid + "/tags.txt").ToList();
             Tags.Reverse();
-            Console.WriteLine(Tags);
         }
 
         private async Task<string> Clone() {
