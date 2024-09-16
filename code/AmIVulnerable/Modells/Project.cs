@@ -115,6 +115,14 @@ namespace Modells {
             Tags.Reverse();
         }
 
+        /// <summary>
+        /// Deletes Project folder
+        /// </summary>
+        public void Delete() {
+            RemoveReadOnlyAttribute(AppDomain.CurrentDomain.BaseDirectory + DirGuid);
+            Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + DirGuid, true);
+        }
+
         private async Task<string> Clone() {
             if (ProjectUrl is null) {
                 this.DirGuid = "Err";

@@ -50,7 +50,9 @@ namespace AmIVulnerable.Controllers {
                 Console.WriteLine(cloneStatus);
                 DateTime currentTagDateTime = GetTagDateTime(project.DirGuid);
 
-                timeSeries.Add(MakeTimeSlice(project, currentTagDateTime, "release"));
+                if(project.Packages.Count != 0) {
+                    timeSeries.Add(MakeTimeSlice(project, currentTagDateTime, "release"));
+                }
 
                 project.SetTags();
 
@@ -59,12 +61,15 @@ namespace AmIVulnerable.Controllers {
 
                     cloneStatus = project.MakeDependencyTreeCheckoutAsync(tag);
                     currentTagDateTime = GetTagDateTime(project.DirGuid);
-                    timeSeries.Add(MakeTimeSlice(project, lastTagDateTime, tag));
-                    timeSeries.Add(MakeTimeSlice(project, currentTagDateTime, tag));
 
+                    if (project.Packages.Count != 0) {
+                        timeSeries.Add(MakeTimeSlice(project, lastTagDateTime, tag));
+                        timeSeries.Add(MakeTimeSlice(project, currentTagDateTime, tag));
+                    }
                     lastTagDateTime = currentTagDateTime.AddSeconds(-1);
-                    F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/reportCache.json", JsonConvert.SerializeObject(timeSeries));
+                    F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "/reportCache.json", JsonConvert.SerializeObject(timeSeries));
                 }
+                //project.Delete(); //Comment out for Debugging
             }
             return Ok(timeSeries);
         }
