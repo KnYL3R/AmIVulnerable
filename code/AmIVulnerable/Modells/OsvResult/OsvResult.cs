@@ -1,7 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using Modells.DTO;
+using Modells.Packages;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using F = System.IO.File;
+using MPP = Modells.Packages.Package;
 
 namespace Modells.OsvResult {
     public class OsvResult {
@@ -15,9 +18,37 @@ namespace Modells.OsvResult {
 
         private readonly static string CLI = "cmd";
 
-        public OsvResult OsvExtractVulnerabilities(string dir) {
-            ExecuteCommand("osv-scanner", " --format json . > osv.json", dir);
-            return JsonConvert.DeserializeObject<OsvResult>(F.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + dir + "/osv.json")) ?? new OsvResult();
+        public OsvResult OsvExtractVulnerabilities(Project project) {
+            if(project.ProjectType == Project.ProjectTypeEnum.npm) {
+                ExecuteCommand("osv-scanner", " --format json . > osv.json", project.DirGuid);
+            }
+            else {
+                 MakeCustomOsvLock(project);
+            }
+            return JsonConvert.DeserializeObject<OsvResult>(F.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/osv.json")) ?? new OsvResult();
+        }
+        private void MakeCustomOsvLock(Project project) {
+            List<MPP> packages = GetAllPackages(project.Packages);
+            List<CustomPackage> customPackages = new List<CustomPackage>();
+            foreach (MPP package in packages) {
+                //Maven is sadly hardcoded rn
+                customPackages.Add(new CustomPackage(package.Name, package.Version, "Maven"));
+            }
+            CustomOsvLock customOsvLock = new CustomOsvLock();
+            customOsvLock.results.Add(new CustomResult(customPackages));
+            F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/custom-osv-scanner.json", JsonConvert.SerializeObject(customOsvLock));
+            Console.WriteLine("Made custom lockfile");
+            ExecuteCommand("osv-scanner", " --format json --lockfile osv-scanner:custom-osv-scanner.json > osv.json", project.DirGuid);
+        }
+        private List<MPP> GetAllPackages(List<MPP> packages) {
+            List<MPP> packagesResult = new List<MPP>();
+            foreach (MPP package in packages) {
+                packagesResult.Add(package);
+                if (package.Dependencies != null) {
+                    packagesResult.AddRange(GetAllPackages(package.Dependencies));
+                }
+            }
+            return packagesResult;
         }
         private void ExecuteCommand(string prog, string command, string dir) {
             ProcessStartInfo process = new ProcessStartInfo {

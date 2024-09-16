@@ -105,7 +105,7 @@ namespace AmIVulnerable.Controllers {
         /// <returns></returns>
         private MP.Tag MakeDependencyResultEntry(MP project, string tagName) {
             OsvResult osvResult = new OsvResult();
-            osvResult = osvResult.OsvExtractVulnerabilities(project.DirGuid);
+            osvResult = osvResult.OsvExtractVulnerabilities(project);
             MP.Tag tagWithEntries = new MP.Tag();
             tagWithEntries.TagName = tagName;
             if (osvResult.results.Count == 0) {
@@ -133,7 +133,7 @@ namespace AmIVulnerable.Controllers {
 
         private MP.Tag MakeVulnerabilityResultEntry(MP project, string tagName) {
             OsvResult osvResult = new OsvResult();
-            osvResult = osvResult.OsvExtractVulnerabilities(project.DirGuid);
+            osvResult = osvResult.OsvExtractVulnerabilities(project);
             MP.Tag tagWithEntries = new MP.Tag();
             tagWithEntries.TagName = tagName;
             if (osvResult.results.Count == 0) {

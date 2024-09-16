@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics;
-using System.Runtime.Intrinsics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Modells.Packages;
 using F = System.IO.File;
+using Modells.Packages;
 
 namespace Modells {
     public class Project {
@@ -41,7 +40,7 @@ namespace Modells {
         }
 
         public enum ProjectTypeEnum {
-            maven = 0,
+            Maven = 0,
             npm = 1,
         }
 
@@ -58,7 +57,7 @@ namespace Modells {
             }
             // If is Maven Project
             if (F.Exists(AppDomain.CurrentDomain.BaseDirectory + DirGuid + "/pom.xml")) {
-                ProjectType = ProjectTypeEnum.maven;
+                ProjectType = ProjectTypeEnum.Maven;
             }
 
 
@@ -183,7 +182,7 @@ namespace Modells {
                 return AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/tree.json";
             } 
             // If is Maven Project
-            if(ProjectType == ProjectTypeEnum.maven) {
+            if(ProjectType == ProjectTypeEnum.Maven) {
                 ExecuteCommand(CLI_RM, "tree.json", dirGuid);
                 ExecuteCommand("mvn", "org.apache.maven.plugins:maven-dependency-plugin:3.8.0:tree -DoutputFile=tree.json -DoutputType=json", dirGuid);
                 return AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/tree.json";
@@ -209,7 +208,7 @@ namespace Modells {
                         }
                     }
                 }
-                if(ProjectType == ProjectTypeEnum.maven) {
+                if(ProjectType == ProjectTypeEnum.Maven) {
                     if (jsonDocument.RootElement.TryGetProperty("children", out JsonElement dependenciesElement) &&
                         dependenciesElement.ValueKind == JsonValueKind.Array) {
                         foreach (JsonElement dependency in dependenciesElement.EnumerateArray()) {
@@ -249,7 +248,7 @@ namespace Modells {
 
         private Package ExtractDependencyInfoFromElement(JsonElement dependencyElement) {
             Package package = new Package();
-            if (ProjectType == ProjectTypeEnum.maven) {
+            if (ProjectType == ProjectTypeEnum.Maven) {
                 package.Name = dependencyElement.GetProperty("groupId").ToString() + ":" + dependencyElement.GetProperty("artifactId").ToString();
                 if (dependencyElement.TryGetProperty("version", out JsonElement version) && version.ValueKind == JsonValueKind.String) {
                     package.Version = version.ToString();

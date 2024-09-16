@@ -121,7 +121,7 @@ namespace AmIVulnerable.Controllers {
         private TimeSlice MakeTimeSlice(MP project, DateTime timestamp, string tagName = "master") {
             TimeSlice timeSlice = new TimeSlice();
             OsvResult osvResult = new OsvResult();
-            osvResult = osvResult.OsvExtractVulnerabilities(project.DirGuid);
+            osvResult = osvResult.OsvExtractVulnerabilities(project);
             
             timeSlice.TagName = tagName;
             timeSlice.Timestamp = timestamp;
