@@ -110,9 +110,10 @@ namespace Modells {
         }
 
         public void SetTags() {
-            ExecuteCommand("git", "tag > tags.txt", DirGuid);
+            ExecuteCommand("git", "for-each-ref --sort=creatordate --format %(refname:short) refs/tags > tags.txt", DirGuid);
             Tags = F.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + DirGuid + "/tags.txt").ToList();
             Tags.Reverse();
+            Console.WriteLine(Tags);
         }
 
         /// <summary>
@@ -186,7 +187,7 @@ namespace Modells {
             // If is npm project
             if(ProjectType == ProjectTypeEnum.npm) {
                 ExecuteCommand(CLI_RM, "tree.json", dirGuid);
-                ExecuteCommand("npm", "list --all --json > tree.json", dirGuid);
+                ExecuteCommand("npm", "list --all --omit=dev --json > tree.json", dirGuid);
                 return AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/tree.json";
             } 
             // If is Maven Project

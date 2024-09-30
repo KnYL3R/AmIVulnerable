@@ -68,8 +68,9 @@ namespace AmIVulnerable.Controllers {
                     }
                     lastTagDateTime = currentTagDateTime.AddSeconds(-1);
                     F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "/reportCache.json", JsonConvert.SerializeObject(timeSeries));
+                    DeleteLocalFiles(project);
                 }
-                //project.Delete(); //Comment out for Debugging
+                project.Delete(); //Comment out for Debugging
             }
             return Ok(timeSeries);
         }
@@ -204,6 +205,25 @@ namespace AmIVulnerable.Controllers {
             return timeSlice;
         }
 
+        private void DeleteLocalFiles(MP project) {
+            RemoveReadOnlyAttribute(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid);
+            F.Delete(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/osv.json");
+            F.Delete(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/tree.json");
+            F.Delete(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/tags.txt");
+            F.Delete(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/status.txt");
+        }
+
+        private static void RemoveReadOnlyAttribute(string path) {
+            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+
+            foreach (FileInfo file in directoryInfo.GetFiles()) {
+                file.Attributes &= ~FileAttributes.ReadOnly;
+            }
+
+            foreach (DirectoryInfo subDirectory in directoryInfo.GetDirectories()) {
+                RemoveReadOnlyAttribute(subDirectory.FullName);
+            }
+        }
         private MPP ExtractDependencyInfoNpm(JsonProperty dependency) {
             MPP package = new MPP {
                 Name = dependency.Name

@@ -20,7 +20,7 @@ namespace Modells.OsvResult {
 
         public OsvResult OsvExtractVulnerabilities(Project project) {
             if(project.ProjectType == Project.ProjectTypeEnum.npm) {
-                ExecuteCommand("osv-scanner", " --format json . > osv.json", project.DirGuid);
+                ExecuteCommand("osv-scanner", " --no-ignore --format json . > osv.json", project.DirGuid);
             }
             else {
                  MakeCustomOsvLock(project);
@@ -38,7 +38,7 @@ namespace Modells.OsvResult {
             customOsvLock.results.Add(new CustomResult(customPackages));
             F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/custom-osv-scanner.json", JsonConvert.SerializeObject(customOsvLock));
             Console.WriteLine("Made custom lockfile");
-            ExecuteCommand("osv-scanner", " --format json --lockfile osv-scanner:custom-osv-scanner.json > osv.json", project.DirGuid);
+            ExecuteCommand("osv-scanner", " --no-ignore --format json --lockfile osv-scanner:custom-osv-scanner.json > osv.json", project.DirGuid);
         }
         private List<MPP> GetAllPackages(List<MPP> packages) {
             List<MPP> packagesResult = new List<MPP>();
