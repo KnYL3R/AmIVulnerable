@@ -221,7 +221,11 @@ namespace AmIVulnerable.Controllers {
             }
 
             foreach (DirectoryInfo subDirectory in directoryInfo.GetDirectories()) {
-                RemoveReadOnlyAttribute(subDirectory.FullName);
+                try {
+                    RemoveReadOnlyAttribute(subDirectory.FullName);
+                } catch {
+                    return;
+                }
             }
         }
         private MPP ExtractDependencyInfoNpm(JsonProperty dependency) {

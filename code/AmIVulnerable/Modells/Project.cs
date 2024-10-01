@@ -193,7 +193,7 @@ namespace Modells {
             // If is Maven Project
             if(ProjectType == ProjectTypeEnum.Maven) {
                 ExecuteCommand(CLI_RM, "tree.json", dirGuid);
-                ExecuteCommand("mvn", "org.apache.maven.plugins:maven-dependency-plugin:3.8.0:tree -DoutputFile=tree.json -DoutputType=json", dirGuid);
+                ExecuteCommand("mvn", "org.apache.maven.plugins:maven-dependency-plugin:3.8.0:tree -DoutputFile=tree.json -DoutputType=json -Dscope=\"compile provided runtime system import\"", dirGuid);
                 return AppDomain.CurrentDomain.BaseDirectory + dirGuid + "/tree.json";
             }
             return "NO_VALID_PROJECT";
