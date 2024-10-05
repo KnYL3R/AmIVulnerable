@@ -10,6 +10,8 @@ using PP = Modells.Packages.Package;
 using F = System.IO.File;
 using Modells.DTO;
 using Newtonsoft.Json;
+using System.Security.Cryptography.X509Certificates;
+using Modells.Packages;
 
 namespace AmIVulnerable.Controllers {
 
@@ -96,7 +98,46 @@ namespace AmIVulnerable.Controllers {
             }
             return Ok(projects);
         }
+
+        [HttpPost]
+        [Route("directDependency")]
+        public IActionResult DirectDependecyMetric([FromBody] List<ProjectDto> projectsDto) {
+            List<MP> projects = new List<MP>();
+            foreach (ProjectDto projectDto in projectsDto) {
+                projects.Add(new MP(projectDto.ProjectUrl));
+            }
+            List<PackageMetric> directVulnerableDependencyMetrics = new List<PackageMetric>();
+            foreach (MP project in projects) {
+                Console.WriteLine("Now analysing: " + project.ProjectUrl);
+                if (project.MakeDependencyTreeCloneAsync().Result == "FAILED") {
+                    Console.WriteLine("Could not clone or install project");
+                    directVulnerableDependencyMetrics.AddRange(GetPackageMetrics(project));
+                    continue;
+                }
+            }
+            return Ok();
+        }
         #endregion
+
+        private List<PackageMetric> GetPackageMetrics(MP project) {
+            List<PackageMetric> packageMetrics = new List<PackageMetric>();
+            OsvResult osvResult = new OsvResult();
+            osvResult = osvResult.OsvExtractVulnerabilities(project);
+            if (osvResult.results.Count == 0) {
+                return [];
+            }
+            foreach (PP directDependency in project.Packages) {
+                packageMetrics.Add(MakePackageMetric(directDependency, osvResult));
+            }
+            return packageMetrics;
+        }
+
+        private PackageMetric MakePackageMetric(PP dependency, OsvResult osvResult) {
+            PackageMetric packageMetric = new PackageMetric();
+            packageMetric.version = dependency.Version;
+            packageMetric.name = dependency.Name;
+            return packageMetric;
+        }
 
         /// <summary>
         /// 
@@ -164,26 +205,22 @@ namespace AmIVulnerable.Controllers {
             List<PP> vulnerablePackages = new List<PP>();
             foreach(Packages osvPackage in osvPackages) {
                 foreach(PP package in projectPackages) {
-                    PP vulnerablePackage = FindVulnerablePackage(osvPackage, package);
-                    if (vulnerablePackage.Name != "" && vulnerablePackage.Version != "") {
-                        vulnerablePackages.Add(vulnerablePackage);
-                    }
+                    vulnerablePackages.AddRange(FindVulnerablePackages(osvPackage, package));
                 }
             }
             return vulnerablePackages;
         }
 
-        private PP FindVulnerablePackage(Packages osvPackage, PP package) {
-            PP result = new PP(); 
-            //If current package is vulnerable
+        private List<PP> FindVulnerablePackages(Packages osvPackage, PP package) {
+            List<PP> result = new List<PP>(); 
             if (package.Name == osvPackage.package.name &&
                 package.Version == osvPackage.package.version) {
-                return package;
+                result.Add(package);
             //Search deeper
             }
             else {
                 foreach(PP dependency in package.Dependencies) {
-                    result = FindVulnerablePackage(osvPackage, dependency);
+                    result.AddRange(FindVulnerablePackages(osvPackage, dependency));
                 }
             }
             return result;
