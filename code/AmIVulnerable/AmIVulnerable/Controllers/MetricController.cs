@@ -10,7 +10,6 @@ using PP = Modells.Packages.Package;
 using F = System.IO.File;
 using Modells.DTO;
 using Newtonsoft.Json;
-using System.Security.Cryptography.X509Certificates;
 using Modells.Packages;
 
 namespace AmIVulnerable.Controllers {
