@@ -8,14 +8,14 @@ namespace Modells {
     public class Project {
         public string ProjectUrl { get; set; } = "";
         public List<Tag> Results { get; set; } = [];
-        [JsonIgnore]
+        [JsonIgnore, Newtonsoft.Json.JsonIgnore]
         public List<string> Tags { get; set; } = [];
-        [JsonIgnore]
+        [JsonIgnore, Newtonsoft.Json.JsonIgnore]
         public List<Package> Packages { get; set; } = [];
 
-        [JsonIgnore]
+        [JsonIgnore, Newtonsoft.Json.JsonIgnore]
         public string DirGuid { get; set; } = "";
-        [JsonIgnore]
+        [JsonIgnore, Newtonsoft.Json.JsonIgnore]
         public ProjectTypeEnum ProjectType { get; set; }
         private readonly static string CLI = "cmd";
         private readonly string CLI_RM = CLI == "cmd" ? "del" : "rm";
