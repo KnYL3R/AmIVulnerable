@@ -108,18 +108,71 @@ namespace AmIVulnerable.Controllers {
             foreach (ProjectDto projectDto in projectsDto) {
                 projects.Add(new MP(projectDto.ProjectUrl));
             }
-            List<Modells.Packages.VulnerabilityMetric> directVulnerableDependencyMetrics = new List<Modells.Packages.VulnerabilityMetric>();
+            List<ProjectVulnerabilityResultMetricReturnType> projectVulnerabilityResultMetricReturnTypes = new List<ProjectVulnerabilityResultMetricReturnType>();
             foreach (MP project in projects) {
+                List<VulnerabilityResultMetric> vulnerabilityResultMetrics = new List<VulnerabilityResultMetric>();
                 Console.WriteLine("Now analysing: " + project.ProjectUrl);
                 if (project.MakeDependencyTreeCloneAsync().Result == "FAILED") {
                     Console.WriteLine("Could not clone or install project");
-                    //directVulnerableDependencyMetrics.AddRange(GetPackageMetrics(project));
                     continue;
                 }
+                vulnerabilityResultMetrics.AddRange(MakeVulnerabilityResultMetrics(project));
+                projectVulnerabilityResultMetricReturnTypes.Add(new ProjectVulnerabilityResultMetricReturnType(project.ProjectUrl, vulnerabilityResultMetrics));
             }
-            return Ok();
+            if(projectVulnerabilityResultMetricReturnTypes.Count == 0) {
+                return StatusCode(500, new {
+                    error = new {
+                        code = 500,
+                        message = "Internal Server Error",
+                        details = "Could not clone or install any projects"
+                    }
+                });
+            }
+            return Ok(projectVulnerabilityResultMetricReturnTypes);
         }
         #endregion
+
+        private List<VulnerabilityResultMetric> MakeVulnerabilityResultMetrics(MP project) {
+            List<VulnerabilityResultMetric> vulnerabilityResultMetrics = new List<VulnerabilityResultMetric>();
+            OsvResult osvResult = new OsvResult();
+            osvResult = osvResult.OsvExtractVulnerabilities(project);
+            if (osvResult.results.Count == 0) {
+                return [];
+            }
+            foreach (Packages osvPackage in osvResult.results[0].packages) {
+                foreach (OSVV osvPackageVulnerability in osvPackage.vulnerabilities) {
+                    VulnerabilityResultMetric v = new VulnerabilityResultMetric();
+                    foreach (PP package in project.Packages) {
+                        v.packageDependencyPaths.AddRange(GetDependencyPaths(osvPackage, package));
+                        v.packageTransitiveDepths.AddRange(GetDepths(osvPackage, package));
+                    }
+                    //if there is no path to the package in all prod-dependencies it is of no value to prod environments
+                    //also no path means no way to the dependency --> no way to fix it!
+                    if(v.packageDependencyPaths.Count == 0) {
+                        continue;
+                    }
+                    if (osvPackageVulnerability.severity.Count != 0) {
+                        v.vulnerabilityVectorString = osvPackageVulnerability.severity[0].score;
+                        v.vulnerabilityVector = MakeVector(osvPackageVulnerability.severity[0].score);
+                        v.vulnerabilitySeverity = v.vulnerabilityVector.BaseScore();
+                    }
+                    v.vulnerabilityPublished = osvPackageVulnerability.published;
+                    v.vulnerabilityAliases = osvPackageVulnerability.aliases;
+                    v.vulnerabilitySummary = osvPackageVulnerability.summary;
+                    v.vulnerabilityDetails = osvPackageVulnerability.details;
+                    v.vulnerabilityReferences = osvPackageVulnerability.references;
+                    v.vulnerabilityDatabaseSpecific = osvPackageVulnerability.database_specific;
+                    foreach (Modells.OsvResult.Affected affected in osvPackageVulnerability.affected) {
+                        v.vulnerabilityRanges.AddRange(affected.ranges);
+                    }
+                    v.packageName = osvPackage.package.name;
+                    v.packageVersion = osvPackage.package.version;
+                    v.packageSubPackagesNumber = GetSubPackagesCount(GetProjectPackage(osvPackage, project.Packages));
+                    vulnerabilityResultMetrics.Add(v);
+                }
+            }
+            return vulnerabilityResultMetrics;
+        }
 
         private void DeleteLocalFiles(MP project) {
             RemoveReadOnlyAttribute(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid);
@@ -143,12 +196,6 @@ namespace AmIVulnerable.Controllers {
                     return;
                 }
             }
-        }
-        private PackageMetric MakePackageMetric(PP dependency, OsvResult osvResult) {
-            PackageMetric packageMetric = new PackageMetric();
-            packageMetric.version = dependency.Version;
-            packageMetric.name = dependency.Name;
-            return packageMetric;
         }
 
         /// <summary>
@@ -261,6 +308,14 @@ namespace AmIVulnerable.Controllers {
             return severity;
         }
 
+        private int GetSubPackagesCount(PP dependency, int packageCount = 0) {
+            packageCount += dependency.Dependencies.Count;
+            foreach (PP subDependency in dependency.Dependencies) {
+                packageCount += GetSubPackagesCount(subDependency, packageCount);
+            }
+            return packageCount;
+        }
+
         /// <summary>
         /// Get Depth a single osvPackage is in deptree
         /// </summary>
@@ -302,6 +357,19 @@ namespace AmIVulnerable.Controllers {
             return savedDepths;
         }
 
+        private PP GetProjectPackage(Packages osvPackage, List<PP> projectPackages) {
+            foreach (PP projectPackage in projectPackages) {
+                if (osvPackage.package.name == projectPackage.Name &&
+                    osvPackage.package.version == projectPackage.Version) {
+                    return projectPackage;
+                }
+                foreach (PP dependencyPackage in projectPackage.Dependencies) {
+                    return GetProjectPackage(osvPackage, dependencyPackage.Dependencies);
+                }
+            }
+            return new PP();
+        }
+
         private int ExtractDependencyDepth(Packages osvPackage, JsonProperty dependency, int depth) {
             depth += 1;
             //When finding the correct Package return a depth
@@ -318,6 +386,20 @@ namespace AmIVulnerable.Controllers {
                 ExtractDependencyDepth(osvPackage, sunDependency, depth);
             }
             return -1;
+        }
+
+        private List<string> GetDependencyPaths(Packages osvPackage, PP package, string path = "-> ") {
+            List<string> savedPaths = new List<string>();
+            if (package.Name == osvPackage.package.name &&
+                package.Version == osvPackage.package.version) {
+                savedPaths.Add(path + package.Name);
+            }
+            path += package.Name + " -> ";
+            foreach (PP dependencyPackage in package.Dependencies) {
+                //path += dependencyPackage.Name + " -> ";
+                savedPaths.AddRange(GetDependencyPaths(osvPackage, dependencyPackage, path));
+            }
+            return savedPaths;
         }
 
         //Make string vector to element of Vector class

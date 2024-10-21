@@ -255,7 +255,7 @@ namespace Modells.OsvResult {
 
         [JsonProperty("aliases")]
         [JsonPropertyName("aliases")]
-        public List<string> aliases { get; set; }
+        public List<string> aliases { get; set; } = [];
 
         [JsonProperty("summary")]
         [JsonPropertyName("summary")]
@@ -267,15 +267,15 @@ namespace Modells.OsvResult {
 
         [JsonProperty("affected")]
         [JsonPropertyName("affected")]
-        public List<Affected> affected { get; set; }
+        public List<Affected> affected { get; set; } = [];
 
         [JsonProperty("severity")]
         [JsonPropertyName("severity")]
-        public List<Severity> severity { get; set; }
+        public List<Severity> severity { get; set; } = [];
 
         [JsonProperty("references")]
         [JsonPropertyName("references")]
-        public List<Reference> references { get; set; }
+        public List<Reference> references { get; set; } = [];
 
         [JsonProperty("database_specific")]
         [JsonPropertyName("database_specific")]
