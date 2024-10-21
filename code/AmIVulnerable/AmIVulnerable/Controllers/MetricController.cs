@@ -61,7 +61,8 @@ namespace AmIVulnerable.Controllers {
                     }
                     project.Results.Add(MakeDependencyResultEntry(project, tag));
                 }
-                F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "cache.json", JsonConvert.SerializeObject(projects));
+                DeleteLocalFiles(project);
+                F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "/dependencyCache.json", JsonConvert.SerializeObject(projects));
             }
             //Return list of enriched projects
             return Ok(projects);
@@ -94,6 +95,8 @@ namespace AmIVulnerable.Controllers {
                     }
                     project.Results.Add(MakeVulnerabilityResultEntry(project, tag));
                 }
+                DeleteLocalFiles(project);
+                F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "/vulnerabilityCache.json", JsonConvert.SerializeObject(projects));
             }
             return Ok(projects);
         }
@@ -118,25 +121,35 @@ namespace AmIVulnerable.Controllers {
         }
         #endregion
 
-        //private List<Modells.Packages.VulnerabilityMetric> GetPackageMetrics(MP project) {
-        //    List<Modells.Packages.VulnerabilityMetric> packageMetrics = new List<Modells.Packages.VulnerabilityMetric>();
-        //    OsvResult osvResult = new OsvResult();
-        //    osvResult = osvResult.OsvExtractVulnerabilities(project);
-        //    if (osvResult.results.Count == 0) {
-        //        return [];
-        //    }
-        //    foreach (PP directDependency in project.Packages) {
-        //        packageMetrics.Add(MakePackageMetric(directDependency, osvResult));
-        //    }
-        //    return packageMetrics;
-        //}
+        private void DeleteLocalFiles(MP project) {
+            RemoveReadOnlyAttribute(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid);
+            F.Delete(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/osv.json");
+            F.Delete(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/tree.json");
+            F.Delete(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/tags.txt");
+            F.Delete(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/status.txt");
+        }
+        private static void RemoveReadOnlyAttribute(string path) {
+            DirectoryInfo directoryInfo = new DirectoryInfo(path);
 
-        //private Modells.Packages.VulnerabilityMetric MakePackageMetric(PP dependency, OsvResult osvResult) {
-        //    Modells.Packages.VulnerabilityMetric packageMetric = new Modells.Packages.VulnerabilityMetric();
-        //    packageMetric.version = dependency.Version;
-        //    packageMetric.name = dependency.Name;
-        //    return packageMetric;
-        //}
+            foreach (FileInfo file in directoryInfo.GetFiles()) {
+                file.Attributes &= ~FileAttributes.ReadOnly;
+            }
+
+            foreach (DirectoryInfo subDirectory in directoryInfo.GetDirectories()) {
+                try {
+                    RemoveReadOnlyAttribute(subDirectory.FullName);
+                }
+                catch {
+                    return;
+                }
+            }
+        }
+        private PackageMetric MakePackageMetric(PP dependency, OsvResult osvResult) {
+            PackageMetric packageMetric = new PackageMetric();
+            packageMetric.version = dependency.Version;
+            packageMetric.name = dependency.Name;
+            return packageMetric;
+        }
 
         /// <summary>
         /// 

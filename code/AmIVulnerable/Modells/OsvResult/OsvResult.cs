@@ -10,7 +10,7 @@ namespace Modells.OsvResult {
     public class OsvResult {
         [JsonProperty("results")]
         [JsonPropertyName("results")]
-        public List<Result> results { get; set; }
+        public List<Result> results { get; set; } = [];
 
         [JsonProperty("experimental_config")]
         [JsonPropertyName("experimental_config")]
@@ -23,13 +23,18 @@ namespace Modells.OsvResult {
                 ExecuteCommand("osv-scanner", " --no-ignore --format json . > osv.json", project.DirGuid);
             }
             else {
-                 MakeCustomOsvLock(project);
+                if(!MakeCustomOsvLock(project)) {
+                    return new OsvResult();
+                }
             }
             return JsonConvert.DeserializeObject<OsvResult>(F.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/osv.json")) ?? new OsvResult();
         }
-        private void MakeCustomOsvLock(Project project) {
+        private bool MakeCustomOsvLock(Project project) {
             List<MPP> packages = GetAllPackages(project.Packages);
             List<CustomPackage> customPackages = new List<CustomPackage>();
+            if(packages.Count() == 0) {
+                return false;
+            }
             foreach (MPP package in packages) {
                 //Maven is sadly hardcoded rn
                 customPackages.Add(new CustomPackage(package.Name, package.Version, "Maven"));
@@ -39,6 +44,7 @@ namespace Modells.OsvResult {
             F.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + project.DirGuid + "/custom-osv-scanner.json", JsonConvert.SerializeObject(customOsvLock));
             Console.WriteLine("Made custom lockfile");
             ExecuteCommand("osv-scanner", " --no-ignore --format json --lockfile osv-scanner:custom-osv-scanner.json > osv.json", project.DirGuid);
+            return true;
         }
         private List<MPP> GetAllPackages(List<MPP> packages) {
             List<MPP> packagesResult = new List<MPP>();
