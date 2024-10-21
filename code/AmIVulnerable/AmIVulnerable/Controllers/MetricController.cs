@@ -99,18 +99,18 @@ namespace AmIVulnerable.Controllers {
         }
 
         [HttpPost]
-        [Route("directDependency")]
+        [Route("management/vulnerabilities")]
         public IActionResult DirectDependecyMetric([FromBody] List<ProjectDto> projectsDto) {
             List<MP> projects = new List<MP>();
             foreach (ProjectDto projectDto in projectsDto) {
                 projects.Add(new MP(projectDto.ProjectUrl));
             }
-            List<PackageMetric> directVulnerableDependencyMetrics = new List<PackageMetric>();
+            List<Modells.Packages.VulnerabilityMetric> directVulnerableDependencyMetrics = new List<Modells.Packages.VulnerabilityMetric>();
             foreach (MP project in projects) {
                 Console.WriteLine("Now analysing: " + project.ProjectUrl);
                 if (project.MakeDependencyTreeCloneAsync().Result == "FAILED") {
                     Console.WriteLine("Could not clone or install project");
-                    directVulnerableDependencyMetrics.AddRange(GetPackageMetrics(project));
+                    //directVulnerableDependencyMetrics.AddRange(GetPackageMetrics(project));
                     continue;
                 }
             }
@@ -118,25 +118,25 @@ namespace AmIVulnerable.Controllers {
         }
         #endregion
 
-        private List<PackageMetric> GetPackageMetrics(MP project) {
-            List<PackageMetric> packageMetrics = new List<PackageMetric>();
-            OsvResult osvResult = new OsvResult();
-            osvResult = osvResult.OsvExtractVulnerabilities(project);
-            if (osvResult.results.Count == 0) {
-                return [];
-            }
-            foreach (PP directDependency in project.Packages) {
-                packageMetrics.Add(MakePackageMetric(directDependency, osvResult));
-            }
-            return packageMetrics;
-        }
+        //private List<Modells.Packages.VulnerabilityMetric> GetPackageMetrics(MP project) {
+        //    List<Modells.Packages.VulnerabilityMetric> packageMetrics = new List<Modells.Packages.VulnerabilityMetric>();
+        //    OsvResult osvResult = new OsvResult();
+        //    osvResult = osvResult.OsvExtractVulnerabilities(project);
+        //    if (osvResult.results.Count == 0) {
+        //        return [];
+        //    }
+        //    foreach (PP directDependency in project.Packages) {
+        //        packageMetrics.Add(MakePackageMetric(directDependency, osvResult));
+        //    }
+        //    return packageMetrics;
+        //}
 
-        private PackageMetric MakePackageMetric(PP dependency, OsvResult osvResult) {
-            PackageMetric packageMetric = new PackageMetric();
-            packageMetric.version = dependency.Version;
-            packageMetric.name = dependency.Name;
-            return packageMetric;
-        }
+        //private Modells.Packages.VulnerabilityMetric MakePackageMetric(PP dependency, OsvResult osvResult) {
+        //    Modells.Packages.VulnerabilityMetric packageMetric = new Modells.Packages.VulnerabilityMetric();
+        //    packageMetric.version = dependency.Version;
+        //    packageMetric.name = dependency.Name;
+        //    return packageMetric;
+        //}
 
         /// <summary>
         /// 
