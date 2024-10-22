@@ -102,7 +102,7 @@ namespace AmIVulnerable.Controllers {
         }
 
         [HttpPost]
-        [Route("management/vulnerabilities")]
+        [Route("management/vulnerability")]
         public IActionResult DirectDependecyMetric([FromBody] List<ProjectDto> projectsDto) {
             List<MP> projects = new List<MP>();
             foreach (ProjectDto projectDto in projectsDto) {
