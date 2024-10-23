@@ -146,9 +146,10 @@ namespace AmIVulnerable.Controllers {
                         v.packageDependencyPaths.AddRange(GetDependencyPaths(osvPackage, package));
                         v.packageTransitiveDepths.AddRange(GetDepths(osvPackage, package));
                     }
+                    v.packageTransitiveDepthsPackages.AddRange(GetDepthPackages(v.packageDependencyPaths));
                     //if there is no path to the package in all prod-dependencies it is of no value to prod environments
                     //also no path means no way to the dependency --> no way to fix it!
-                    if(v.packageDependencyPaths.Count == 0) {
+                    if (v.packageDependencyPaths.Count == 0) {
                         continue;
                     }
                     if (osvPackageVulnerability.severity.Count != 0) {
@@ -156,7 +157,6 @@ namespace AmIVulnerable.Controllers {
                         v.vulnerabilityVector = MakeVector(osvPackageVulnerability.severity[0].score);
                         v.vulnerabilitySeverity = v.vulnerabilityVector.BaseScore();
                     }
-                    v.vulnerabilityPublished = osvPackageVulnerability.published;
                     v.vulnerabilityAliases = osvPackageVulnerability.aliases;
                     v.vulnerabilitySummary = osvPackageVulnerability.summary;
                     v.vulnerabilityDetails = osvPackageVulnerability.details;
@@ -388,7 +388,7 @@ namespace AmIVulnerable.Controllers {
             return -1;
         }
 
-        private List<string> GetDependencyPaths(Packages osvPackage, PP package, string path = "-> ") {
+        private List<string> GetDependencyPaths(Packages osvPackage, PP package, string path = " -> ") {
             List<string> savedPaths = new List<string>();
             if (package.Name == osvPackage.package.name &&
                 package.Version == osvPackage.package.version) {
@@ -401,163 +401,189 @@ namespace AmIVulnerable.Controllers {
             }
             return savedPaths;
         }
+        private List<PP> GetDepthPackages(List<string> pathStrings) {
+            List<PP> depthPackages = new List<PP>();
+            foreach (string pathString in pathStrings) {
+                List<string> subs = pathString.Split(" -> ").ToList();
+                subs.Remove(subs.First());
+                PP package = new PP();
+                package.Name = subs.First();
+                subs.Remove(subs.First());
+                if(subs.Count != 0) {
+                    package.Dependencies.Add(MakePackageFromStrings(subs));
+                }
+                depthPackages.Add(package);
+            }
+            return depthPackages;
+        }
+
+        private PP MakePackageFromStrings(List<string> subs) {
+            PP newPackage = new PP();
+            newPackage.Name = subs.First();
+            subs.Remove(subs.First());
+            if (subs.Count == 0) {
+                return newPackage;
+            }
+            newPackage.Dependencies.Add(MakePackageFromStrings(subs));
+            return newPackage;
+        }
 
         //Make string vector to element of Vector class
         private Vector MakeVector(string vectorString) {
-            Vector vector = new Vector();
+        Vector vector = new Vector();
 
-            Match attackVector = Regex.Match(vectorString, @"/AV:+\w{1}/");
-            switch (attackVector.Groups[0].Value) {
-                case "/AV:N/": {
-                        vector.AttackVector = AttackVector.Network;
-                        break;
-                    }
-                case "/AV:A/": {
-                        vector.AttackVector = AttackVector.Adjacent_Network;
-                        break;
-                    }
-                case "/AV:L/": {
-                        vector.AttackVector = AttackVector.Local;
-                        break;
-                    }
-                case "/AV:P/": {
-                        vector.AttackVector = AttackVector.Physial;
-                        break;
-                    }
-                default: {
-                        vector.AttackVector = AttackVector.Not_Available;
-                        break;
-                    }
-            }
+        Match attackVector = Regex.Match(vectorString, @"/AV:+\w{1}/");
+        switch (attackVector.Groups[0].Value) {
+            case "/AV:N/": {
+                    vector.AttackVector = AttackVector.Network;
+                    break;
+                }
+            case "/AV:A/": {
+                    vector.AttackVector = AttackVector.Adjacent_Network;
+                    break;
+                }
+            case "/AV:L/": {
+                    vector.AttackVector = AttackVector.Local;
+                    break;
+                }
+            case "/AV:P/": {
+                    vector.AttackVector = AttackVector.Physial;
+                    break;
+                }
+            default: {
+                    vector.AttackVector = AttackVector.Not_Available;
+                    break;
+                }
+        }
 
-            Match attackComplexity = Regex.Match(vectorString, @"/AC:+\w{1}/");
-            switch (attackComplexity.Groups[0].Value) {
-                case "/AC:L/": {
-                        vector.AttackComplexity = AttackComplexity.Low;
-                        break;
-                    }
-                case "/AC:H/": {
-                        vector.AttackComplexity = AttackComplexity.High;
-                        break;
-                    }
-                default: {
-                        vector.AttackComplexity = AttackComplexity.Not_Available;
-                        break;
-                    }
-            }
+        Match attackComplexity = Regex.Match(vectorString, @"/AC:+\w{1}/");
+        switch (attackComplexity.Groups[0].Value) {
+            case "/AC:L/": {
+                    vector.AttackComplexity = AttackComplexity.Low;
+                    break;
+                }
+            case "/AC:H/": {
+                    vector.AttackComplexity = AttackComplexity.High;
+                    break;
+                }
+            default: {
+                    vector.AttackComplexity = AttackComplexity.Not_Available;
+                    break;
+                }
+        }
 
-            Match privilegesRequired = Regex.Match(vectorString, @"/PR:+\w{1}/");
-            switch (privilegesRequired.Groups[0].Value) {
-                case "/PR:N/": {
-                        vector.PrivilegesRequired = PrivilegesRequired.None;
-                        break;
-                    }
-                case "/PR:L/": {
-                        vector.PrivilegesRequired = PrivilegesRequired.Low;
-                        break;
-                    }
-                case "/PR:H/": {
-                        vector.PrivilegesRequired = PrivilegesRequired.High;
-                        break;
-                    }
-                default: {
-                        vector.PrivilegesRequired = PrivilegesRequired.Not_Available;
-                        break;
-                    }
-            }
+        Match privilegesRequired = Regex.Match(vectorString, @"/PR:+\w{1}/");
+        switch (privilegesRequired.Groups[0].Value) {
+            case "/PR:N/": {
+                    vector.PrivilegesRequired = PrivilegesRequired.None;
+                    break;
+                }
+            case "/PR:L/": {
+                    vector.PrivilegesRequired = PrivilegesRequired.Low;
+                    break;
+                }
+            case "/PR:H/": {
+                    vector.PrivilegesRequired = PrivilegesRequired.High;
+                    break;
+                }
+            default: {
+                    vector.PrivilegesRequired = PrivilegesRequired.Not_Available;
+                    break;
+                }
+        }
 
-            Match userInteraction = Regex.Match(vectorString, @"/UI:+\w{1}/");
-            switch (userInteraction.Groups[0].Value) {
-                case "/UI:N/": {
-                        vector.UserInteraction = UserInteraction.None;
-                        break;
-                    }
-                case "/UI:R/": {
-                        vector.UserInteraction = UserInteraction.Required;
-                        break;
-                    }
-                default: {
-                        vector.UserInteraction = UserInteraction.Not_Available;
-                        break;
-                    }
-            }
+        Match userInteraction = Regex.Match(vectorString, @"/UI:+\w{1}/");
+        switch (userInteraction.Groups[0].Value) {
+            case "/UI:N/": {
+                    vector.UserInteraction = UserInteraction.None;
+                    break;
+                }
+            case "/UI:R/": {
+                    vector.UserInteraction = UserInteraction.Required;
+                    break;
+                }
+            default: {
+                    vector.UserInteraction = UserInteraction.Not_Available;
+                    break;
+                }
+        }
 
-            Match scope = Regex.Match(vectorString, @"/S:+\w{1}/");
-            switch (scope.Groups[0].Value) {
-                case "/S:U/": {
-                        vector.Scope = Scope.Unchanged;
-                        break;
-                    }
-                case "/S:C/": {
-                        vector.Scope = Scope.Changed;
-                        break;
-                    }
-                default: {
-                        vector.Scope = Scope.Not_Available;
-                        break;
-                    }
-            }
+        Match scope = Regex.Match(vectorString, @"/S:+\w{1}/");
+        switch (scope.Groups[0].Value) {
+            case "/S:U/": {
+                    vector.Scope = Scope.Unchanged;
+                    break;
+                }
+            case "/S:C/": {
+                    vector.Scope = Scope.Changed;
+                    break;
+                }
+            default: {
+                    vector.Scope = Scope.Not_Available;
+                    break;
+                }
+        }
 
-            Match confidentialityImpact = Regex.Match(vectorString, @"/C:+\w{1}/");
-            switch (confidentialityImpact.Groups[0].Value) {
-                case "/C:N/": {
-                        vector.ConfidentialityImpact = BaseScoreMetric.None;
-                        break;
-                    }
-                case "/C:L/": {
-                        vector.ConfidentialityImpact = BaseScoreMetric.Low;
-                        break;
-                    }
-                case "/C:H/": {
-                        vector.ConfidentialityImpact = BaseScoreMetric.High;
-                        break;
-                    }
-                default: {
-                        vector.ConfidentialityImpact = BaseScoreMetric.Not_Available;
-                        break;
-                    }
-            }
+        Match confidentialityImpact = Regex.Match(vectorString, @"/C:+\w{1}/");
+        switch (confidentialityImpact.Groups[0].Value) {
+            case "/C:N/": {
+                    vector.ConfidentialityImpact = BaseScoreMetric.None;
+                    break;
+                }
+            case "/C:L/": {
+                    vector.ConfidentialityImpact = BaseScoreMetric.Low;
+                    break;
+                }
+            case "/C:H/": {
+                    vector.ConfidentialityImpact = BaseScoreMetric.High;
+                    break;
+                }
+            default: {
+                    vector.ConfidentialityImpact = BaseScoreMetric.Not_Available;
+                    break;
+                }
+        }
 
-            Match integrityImpact = Regex.Match(vectorString, @"/I:+\w{1}/");
-            switch (integrityImpact.Groups[0].Value) {
-                case "/I:N/": {
-                        vector.IntegrityImpact = BaseScoreMetric.None;
-                        break;
-                    }
-                case "/I:L/": {
-                        vector.IntegrityImpact = BaseScoreMetric.Low;
-                        break;
-                    }
-                case "/I:H/": {
-                        vector.IntegrityImpact = BaseScoreMetric.High;
-                        break;
-                    }
-                default: {
-                        vector.IntegrityImpact = BaseScoreMetric.Not_Available;
-                        break;
-                    }
-            }
+        Match integrityImpact = Regex.Match(vectorString, @"/I:+\w{1}/");
+        switch (integrityImpact.Groups[0].Value) {
+            case "/I:N/": {
+                    vector.IntegrityImpact = BaseScoreMetric.None;
+                    break;
+                }
+            case "/I:L/": {
+                    vector.IntegrityImpact = BaseScoreMetric.Low;
+                    break;
+                }
+            case "/I:H/": {
+                    vector.IntegrityImpact = BaseScoreMetric.High;
+                    break;
+                }
+            default: {
+                    vector.IntegrityImpact = BaseScoreMetric.Not_Available;
+                    break;
+                }
+        }
 
-            Match availabilityImpact = Regex.Match(vectorString, @"/A:+\w{1}/{0,1}");
-            switch (availabilityImpact.Groups[0].Value) {
-                case "/A:N": {
-                        vector.AvailabilityImpact = BaseScoreMetric.None;
-                        break;
-                    }
-                case "/A:L": {
-                        vector.AvailabilityImpact = BaseScoreMetric.Low;
-                        break;
-                    }
-                case "/A:H": {
-                        vector.AvailabilityImpact = BaseScoreMetric.High;
-                        break;
-                    }
-                default: {
-                        vector.AvailabilityImpact = BaseScoreMetric.Not_Available;
-                        break;
-                    }
-            }
-            return vector;
+        Match availabilityImpact = Regex.Match(vectorString, @"/A:+\w{1}/{0,1}");
+        switch (availabilityImpact.Groups[0].Value) {
+            case "/A:N": {
+                    vector.AvailabilityImpact = BaseScoreMetric.None;
+                    break;
+                }
+            case "/A:L": {
+                    vector.AvailabilityImpact = BaseScoreMetric.Low;
+                    break;
+                }
+            case "/A:H": {
+                    vector.AvailabilityImpact = BaseScoreMetric.High;
+                    break;
+                }
+            default: {
+                    vector.AvailabilityImpact = BaseScoreMetric.Not_Available;
+                    break;
+                }
+        }
+        return vector;
         }
         #endregion
     }
