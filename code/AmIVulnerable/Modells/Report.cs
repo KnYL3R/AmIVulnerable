@@ -13,6 +13,10 @@ namespace Modells {
         public string? AnalysedRepoTag { get; set; } = null;
 
         /// <summary></summary>
+        [JsonPropertyName(nameof(AnalysedRepoTagDateTime))]
+        public string? AnalysedRepoTagDateTime { get; set; } = null;
+
+        /// <summary></summary>
         [JsonPropertyName(nameof(ReportMetrics))]
         public object ReportMetrics { get; set; } = new ReportMetric();
     }

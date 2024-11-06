@@ -1,3 +1,4 @@
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
 
@@ -13,7 +14,13 @@ namespace AmIVulnerable {
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo {
+                    Version = "v2",
+                    Title = "AmIVulnerable API"
+                });
+            });
 
             WebApplication app = builder.Build();
 

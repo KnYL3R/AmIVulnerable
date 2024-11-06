@@ -19,14 +19,17 @@ RUN dotnet build AmIVulnerable/AmIVulnerable.csproj -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish AmIVulnerable/AmIVulnerable.csproj -c Release -o /app/publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM golang:latest as gof
+RUN go install github.com/google/osv-scanner/cmd/osv-scanner@v1
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS aspnetFinal
 WORKDIR /app
 COPY AmIVulnerable/Controllers/Views /app/Controllers/Views
 COPY --from=publish /root/.dotnet/corefx/cryptography/x509stores/my/* /root/.dotnet/corefx/cryptography/x509stores/my/
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "AmIVulnerable.dll"]
 
-# Install NodeJS and git
+# Install NodeJS, git
 RUN apt-get update
 RUN apt-get install -y curl gnupg
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
